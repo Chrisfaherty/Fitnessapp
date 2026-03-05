@@ -232,13 +232,15 @@ create trigger meal_plans_updated_at     before update on public.meal_plans     
 -- Auto-create profile on signup
 -- ============================================================
 create or replace function public.handle_new_user()
-returns trigger language plpgsql security definer as $$
+returns trigger language plpgsql security definer
+set search_path = public
+as $$
 begin
   insert into public.profiles (id, full_name, role)
   values (
     new.id,
     coalesce(new.raw_user_meta_data->>'full_name', new.email),
-    coalesce((new.raw_user_meta_data->>'role')::user_role, 'client')
+    coalesce((new.raw_user_meta_data->>'role')::public.user_role, 'client'::public.user_role)
   );
   return new;
 end;
