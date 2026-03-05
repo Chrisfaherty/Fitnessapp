@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import {
   ResponsiveContainer,
   AreaChart,
@@ -16,7 +17,7 @@ interface SparklineCardProps {
   data?: number[];          // up to 7 values, latest last
   trendPct?: number | null; // e.g. 5.2 or -2.1
   accent?: boolean;
-  color?: string;           // recharts line/area color — defaults to accent
+  color?: string;           // recharts line/area color
   className?: string;
 }
 
@@ -26,11 +27,10 @@ function Trend({ pct }: { pct: number }) {
   return              <span className="trend-flat"><Minus className="w-3 h-3" />0%</span>;
 }
 
-// Tiny custom tooltip so we don't show ugly defaults
-function SparkTooltip({ active, payload, label: _label }: any) {
+function SparkTooltip({ active, payload }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-surface border border-border rounded-lg px-2 py-1 text-xs font-medium text-foreground shadow-card">
+    <div className="bg-surface-elevated border border-border rounded-lg px-2.5 py-1.5 text-xs font-mono font-medium text-foreground">
       {payload[0].value}
     </div>
   );
@@ -52,7 +52,11 @@ export function SparklineCard({
   const hasChart  = chartData.length >= 2;
 
   return (
-    <div className={`stat-card ${accent ? "border-accent/20 bg-accent/[0.03]" : ""} ${className}`}>
+    <motion.div
+      className={`stat-card cursor-default ${accent ? "border-accent/20 bg-accent/[0.03]" : ""} ${className}`}
+      whileHover={{ scale: 1.02, y: -1 }}
+      transition={{ type: "spring", stiffness: 300, damping: 28 }}
+    >
       {/* Top row: icon + trend */}
       <div className="flex items-start justify-between">
         <div className={accent ? "stat-card-icon-accent" : "stat-card-icon"}>
@@ -61,26 +65,26 @@ export function SparklineCard({
         {trendPct != null && <Trend pct={trendPct} />}
       </div>
 
-      {/* Value */}
+      {/* Value — Geist Mono via text-metric */}
       <div>
         <div className="flex items-baseline gap-1">
           <span className={`text-metric ${accent ? "text-accent" : "text-foreground"}`}>
             {value}
           </span>
-          {unit && <span className="text-sm text-foreground-secondary font-normal">{unit}</span>}
+          {unit && <span className="text-sm text-foreground-secondary font-normal font-sans">{unit}</span>}
         </div>
-        <p className="text-caption mt-0.5">{label}</p>
+        <p className="text-caption mt-1 text-xs">{label}</p>
       </div>
 
-      {/* Sparkline */}
+      {/* Sparkline — bottom 30% of card */}
       {hasChart && (
-        <div className="h-12 -mx-1">
+        <div className="h-14 -mx-1 -mb-1">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={chartData} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
+            <AreaChart data={chartData} margin={{ top: 4, right: 2, left: 2, bottom: 0 }}>
               <defs>
-                <linearGradient id={`grad-${label}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor={chartColor} stopOpacity={0.25} />
-                  <stop offset="100%" stopColor={chartColor} stopOpacity={0}    />
+                <linearGradient id={`grad-${label.replace(/\s/g, "")}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%"   stopColor={chartColor} stopOpacity={0.3} />
+                  <stop offset="100%" stopColor={chartColor} stopOpacity={0}   />
                 </linearGradient>
               </defs>
               <Tooltip
@@ -92,7 +96,7 @@ export function SparklineCard({
                 dataKey="v"
                 stroke={chartColor}
                 strokeWidth={1.5}
-                fill={`url(#grad-${label})`}
+                fill={`url(#grad-${label.replace(/\s/g, "")})`}
                 dot={false}
                 activeDot={{ r: 3, fill: chartColor, strokeWidth: 0 }}
               />
@@ -100,6 +104,6 @@ export function SparklineCard({
           </ResponsiveContainer>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

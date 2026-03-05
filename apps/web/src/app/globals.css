@@ -7,25 +7,26 @@
    ============================================================ */
 :root {
   /* Light mode */
-  --color-background:       #F7F7FA;
+  --color-background:       #F5F5F7;
   --color-surface:          #FFFFFF;
-  --color-surface-elevated: #F0F1F5;
-  --color-text:             #0B0C10;
-  --color-text-secondary:   #6B7280;
-  --color-muted:            #9CA3AF;
-  --color-border:           #E2E4EA;
-  --color-border-subtle:    #ECEEF3;
+  --color-surface-elevated: #F0F0F2;
+  --color-text:             #1C1C1E;
+  --color-text-secondary:   #636366;
+  --color-muted:            #8E8E93;
+  --color-border:           rgba(0, 0, 0, 0.10);
+  --color-border-subtle:    rgba(0, 0, 0, 0.06);
 }
 
 .dark {
-  --color-background:       #0D0E14;
-  --color-surface:          #13141F;
-  --color-surface-elevated: #1E2030;
-  --color-text:             #ECEEF4;
-  --color-text-secondary:   #8B8FA8;
-  --color-muted:            #5C607A;
-  --color-border:           #252638;
-  --color-border-subtle:    #1A1B2E;
+  /* Void palette — Gemini spec */
+  --color-background:       #080809;
+  --color-surface:          #111113;
+  --color-surface-elevated: #1C1C1E;
+  --color-text:             #F5F5F7;
+  --color-text-secondary:   #8E8E93;
+  --color-muted:            #48484A;
+  --color-border:           rgba(255, 255, 255, 0.10);
+  --color-border-subtle:    rgba(255, 255, 255, 0.06);
 }
 
 /* ============================================================
@@ -45,12 +46,6 @@ body {
   background-color: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
-}
-
-/* Tabular numerals — all stat numbers render with fixed-width digits */
-.tabular-nums {
-  font-feature-settings: "tnum" 1;
-  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================================
@@ -89,21 +84,30 @@ body {
     @apply text-sm text-foreground-secondary;
   }
   .text-label {
-    @apply text-xs font-medium uppercase tracking-wider text-foreground-secondary;
-  }
-  .text-metric {
-    @apply text-3xl font-bold tracking-tight tabular-nums;
+    @apply text-[10px] font-semibold uppercase tracking-widest text-foreground-secondary;
   }
 
-  /* ── Card ─────────────────────────────────────────────────── */
+  /* Metric numbers — Geist Mono for precision */
+  .text-metric {
+    @apply text-[2rem] font-bold tracking-tight font-mono;
+    font-feature-settings: "tnum" 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .text-metric-sm {
+    @apply text-2xl font-bold tracking-tight font-mono;
+    font-feature-settings: "tnum" 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── Card — border-only, no shadow ─────────────────────── */
   .card {
-    @apply bg-surface border border-border rounded-xl p-6 shadow-card;
+    @apply bg-surface border border-border rounded-xl p-6;
   }
   .card-compact {
-    @apply bg-surface border border-border rounded-xl p-4 shadow-card;
+    @apply bg-surface border border-border rounded-xl p-4;
   }
   .card-interactive {
-    @apply card transition-all duration-fast hover:border-accent/30 hover:shadow-card-hover cursor-pointer;
+    @apply card transition-all duration-fast hover:border-white/20 cursor-pointer;
   }
 
   /* ── Buttons ─────────────────────────────────────────────── */
@@ -121,14 +125,14 @@ body {
            px-5 py-2.5 text-sm;
   }
   .btn-ghost {
-    @apply btn text-foreground-secondary hover:text-foreground hover:bg-surface-elevated
+    @apply btn text-foreground-secondary hover:text-foreground hover:bg-white/[0.05]
            px-4 py-2 text-sm;
   }
   .btn-danger {
     @apply btn bg-danger text-danger-foreground hover:bg-danger/90 px-5 py-2.5 text-sm;
   }
   .btn-icon {
-    @apply btn p-2 text-foreground-secondary hover:text-foreground hover:bg-surface-elevated rounded-lg;
+    @apply btn p-2 text-foreground-secondary hover:text-foreground hover:bg-white/[0.05] rounded-lg;
   }
 
   /* ── Input ─────────────────────────────────────────────────── */
@@ -144,35 +148,35 @@ body {
 
   /* ── Badge ─────────────────────────────────────────────────── */
   .badge {
-    @apply inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full;
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full;
   }
   .badge-accent   { @apply badge bg-accent/15 text-accent; }
-  .badge-indigo   { @apply badge bg-indigo-muted text-indigo; }
-  .badge-success  { @apply badge bg-success-muted text-success; }
-  .badge-warning  { @apply badge bg-warning-muted text-warning; }
-  .badge-danger   { @apply badge bg-danger-muted text-danger; }
-  .badge-neutral  { @apply badge bg-border text-foreground-secondary; }
+  .badge-indigo   { @apply badge bg-indigo/10 text-indigo; }
+  .badge-success  { @apply badge bg-success/10 text-success; }
+  .badge-warning  { @apply badge bg-warning/15 text-warning; }
+  .badge-danger   { @apply badge bg-danger/10 text-danger; }
+  .badge-neutral  { @apply badge bg-white/[0.08] text-foreground-secondary; }
 
-  /* ── Stat card ─────────────────────────────────────────────── */
+  /* ── Stat card — pure border, WHOOP-influenced ──────────── */
   .stat-card {
-    @apply bg-surface border border-border rounded-xl p-5 shadow-card flex flex-col gap-4;
+    @apply bg-surface border border-border rounded-xl p-5 flex flex-col gap-4;
   }
   .stat-card-icon {
-    @apply w-9 h-9 rounded-lg flex items-center justify-center bg-surface-elevated;
+    @apply w-9 h-9 rounded-lg flex items-center justify-center bg-white/[0.06];
   }
   .stat-card-icon-accent {
-    @apply w-9 h-9 rounded-lg flex items-center justify-center bg-accent/20;
+    @apply w-9 h-9 rounded-lg flex items-center justify-center bg-accent/15;
   }
   .stat-card-icon-indigo {
     @apply w-9 h-9 rounded-lg flex items-center justify-center bg-indigo/10;
   }
 
-  /* ── Trend badge ─────────────────────────────────────────────── */
-  .trend-up   { @apply inline-flex items-center gap-0.5 text-xs font-semibold text-success; }
-  .trend-down { @apply inline-flex items-center gap-0.5 text-xs font-semibold text-danger; }
-  .trend-flat { @apply inline-flex items-center gap-0.5 text-xs font-semibold text-foreground-secondary; }
+  /* ── Trend badge ─────────────────────────────────────────── */
+  .trend-up   { @apply inline-flex items-center gap-0.5 text-[11px] font-semibold text-success; }
+  .trend-down { @apply inline-flex items-center gap-0.5 text-[11px] font-semibold text-danger; }
+  .trend-flat { @apply inline-flex items-center gap-0.5 text-[11px] font-semibold text-foreground-secondary; }
 
-  /* ── Data table ─────────────────────────────────────────────── */
+  /* ── Data table ─────────────────────────────────────────── */
   .data-table { @apply w-full text-sm; }
   .data-table thead th {
     @apply text-label px-4 py-3 text-left border-b border-border bg-surface-elevated/50 first:rounded-tl-lg last:rounded-tr-lg;
@@ -181,14 +185,14 @@ body {
     @apply px-4 py-3 border-b border-border-subtle text-foreground;
   }
   .data-table tbody tr:last-child td { @apply border-0; }
-  .data-table tbody tr:hover td { @apply bg-surface-elevated/40 transition-colors; }
+  .data-table tbody tr:hover td { @apply bg-white/[0.03] transition-colors; }
 
-  /* ── Empty state ─────────────────────────────────────────────── */
+  /* ── Empty state ─────────────────────────────────────────── */
   .empty-state {
     @apply card flex flex-col items-center justify-center py-16 text-center gap-3;
   }
 
-  /* ── Section header ─────────────────────────────────────────── */
+  /* ── Section header ─────────────────────────────────────── */
   .section-header {
     @apply flex items-center justify-between mb-5;
   }
@@ -197,5 +201,10 @@ body {
   }
   .section-action {
     @apply text-sm text-accent hover:text-accent-hover font-medium transition-colors;
+  }
+
+  /* ── Glass divider ───────────────────────────────────────── */
+  .divider {
+    @apply border-t border-border my-6;
   }
 }
