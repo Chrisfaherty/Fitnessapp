@@ -5,7 +5,7 @@
 -- ============================================================
 
 -- Enable extensions
-create extension if not exists "uuid-ossp";
+-- uuid-ossp not needed: gen_random_uuid() is built into Postgres 13+
 create extension if not exists "pgcrypto";
 create extension if not exists "pg_trgm";     -- trigram search for exercises
 
@@ -37,7 +37,7 @@ comment on table public.profiles is 'Extended profile data for every user.';
 -- TRAINER ↔ CLIENT LINKING
 -- ============================================================
 create table public.trainer_clients (
-  id           uuid primary key default uuid_generate_v4(),
+  id           uuid primary key default gen_random_uuid(),
   trainer_id   uuid not null references public.profiles(id) on delete cascade,
   client_id    uuid not null references public.profiles(id) on delete cascade,
   active       boolean not null default true,
@@ -52,7 +52,7 @@ create index idx_trainer_clients_client  on public.trainer_clients(client_id);
 -- HEALTH: DAILY METRICS
 -- ============================================================
 create table public.health_daily (
-  id                  uuid primary key default uuid_generate_v4(),
+  id                  uuid primary key default gen_random_uuid(),
   user_id             uuid not null references public.profiles(id) on delete cascade,
   date                date not null,
   steps               integer,
@@ -74,7 +74,7 @@ create index idx_health_daily_user_date on public.health_daily(user_id, date des
 -- HEALTH: WORKOUT EVENTS (from OS health hub)
 -- ============================================================
 create table public.health_workouts (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references public.profiles(id) on delete cascade,
   external_id     text not null,           -- HKWorkout.uuid or Health Connect sessionId
   workout_type    text not null,
@@ -94,7 +94,7 @@ create index idx_health_workouts_user_start on public.health_workouts(user_id, s
 -- DIARY (daily client note)
 -- ============================================================
 create table public.diary_entries (
-  id           uuid primary key default uuid_generate_v4(),
+  id           uuid primary key default gen_random_uuid(),
   user_id      uuid not null references public.profiles(id) on delete cascade,
   date         date not null,
   notes        text,
@@ -111,7 +111,7 @@ create index idx_diary_user_date on public.diary_entries(user_id, date desc);
 -- WEEKLY CHECK-INS
 -- ============================================================
 create table public.check_ins (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default gen_random_uuid(),
   client_id       uuid not null references public.profiles(id) on delete cascade,
   trainer_id      uuid references public.profiles(id) on delete set null,
   week_start_date date not null,
@@ -138,7 +138,7 @@ create index idx_check_ins_trainer    on public.check_ins(trainer_id, status);
 -- MEAL PLANS
 -- ============================================================
 create table public.meal_plans (
-  id           uuid primary key default uuid_generate_v4(),
+  id           uuid primary key default gen_random_uuid(),
   trainer_id   uuid not null references public.profiles(id) on delete cascade,
   client_id    uuid not null references public.profiles(id) on delete cascade,
   title        text not null,
@@ -153,7 +153,7 @@ create index idx_meal_plans_client  on public.meal_plans(client_id);
 create index idx_meal_plans_trainer on public.meal_plans(trainer_id);
 
 create table public.meal_plan_days (
-  id            uuid primary key default uuid_generate_v4(),
+  id            uuid primary key default gen_random_uuid(),
   meal_plan_id  uuid not null references public.meal_plans(id) on delete cascade,
   day_of_week   smallint not null check (day_of_week between 0 and 6), -- 0=Sun
   meal_name     text not null,   -- e.g. "Breakfast", "Lunch"
@@ -169,7 +169,7 @@ create table public.meal_plan_days (
 -- MESSAGING
 -- ============================================================
 create table public.conversations (
-  id           uuid primary key default uuid_generate_v4(),
+  id           uuid primary key default gen_random_uuid(),
   trainer_id   uuid not null references public.profiles(id) on delete cascade,
   client_id    uuid not null references public.profiles(id) on delete cascade,
   created_at   timestamptz not null default now(),
@@ -180,7 +180,7 @@ create index idx_conversations_trainer on public.conversations(trainer_id);
 create index idx_conversations_client  on public.conversations(client_id);
 
 create table public.messages (
-  id                uuid primary key default uuid_generate_v4(),
+  id                uuid primary key default gen_random_uuid(),
   conversation_id   uuid not null references public.conversations(id) on delete cascade,
   sender_id         uuid not null references public.profiles(id) on delete cascade,
   sender_role       message_sender_role not null,
@@ -198,7 +198,7 @@ create index idx_messages_sender       on public.messages(sender_id);
 -- WEEKLY SUMMARIES (generated by edge function)
 -- ============================================================
 create table public.weekly_summaries (
-  id                uuid primary key default uuid_generate_v4(),
+  id                uuid primary key default gen_random_uuid(),
   client_id         uuid not null references public.profiles(id) on delete cascade,
   week_start_date   date not null,
   avg_steps         numeric(8,0),

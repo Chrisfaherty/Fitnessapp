@@ -36,7 +36,7 @@ create index idx_exercises_level          on public.exercises(level);
 -- WORKOUT TEMPLATES (trainer-created)
 -- ============================================================
 create table public.workout_templates (
-  id           uuid primary key default uuid_generate_v4(),
+  id           uuid primary key default gen_random_uuid(),
   trainer_id   uuid not null references public.profiles(id) on delete cascade,
   title        text not null,
   description  text,
@@ -54,7 +54,7 @@ create trigger workout_templates_updated_at
 -- WORKOUT TEMPLATE EXERCISES (ordered exercise list in a template)
 -- ============================================================
 create table public.workout_template_exercises (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default gen_random_uuid(),
   template_id     uuid not null references public.workout_templates(id) on delete cascade,
   exercise_id     text not null references public.exercises(id) on delete restrict,
   sort_order      integer not null default 0,
@@ -71,7 +71,7 @@ create index idx_wte_template on public.workout_template_exercises(template_id, 
 -- WORKOUT ASSIGNMENTS (trainer assigns template to client)
 -- ============================================================
 create table public.workout_assignments (
-  id               uuid primary key default uuid_generate_v4(),
+  id               uuid primary key default gen_random_uuid(),
   client_id        uuid not null references public.profiles(id) on delete cascade,
   template_id      uuid not null references public.workout_templates(id) on delete cascade,
   trainer_id       uuid references public.profiles(id) on delete set null,
@@ -93,7 +93,7 @@ create trigger workout_assignments_updated_at
 -- WORKOUT SESSIONS (logged by client)
 -- ============================================================
 create table public.workout_sessions (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default gen_random_uuid(),
   client_id       uuid not null references public.profiles(id) on delete cascade,
   template_id     uuid references public.workout_templates(id) on delete set null,
   assignment_id   uuid references public.workout_assignments(id) on delete set null,
@@ -110,7 +110,7 @@ create index idx_workout_sessions_client on public.workout_sessions(client_id, p
 -- WORKOUT SESSION SETS (individual sets logged)
 -- ============================================================
 create table public.workout_session_sets (
-  id           uuid primary key default uuid_generate_v4(),
+  id           uuid primary key default gen_random_uuid(),
   session_id   uuid not null references public.workout_sessions(id) on delete cascade,
   exercise_id  text not null references public.exercises(id) on delete restrict,
   set_number   integer not null,
