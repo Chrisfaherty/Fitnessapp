@@ -22,6 +22,7 @@
     "tokens:generate": "pnpm --filter design-tokens generate"
   },
   "devDependencies": {
+    "next": "14.2.4",
     "typescript": "^5.4.5"
   },
   "engines": {
