@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClientSupabaseClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { AlertCircle, Loader2 } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -66,9 +67,7 @@ export function LoginForm() {
 
       {error && (
         <p className="text-sm text-danger flex items-center gap-1.5">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
           {error}
         </p>
       )}
@@ -79,13 +78,10 @@ export function LoginForm() {
         disabled={loading}
       >
         {loading ? (
-          <span className="flex items-center gap-2">
-            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-            </svg>
+          <>
+            <Loader2 className="animate-spin w-4 h-4" />
             Signing in…
-          </span>
+          </>
         ) : "Sign In"}
       </button>
 

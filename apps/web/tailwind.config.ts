@@ -9,6 +9,7 @@ const config: Config = {
         background:    "var(--color-background)",
         surface:       "var(--color-surface)",
         "surface-elevated": "var(--color-surface-elevated)",
+        "surface-alt": "var(--color-surface-elevated)",
         foreground:    "var(--color-text)",
         "foreground-secondary": "var(--color-text-secondary)",
         muted:         "var(--color-muted)",
@@ -27,6 +28,9 @@ const config: Config = {
       fontFamily: {
         sans: ["Inter", "system-ui", "-apple-system", "sans-serif"],
         mono: ["JetBrains Mono", "Fira Code", "monospace"],
+      },
+      transitionDuration: {
+        fast: "150ms",
       },
       borderRadius: {
         sm:   "0.375rem",

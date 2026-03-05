@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Users, ChevronRight } from 'lucide-react'
 
 export default async function TrainerClientsPage() {
   const supabase = await createServerSupabaseClient()
@@ -30,13 +31,22 @@ export default async function TrainerClientsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-display">Clients</h1>
-      <p className="text-body text-foreground/60">{clients.length} active client{clients.length !== 1 ? 's' : ''}</p>
+      <div>
+        <h1 className="text-display">Clients</h1>
+        <p className="text-body text-foreground-secondary mt-1">
+          {clients.length} active client{clients.length !== 1 ? 's' : ''}
+        </p>
+      </div>
 
       {clients.length === 0 ? (
-        <div className="card text-center py-16 text-foreground/50">
-          <p className="text-heading mb-2">No clients yet</p>
-          <p className="text-body">Clients will appear here once linked.</p>
+        <div className="empty-state">
+          <div className="stat-card-icon">
+            <Users className="w-5 h-5 text-foreground-secondary" />
+          </div>
+          <p className="text-subheading">No clients yet</p>
+          <p className="text-caption max-w-xs">
+            Clients will appear here once they have been linked to your account.
+          </p>
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -47,25 +57,28 @@ export default async function TrainerClientsPage() {
               className="card hover:border-accent transition-colors group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-surface-alt flex items-center justify-center text-lg font-semibold flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-surface-alt flex items-center justify-center text-lg font-semibold flex-shrink-0 border border-border">
                   {client.avatarUrl ? (
-                    <img src={client.avatarUrl} alt={client.name} className="w-12 h-12 rounded-full object-cover" />
+                    <img
+                      src={client.avatarUrl}
+                      alt={client.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
                   ) : (
-                    <span>{client.name.charAt(0).toUpperCase()}</span>
+                    <span className="text-foreground-secondary">
+                      {client.name.charAt(0).toUpperCase()}
+                    </span>
                   )}
                 </div>
-                <div className="min-w-0">
-                  <p className="text-label font-medium truncate group-hover:text-accent transition-colors">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-foreground group-hover:text-accent transition-colors truncate">
                     {client.name}
                   </p>
                   {client.email && (
-                    <p className="text-caption text-foreground/50 truncate">{client.email}</p>
+                    <p className="text-caption truncate">{client.email}</p>
                   )}
                 </div>
-                <svg className="ml-auto flex-shrink-0 w-4 h-4 text-foreground/30 group-hover:text-accent transition-colors"
-                  fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+                <ChevronRight className="flex-shrink-0 w-4 h-4 text-foreground-secondary group-hover:text-accent transition-colors" />
               </div>
             </Link>
           ))}

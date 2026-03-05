@@ -1,6 +1,15 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import {
+  Footprints,
+  Scale,
+  Dumbbell,
+  Activity,
+  BookText,
+  ClipboardCheck,
+  Salad,
+} from 'lucide-react'
 
 export default async function ClientDashboardPage() {
   const supabase = await createServerSupabaseClient()
@@ -42,10 +51,10 @@ export default async function ClientDashboardPage() {
     .single()
 
   const shortcuts = [
-    { href: '/client/workouts', label: 'My Workouts', icon: '🏋️', count: workoutCount ?? 0, badge: workoutCount ? `${workoutCount} pending` : undefined },
-    { href: '/client/diary', label: 'Daily Diary', icon: '📖' },
-    { href: '/client/check-ins', label: 'Check-In', icon: '✅', badge: !lastCheckIn ? 'Due now' : undefined },
-    { href: '/client/meals', label: 'Meal Plan', icon: '🥗' },
+    { href: '/client/workouts', label: 'My Workouts', icon: Dumbbell, badge: workoutCount ? `${workoutCount} pending` : undefined },
+    { href: '/client/diary', label: 'Daily Diary', icon: BookText },
+    { href: '/client/check-ins', label: 'Check-In', icon: ClipboardCheck, badge: !lastCheckIn ? 'Due now' : undefined },
+    { href: '/client/meals', label: 'Meal Plan', icon: Salad },
   ]
 
   return (
@@ -54,44 +63,62 @@ export default async function ClientDashboardPage() {
 
       {/* Health Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="Avg Steps (7d)" value={avgSteps?.toLocaleString() ?? '—'} />
-        <StatCard label="Latest Weight" value={latestWeight ? `${latestWeight} kg` : '—'} />
-        <StatCard label="Active Workouts" value={workoutCount?.toString() ?? '0'} highlight />
-        <StatCard label="Data Points" value={health?.length?.toString() ?? '0'} />
+        <StatCard label="Avg Steps (7d)" value={avgSteps?.toLocaleString() ?? '—'} icon={Footprints} />
+        <StatCard label="Latest Weight" value={latestWeight ? `${latestWeight} kg` : '—'} icon={Scale} />
+        <StatCard label="Active Workouts" value={workoutCount?.toString() ?? '0'} icon={Dumbbell} highlight />
+        <StatCard label="Data Points" value={health?.length?.toString() ?? '0'} icon={Activity} />
       </div>
 
       {/* Quick Links */}
       <div>
         <h2 className="text-heading mb-4">Quick Access</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {shortcuts.map((s) => (
-            <Link
-              key={s.href}
-              href={s.href}
-              className="card hover:border-accent transition-colors text-center group relative"
-            >
-              {s.badge && (
-                <span className="absolute top-3 right-3 badge bg-accent text-black text-[10px]">
-                  {s.badge}
-                </span>
-              )}
-              <div className="text-3xl mb-2">{s.icon}</div>
-              <p className="text-label font-medium group-hover:text-accent transition-colors">
-                {s.label}
-              </p>
-            </Link>
-          ))}
+          {shortcuts.map((s) => {
+            const Icon = s.icon
+            return (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="card hover:border-accent transition-colors text-center group relative flex flex-col items-center justify-center py-6"
+              >
+                {s.badge && (
+                  <span className="absolute top-3 right-3 badge-accent text-[10px]">
+                    {s.badge}
+                  </span>
+                )}
+                <Icon className="w-8 h-8 mb-3 text-foreground-secondary group-hover:text-accent transition-colors" />
+                <p className="text-label font-medium group-hover:text-accent transition-colors">
+                  {s.label}
+                </p>
+              </Link>
+            )
+          })}
         </div>
       </div>
     </div>
   )
 }
 
-function StatCard({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
+function StatCard({
+  label,
+  value,
+  icon: Icon,
+  highlight = false,
+}: {
+  label: string
+  value: string
+  icon: React.ElementType
+  highlight?: boolean
+}) {
   return (
-    <div className="card">
-      <p className="text-caption text-foreground/50 mb-1">{label}</p>
-      <p className={`text-heading font-bold ${highlight ? 'text-accent' : ''}`}>{value}</p>
+    <div className="card flex flex-col gap-3">
+      <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${highlight ? 'bg-accent/20' : 'bg-surface-elevated'}`}>
+        <Icon className={`w-5 h-5 ${highlight ? 'text-accent' : 'text-foreground-secondary'}`} />
+      </div>
+      <div>
+        <p className={`text-heading font-bold ${highlight ? 'text-accent' : ''}`}>{value}</p>
+        <p className="text-caption">{label}</p>
+      </div>
     </div>
   )
 }

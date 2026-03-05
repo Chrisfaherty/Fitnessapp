@@ -139,4 +139,31 @@ body {
   .badge-warning  { @apply badge bg-warning-muted text-warning; }
   .badge-danger   { @apply badge bg-danger-muted text-danger; }
   .badge-neutral  { @apply badge bg-border text-foreground-secondary; }
+
+  /* ── Stat card ─────────────────────────────────────────────── */
+  .stat-card {
+    @apply card flex flex-col gap-3;
+  }
+  .stat-card-icon {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center bg-surface-elevated;
+  }
+  .stat-card-icon-accent {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center bg-accent/20;
+  }
+
+  /* ── Data table ─────────────────────────────────────────────── */
+  .data-table { @apply w-full text-sm; }
+  .data-table thead th {
+    @apply text-label px-4 py-3 text-left border-b border-border bg-surface-elevated/50;
+  }
+  .data-table tbody td {
+    @apply px-4 py-3 border-b border-border-subtle text-foreground;
+  }
+  .data-table tbody tr:last-child td { @apply border-0; }
+  .data-table tbody tr:hover td { @apply bg-surface-elevated/40; }
+
+  /* ── Empty state ─────────────────────────────────────────────── */
+  .empty-state {
+    @apply card flex flex-col items-center justify-center py-16 text-center gap-3;
+  }
 }
