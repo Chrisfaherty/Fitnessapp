@@ -13,3 +13,6 @@ export function createClientSupabaseClient() {
 
   return supabaseClient;
 }
+
+// Alias used by client components
+export const createBrowserSupabaseClient = createClientSupabaseClient;

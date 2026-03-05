@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 
@@ -22,11 +23,12 @@ export default async function ClientDetailPage({ params }: Props) {
   if (!link) notFound()
 
   // Fetch client profile
-  const { data: profile } = await supabase
+  const { data: profileRaw } = await supabase
     .from('profiles')
     .select('id, full_name, email, avatar_url')
     .eq('id', params.clientId)
     .single()
+  const profile = profileRaw as any
 
   // Fetch last 7 days health
   const sevenDaysAgo = new Date()

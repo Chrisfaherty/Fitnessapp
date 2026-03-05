@@ -10,18 +10,20 @@ export default async function ClientDashboardPage() {
   // Last 7 days health summary
   const sevenDaysAgo = new Date()
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
-  const { data: health } = await supabase
+  const { data: healthRaw } = await supabase
     .from('health_daily')
     .select('date, steps, calories_out, weight_kg')
     .eq('user_id', user.id)
     .gte('date', sevenDaysAgo.toISOString().split('T')[0])
     .order('date', { ascending: false })
 
-  const avgSteps = health && health.length > 0
-    ? Math.round(health.reduce((a, r: any) => a + (r.steps ?? 0), 0) / health.filter((r: any) => r.steps).length)
+  const health = (healthRaw ?? []) as Array<{ date: string; steps: number | null; calories_out: number | null; weight_kg: number | null }>
+
+  const avgSteps = health.length > 0
+    ? Math.round(health.reduce((a, r) => a + (r.steps ?? 0), 0) / (health.filter(r => r.steps).length || 1))
     : null
 
-  const latestWeight = health?.find((r: any) => r.weight_kg)?.weight_kg ?? null
+  const latestWeight = health.find(r => r.weight_kg)?.weight_kg ?? null
 
   // Active assignments
   const { count: workoutCount } = await supabase
