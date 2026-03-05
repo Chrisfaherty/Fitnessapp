@@ -13,12 +13,14 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^16.6.0",
     "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.43.4",
     "@tanstack/react-query": "^5.40.0",
     "@tanstack/react-query-devtools": "^5.40.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
+    "geist": "^1.7.0",
     "lucide-react": "^0.390.0",
     "next": "14.2.4",
     "react": "^18.3.1",
@@ -26,8 +28,7 @@
     "recharts": "^2.12.7",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.3.0",
-    "zod": "^3.23.8",
-    "@hello-pangea/dnd": "^16.6.0"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@fitnessapp/design-tokens": "workspace:*",

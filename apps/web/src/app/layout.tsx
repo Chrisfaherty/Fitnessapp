@@ -1,21 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Toaster } from "sonner";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: { default: "FitnessCoach", template: "%s | FitnessCoach" },
   description: "All-in-one fitness coaching platform",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#F7F7FA" },
-    { media: "(prefers-color-scheme: dark)",  color: "#0B0C10" },
+    { media: "(prefers-color-scheme: dark)",  color: "#0D0E14" },
   ],
 };
 
@@ -25,8 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} font-sans antialiased`}>
+    <html lang="en" className={GeistSans.variable} suppressHydrationWarning>
+      <body className="font-sans antialiased">
         <Providers>
           {children}
           <Toaster
