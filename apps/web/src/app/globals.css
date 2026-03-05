@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   CSS Custom Properties — Design Tokens
+   ============================================================ */
+:root {
+  /* Light mode */
+  --color-background:       #F7F7FA;
+  --color-surface:          #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+  --color-text:             #0B0C10;
+  --color-text-secondary:   #6B7280;
+  --color-muted:            #6B7280;
+  --color-border:           #E5E7EB;
+  --color-border-subtle:    #F3F4F6;
+}
+
+.dark {
+  --color-background:       #0B0C10;
+  --color-surface:          #12131A;
+  --color-surface-elevated: #1C1D26;
+  --color-text:             #F4F5F7;
+  --color-text-secondary:   #9CA3AF;
+  --color-muted:            #9CA3AF;
+  --color-border:           #23242E;
+  --color-border-subtle:    #1A1B23;
+}
+
+/* ============================================================
+   Base styles
+   ============================================================ */
+* {
+  box-sizing: border-box;
+  border-color: var(--color-border);
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+/* ============================================================
+   Focus visible ring (accessibility)
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid #A3FF12;
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Scrollbar (minimal)
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-muted); }
+
+/* ============================================================
+   Typography utilities
+   ============================================================ */
+@layer components {
+  .text-display {
+    @apply text-4xl font-bold tracking-tight leading-tight;
+  }
+  .text-heading {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  .text-subheading {
+    @apply text-lg font-semibold;
+  }
+  .text-body {
+    @apply text-base font-normal leading-relaxed;
+  }
+  .text-caption {
+    @apply text-sm text-foreground-secondary;
+  }
+  .text-label {
+    @apply text-xs font-medium uppercase tracking-wider text-foreground-secondary;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-surface border border-border rounded-xl p-6 shadow-card;
+  }
+  .card-compact {
+    @apply bg-surface border border-border rounded-lg p-4 shadow-card;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-lg
+           transition-all duration-fast disabled:opacity-50 disabled:cursor-not-allowed
+           focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none;
+  }
+  .btn-primary {
+    @apply btn bg-accent text-accent-foreground hover:bg-accent-hover active:bg-accent/80
+           px-5 py-2.5 text-sm;
+  }
+  .btn-secondary {
+    @apply btn bg-surface border border-border text-foreground hover:bg-surface-elevated
+           px-5 py-2.5 text-sm;
+  }
+  .btn-ghost {
+    @apply btn text-foreground-secondary hover:text-foreground hover:bg-surface-elevated
+           px-4 py-2 text-sm;
+  }
+  .btn-danger {
+    @apply btn bg-danger text-danger-foreground hover:bg-danger/90 px-5 py-2.5 text-sm;
+  }
+  .btn-icon {
+    @apply btn p-2 text-foreground-secondary hover:text-foreground hover:bg-surface-elevated;
+  }
+
+  /* Input */
+  .input {
+    @apply w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm
+           text-foreground placeholder:text-muted
+           focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent
+           transition-all duration-fast;
+  }
+  .input-error {
+    @apply input border-danger focus:ring-danger;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full;
+  }
+  .badge-accent   { @apply badge bg-accent/15 text-accent; }
+  .badge-success  { @apply badge bg-success-muted text-success; }
+  .badge-warning  { @apply badge bg-warning-muted text-warning; }
+  .badge-danger   { @apply badge bg-danger-muted text-danger; }
+  .badge-neutral  { @apply badge bg-border text-foreground-secondary; }
+}

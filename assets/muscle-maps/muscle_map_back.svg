@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FitnessCoach Muscle Map — Back View
+     Original artwork, CC0 license. data-muscle attributes match exercise library strings.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 440" fill="none">
+  <style>
+    [data-muscle] { fill: #2D2D3A; stroke: #3D3D4E; stroke-width: 1; transition: fill 0.3s, opacity 0.3s; }
+    .body-outline { fill: none; stroke: #4D4D60; stroke-width: 1.5; }
+  </style>
+
+  <!-- Body silhouette outline (back view) -->
+  <path class="body-outline" d="M80,20 C65,20 55,35 55,50 L50,90 L40,130 L35,180 L38,250 L40,340 L45,420 L55,420 L60,340 L65,280 L70,280 L75,340 L80,420 L120,420 L125,340 L130,280 L135,280 L140,340 L145,420 L155,420 L160,340 L162,250 L165,180 L160,130 L150,90 L145,50 C145,35 135,20 120,20 Z"/>
+
+  <!-- Neck / Traps -->
+  <path data-muscle="traps" d="M82,34 L118,34 L125,60 L75,60 Z"/>
+  <!-- Upper traps extending to shoulders -->
+  <path data-muscle="traps" d="M55,55 L75,60 L70,80 L40,90 L42,70 Z"/>
+  <path data-muscle="traps" d="M145,55 L125,60 L130,80 L160,90 L158,70 Z"/>
+
+  <!-- Rear Deltoids (shoulders) -->
+  <path data-muscle="shoulders" d="M38,72 L55,58 L65,78 L48,92 Z"/>
+  <path data-muscle="shoulders" d="M162,72 L145,58 L135,78 L152,92 Z"/>
+
+  <!-- Lats -->
+  <path data-muscle="lats" d="M52,92 L72,95 L70,165 L40,155 Z"/>
+  <path data-muscle="lats" d="M148,92 L128,95 L130,165 L160,155 Z"/>
+
+  <!-- Middle back (rhomboids / middle back) -->
+  <path data-muscle="middle back" d="M72,95 L128,95 L126,140 L74,140 Z"/>
+  <!-- Vertical spine line -->
+  <line x1="100" y1="95" x2="100" y2="250" stroke="#4D4D60" stroke-width="0.8"/>
+
+  <!-- Lower back (erectors) -->
+  <path data-muscle="lower back" d="M74,140 L126,140 L124,195 L76,195 Z"/>
+
+  <!-- Glutes -->
+  <path data-muscle="glutes" d="M62,200 L100,198 L138,200 L135,260 L100,265 L65,260 Z"/>
+  <!-- Glute division -->
+  <path d="M100,198 L100,265" stroke="#3D3D4E" stroke-width="0.8"/>
+
+  <!-- Triceps - left (back view) -->
+  <path data-muscle="triceps" d="M40,90 L52,92 L55,130 L38,128 Z"/>
+  <!-- Triceps - right -->
+  <path data-muscle="triceps" d="M160,90 L148,92 L145,130 L162,128 Z"/>
+
+  <!-- Biceps (from back slightly visible) -->
+  <!-- Forearms back view - left -->
+  <path data-muscle="forearms" d="M38,130 L54,132 L56,175 L36,172 Z"/>
+  <!-- Forearms back - right -->
+  <path data-muscle="forearms" d="M162,130 L146,132 L144,175 L164,172 Z"/>
+
+  <!-- Hamstrings - left -->
+  <path data-muscle="hamstrings" d="M62,268 L100,270 L98,355 L60,350 Z"/>
+  <!-- Hamstrings - right -->
+  <path data-muscle="hamstrings" d="M138,268 L100,270 L102,355 L140,350 Z"/>
+
+  <!-- Calves (gastrocnemius) - left -->
+  <path data-muscle="calves" d="M60,355 L96,353 L94,415 L58,410 Z"/>
+  <!-- Calves - right -->
+  <path data-muscle="calves" d="M140,355 L104,353 L106,415 L142,410 Z"/>
+</svg>

@@ -1,0 +1,52 @@
+name: Backend — Migrations + DB Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "supabase/**"
+      - "tests/db/**"
+      - ".github/workflows/backend.yml"
+  pull_request:
+    paths:
+      - "supabase/**"
+      - "tests/db/**"
+
+jobs:
+  db-test:
+    name: Supabase DB Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start Supabase local stack
+        run: supabase start
+        working-directory: .
+
+      - name: Apply migrations
+        run: supabase db reset --db-url "postgresql://postgres:postgres@localhost:54322/postgres"
+
+      - name: Run DB CRUD tests
+        run: |
+          supabase db test \
+            --db-url "postgresql://postgres:postgres@localhost:54322/postgres" \
+            --file tests/db/crud_test.sql
+
+      - name: Run DB RLS tests
+        run: |
+          # Install pgTAP via SQL if needed
+          psql "postgresql://postgres:postgres@localhost:54322/postgres" -c "CREATE EXTENSION IF NOT EXISTS pgtap;"
+          supabase db test \
+            --db-url "postgresql://postgres:postgres@localhost:54322/postgres" \
+            --file tests/db/rls_test.sql
+
+      - name: Stop Supabase
+        if: always()
+        run: supabase stop

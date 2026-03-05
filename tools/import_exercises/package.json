@@ -1,0 +1,19 @@
+{
+  "name": "import-exercises",
+  "version": "1.0.0",
+  "description": "CLI tool to import free-exercise-db into Supabase",
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts",
+    "import": "tsx index.ts",
+    "dry-run": "tsx index.ts --dry-run --limit=10"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3",
+    "@types/node": "^20.11.0"
+  }
+}

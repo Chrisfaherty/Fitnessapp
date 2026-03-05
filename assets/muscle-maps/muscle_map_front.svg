@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- FitnessCoach Muscle Map — Front View
+     Original artwork, CC0 license. Each major muscle group has
+     data-muscle="<name>" matching the exercise library strings.
+     Paths are simplified anatomical shapes for UI highlighting.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 440" fill="none">
+  <!-- Defaults -->
+  <style>
+    [data-muscle] { fill: #2D2D3A; stroke: #3D3D4E; stroke-width: 1; transition: fill 0.3s, opacity 0.3s; }
+    .body-outline { fill: none; stroke: #4D4D60; stroke-width: 1.5; }
+  </style>
+
+  <!-- Body silhouette outline -->
+  <path class="body-outline" d="M80,20 C65,20 55,35 55,50 L50,90 L40,130 L35,180 L38,250 L40,340 L45,420 L55,420 L60,340 L65,280 L70,280 L75,340 L80,420 L120,420 L125,340 L130,280 L135,280 L140,340 L145,420 L155,420 L160,340 L162,250 L165,180 L160,130 L150,90 L145,50 C145,35 135,20 120,20 Z"/>
+
+  <!-- Head -->
+  <ellipse data-muscle="neck" cx="100" cy="18" rx="16" ry="18" fill="#2D2D3A" stroke="#3D3D4E" stroke-width="1"/>
+
+  <!-- Neck -->
+  <path data-muscle="neck" d="M90,34 L110,34 L112,48 L88,48 Z"/>
+
+  <!-- Shoulders (deltoids) - left and right -->
+  <path data-muscle="shoulders" d="M55,55 C42,55 36,65 38,80 L50,90 L60,75 L65,60 Z"/>
+  <path data-muscle="shoulders" d="M145,55 C158,55 164,65 162,80 L150,90 L140,75 L135,60 Z"/>
+
+  <!-- Chest (pectorals) - left and right -->
+  <path data-muscle="chest" d="M68,55 L100,58 L88,95 L62,88 Z"/>
+  <path data-muscle="chest" d="M132,55 L100,58 L112,95 L138,88 Z"/>
+
+  <!-- Biceps - left -->
+  <path data-muscle="biceps" d="M40,88 L52,90 L55,130 L38,128 Z"/>
+  <!-- Biceps - right -->
+  <path data-muscle="biceps" d="M160,88 L148,90 L145,130 L162,128 Z"/>
+
+  <!-- Forearms - left -->
+  <path data-muscle="forearms" d="M38,130 L54,132 L56,175 L36,172 Z"/>
+  <!-- Forearms - right -->
+  <path data-muscle="forearms" d="M162,130 L146,132 L144,175 L164,172 Z"/>
+
+  <!-- Abdominals (6-pack) -->
+  <path data-muscle="abdominals" d="M88,95 L112,95 L114,170 L86,170 Z"/>
+  <!-- Vertical line -->
+  <line x1="100" y1="95" x2="100" y2="170" stroke="#3D3D4E" stroke-width="0.8"/>
+  <!-- Horizontal lines for 6-pack -->
+  <line x1="87" y1="115" x2="113" y2="115" stroke="#3D3D4E" stroke-width="0.8"/>
+  <line x1="87" y1="135" x2="113" y2="135" stroke="#3D3D4E" stroke-width="0.8"/>
+  <line x1="87" y1="155" x2="113" y2="155" stroke="#3D3D4E" stroke-width="0.8"/>
+
+  <!-- Hip flexors -->
+  <path data-muscle="hip flexors" d="M86,170 L100,172 L100,200 L82,195 Z"/>
+  <path data-muscle="hip flexors" d="M114,170 L100,172 L100,200 L118,195 Z"/>
+
+  <!-- Quadriceps - left -->
+  <path data-muscle="quadriceps" d="M60,200 L90,200 L88,300 L58,295 Z"/>
+  <!-- Quadriceps - right -->
+  <path data-muscle="quadriceps" d="M140,200 L110,200 L112,300 L142,295 Z"/>
+
+  <!-- Calves - left (visible from front) -->
+  <path data-muscle="calves" d="M58,305 L88,302 L86,385 L56,380 Z"/>
+  <!-- Calves - right -->
+  <path data-muscle="calves" d="M142,305 L112,302 L114,385 L144,380 Z"/>
+
+  <!-- Adductors / inner thigh - left -->
+  <path data-muscle="adductors" d="M90,200 L100,200 L100,280 L88,280 Z"/>
+  <!-- Adductors - right -->
+  <path data-muscle="adductors" d="M110,200 L100,200 L100,280 L112,280 Z"/>
+
+  <!-- Obliques - left -->
+  <path data-muscle="abdominals" d="M62,95 L88,95 L86,170 L60,155 Z" opacity="0.7"/>
+  <!-- Obliques - right -->
+  <path data-muscle="abdominals" d="M138,95 L112,95 L114,170 L140,155 Z" opacity="0.7"/>
+</svg>

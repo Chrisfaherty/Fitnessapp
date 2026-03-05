@@ -1,0 +1,13 @@
+{
+  "name": "@fitnessapp/design-tokens",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "generate": "tsx scripts/generate.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
+  }
+}

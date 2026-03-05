@@ -1,0 +1,32 @@
+{
+  "name": "fitnessapp",
+  "version": "1.0.0",
+  "private": true,
+  "description": "All-in-one Fitness Coaching Platform",
+  "workspaces": [
+    "apps/web",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "build:web": "pnpm --filter web build",
+    "test:web": "pnpm --filter web test",
+    "test:e2e": "pnpm --filter web test:e2e",
+    "test:db": "supabase db test",
+    "lint": "pnpm --filter web lint",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:reset": "supabase db reset",
+    "db:migrate": "supabase db push",
+    "db:seed": "supabase db reset --db-url $DATABASE_URL",
+    "tokens:generate": "pnpm --filter design-tokens generate"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.1.0"
+}

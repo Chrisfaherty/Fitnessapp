@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+*.xcarchive
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Supabase
+supabase/.temp/
+supabase/.branches/
+
+# iOS
+apps/ios/FitnessCoach.xcodeproj/project.xcworkspace/xcuserdata/
+apps/ios/FitnessCoach.xcodeproj/xcuserdata/
+apps/ios/DerivedData/
+apps/ios/*.xcarchive
+apps/ios/Pods/
+
+# Android
+apps/android/.gradle/
+apps/android/build/
+apps/android/app/build/
+apps/android/local.properties
+apps/android/*.jks
+*.keystore
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Test results
+test-results/
+playwright-report/
+coverage/
+
+# Generated
+packages/design-tokens/dist/

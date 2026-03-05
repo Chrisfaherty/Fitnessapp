@@ -1,0 +1,44 @@
+name: iOS — Build + Unit Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "apps/ios/**"
+      - ".github/workflows/ios.yml"
+  pull_request:
+    paths:
+      - "apps/ios/**"
+
+jobs:
+  ios-test:
+    name: iOS Unit Tests
+    runs-on: macos-14
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app
+
+      - name: Resolve Swift Package dependencies
+        run: swift package resolve
+        working-directory: apps/ios
+
+      - name: Build + run unit tests
+        run: |
+          swift test \
+            --filter FitnessCoachTests \
+            --verbose
+        working-directory: apps/ios
+
+      - name: Run UI tests (simulator)
+        if: false  # Enable when XCUITest targets are configured
+        run: |
+          xcodebuild test \
+            -scheme FitnessCoach \
+            -destination "platform=iOS Simulator,name=iPhone 15,OS=17.5" \
+            -testPlan UITests \
+            | xcpretty
+        working-directory: apps/ios

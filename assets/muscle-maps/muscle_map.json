@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "description": "Maps exercise-library muscle-group strings to SVG data-muscle attributes and which view (front/back).",
+  "muscles": {
+    "chest": {
+      "view": "front",
+      "dataAttribute": "chest",
+      "label": "Chest"
+    },
+    "shoulders": {
+      "view": "both",
+      "dataAttribute": "shoulders",
+      "label": "Shoulders"
+    },
+    "biceps": {
+      "view": "front",
+      "dataAttribute": "biceps",
+      "label": "Biceps"
+    },
+    "triceps": {
+      "view": "back",
+      "dataAttribute": "triceps",
+      "label": "Triceps"
+    },
+    "forearms": {
+      "view": "front",
+      "dataAttribute": "forearms",
+      "label": "Forearms"
+    },
+    "lats": {
+      "view": "back",
+      "dataAttribute": "lats",
+      "label": "Lats"
+    },
+    "middle back": {
+      "view": "back",
+      "dataAttribute": "middle back",
+      "label": "Middle Back"
+    },
+    "lower back": {
+      "view": "back",
+      "dataAttribute": "lower back",
+      "label": "Lower Back"
+    },
+    "traps": {
+      "view": "back",
+      "dataAttribute": "traps",
+      "label": "Trapezius"
+    },
+    "abdominals": {
+      "view": "front",
+      "dataAttribute": "abdominals",
+      "label": "Abdominals"
+    },
+    "obliques": {
+      "view": "front",
+      "dataAttribute": "obliques",
+      "label": "Obliques"
+    },
+    "glutes": {
+      "view": "back",
+      "dataAttribute": "glutes",
+      "label": "Glutes"
+    },
+    "quadriceps": {
+      "view": "front",
+      "dataAttribute": "quadriceps",
+      "label": "Quadriceps"
+    },
+    "hamstrings": {
+      "view": "back",
+      "dataAttribute": "hamstrings",
+      "label": "Hamstrings"
+    },
+    "calves": {
+      "view": "both",
+      "dataAttribute": "calves",
+      "label": "Calves"
+    },
+    "hip flexors": {
+      "view": "front",
+      "dataAttribute": "hip flexors",
+      "label": "Hip Flexors"
+    },
+    "adductors": {
+      "view": "front",
+      "dataAttribute": "adductors",
+      "label": "Adductors"
+    },
+    "neck": {
+      "view": "front",
+      "dataAttribute": "neck",
+      "label": "Neck"
+    }
+  }
+}
