@@ -49,11 +49,27 @@ body {
 }
 
 /* ============================================================
-   Focus visible ring (accessibility)
+   Lucide icons — stroke-width 1.5 globally for premium feel
+   ============================================================ */
+svg.lucide {
+  stroke-width: 1.5;
+}
+
+/* ============================================================
+   Smooth transitions — cubic-bezier for all hover states
+   ============================================================ */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ============================================================
+   Focus ring — ring-offset style, lime at 50% opacity
    ============================================================ */
 :focus-visible {
-  outline: 2px solid #A3FF12;
-  outline-offset: 2px;
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--color-background),
+    0 0 0 4px rgba(163, 255, 18, 0.5);
 }
 
 /* ============================================================

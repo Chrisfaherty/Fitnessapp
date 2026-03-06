@@ -44,6 +44,9 @@ const config: Config = {
         xl:   "1rem",
         "2xl":"1.5rem",
       },
+      backgroundImage: {
+        "glass-gradient": "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)",
+      },
       boxShadow: {
         card:        "inset 0 1px 0 0 rgba(255,255,255,0.04)",
         "card-hover": "0 0 0 1px rgba(255,255,255,0.12), inset 0 1px 0 0 rgba(255,255,255,0.06)",
