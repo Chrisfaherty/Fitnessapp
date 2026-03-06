@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 

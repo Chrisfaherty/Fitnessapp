@@ -2,6 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
+import type { Database } from '@/types/database'
+
+type MessageRow = Database['public']['Tables']['messages']['Row']
+type MessageInsert = Database['public']['Tables']['messages']['Insert']
 
 interface ConversationSummary {
   id: string
@@ -9,14 +13,6 @@ interface ConversationSummary {
   clientName: string
   lastMessage: string | null
   lastMessageAt: string
-}
-
-interface Message {
-  id: string
-  sender_id: string
-  body: string | null
-  video_storage_path: string | null
-  sent_at: string
 }
 
 interface Props {
@@ -28,7 +24,7 @@ export default function TrainerMessagingClient({ conversations, trainerId }: Pro
   const [selectedConvoId, setSelectedConvoId] = useState<string | null>(
     conversations[0]?.id ?? null
   )
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<MessageRow[]>([])
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [inputText, setInputText] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -44,7 +40,7 @@ export default function TrainerMessagingClient({ conversations, trainerId }: Pro
       .from('messages')
       .select('*')
       .eq('conversation_id', selectedConvoId)
-      .order('sent_at', { ascending: true })
+      .order('created_at', { ascending: true })
       .limit(100)
       .then(({ data }) => {
         setMessages(data ?? [])
@@ -64,7 +60,7 @@ export default function TrainerMessagingClient({ conversations, trainerId }: Pro
         (payload) => {
           setMessages((prev) => {
             if (prev.some((m) => m.id === payload.new.id)) return prev
-            return [...prev, payload.new as Message]
+            return [...prev, payload.new as MessageRow]
           })
           setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
         }
@@ -77,11 +73,13 @@ export default function TrainerMessagingClient({ conversations, trainerId }: Pro
     const text = inputText.trim()
     if (!text || !selectedConvoId) return
     setInputText('')
-    await supabase.from('messages').insert({
+    const payload: MessageInsert = {
       conversation_id: selectedConvoId,
       sender_id: trainerId,
+      sender_role: 'trainer',
       body: text,
-    })
+    }
+    await supabase.from('messages').insert(payload)
   }
 
   return (
@@ -142,7 +140,7 @@ export default function TrainerMessagingClient({ conversations, trainerId }: Pro
                   }`}>
                     {msg.video_storage_path ? (
                       <span className="flex items-center gap-1">
-                        <span>🎥</span> Video message
+                        <span>Video message</span>
                       </span>
                     ) : (
                       msg.body
@@ -163,7 +161,7 @@ export default function TrainerMessagingClient({ conversations, trainerId }: Pro
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage() } }}
-              placeholder="Message…"
+              placeholder="Message..."
               className="input flex-1"
             />
             <button

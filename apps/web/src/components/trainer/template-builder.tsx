@@ -121,17 +121,19 @@ export function TemplateBuilder({ templateId }: { templateId?: string }) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Not authenticated");
 
+      // Upsert template — include id only when editing (id not in Insert type, so cast to any)
       const { data: template, error: tErr } = await supabase
         .from("workout_templates")
         .upsert({
-          id: templateId,
+          ...(templateId ? { id: templateId } : {}),
           trainer_id: user.id,
           title: title.trim(),
           description: description.trim() || null,
-        })
+        } as any)
         .select()
         .single();
       if (tErr) throw tErr;
+      if (!template) throw new Error("Failed to save template");
 
       if (templateId) {
         await supabase

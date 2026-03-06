@@ -9,7 +9,7 @@ export default async function ClientDiaryPage() {
 
   const { data: entries } = await supabase
     .from('diary_entries')
-    .select('id, date, mood, energy_level, sleep_hours, notes, created_at')
+    .select('id, date, mood, sleep_hours, notes, created_at')
     .eq('user_id', user.id)
     .order('date', { ascending: false })
     .limit(30)

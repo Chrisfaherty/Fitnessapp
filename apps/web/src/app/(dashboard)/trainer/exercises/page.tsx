@@ -10,7 +10,7 @@ export default async function ExercisesPage() {
   // Fetch initial page of exercises server-side
   const { data: exercises } = await supabase
     .from('exercises')
-    .select('id, name, category, level, primary_muscles, secondary_muscles, equipment, images')
+    .select('id, name, category, level, primary_muscles, secondary_muscles, equipment, image_paths')
     .order('name', { ascending: true })
     .limit(50)
 
@@ -21,7 +21,7 @@ export default async function ExercisesPage() {
     .limit(500)
 
   const allMuscles = Array.from(
-    new Set((muscleRows ?? []).flatMap((r: any) => r.primary_muscles ?? []))
+    new Set((muscleRows ?? []).flatMap((r: { primary_muscles: string[] }) => r.primary_muscles ?? []))
   ).sort() as string[]
 
   return (

@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { useDebounce } from '@/lib/utils/use-debounce'
-import Link from 'next/link'
 
 interface Exercise {
   id: string
@@ -13,7 +12,7 @@ interface Exercise {
   primary_muscles: string[]
   secondary_muscles: string[]
   equipment: string | null
-  images: string[]
+  image_paths: string[]
 }
 
 interface Props {
@@ -39,7 +38,7 @@ export default function ExerciseLibrary({ initialExercises, allMuscles }: Props)
     setLoading(true)
     let query = supabase
       .from('exercises')
-      .select('id, name, category, level, primary_muscles, secondary_muscles, equipment, images')
+      .select('id, name, category, level, primary_muscles, secondary_muscles, equipment, image_paths')
       .order('name', { ascending: true })
       .limit(100)
 
@@ -49,7 +48,7 @@ export default function ExerciseLibrary({ initialExercises, allMuscles }: Props)
     if (selectedLevel) query = query.eq('level', selectedLevel)
 
     const { data } = await query
-    setExercises(data ?? [])
+    setExercises((data ?? []) as Exercise[])
     setLoading(false)
   }, [debouncedSearch, selectedMuscle, selectedCategory, selectedLevel])
 
@@ -118,9 +117,9 @@ export default function ExerciseLibrary({ initialExercises, allMuscles }: Props)
           {exercises.map((ex) => (
             <div key={ex.id} className="card-compact space-y-2">
               {/* Thumbnail */}
-              {ex.images?.[0] ? (
+              {ex.image_paths?.[0] ? (
                 <img
-                  src={ex.images[0]}
+                  src={ex.image_paths[0]}
                   alt={ex.name}
                   className="w-full h-32 object-cover rounded-lg bg-surface-alt"
                 />
