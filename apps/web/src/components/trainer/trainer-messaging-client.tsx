@@ -78,6 +78,9 @@ export default function TrainerMessagingClient({ conversations, trainerId }: Pro
       sender_id: trainerId,
       sender_role: 'trainer',
       body: text,
+      video_storage_path: null,
+      video_thumbnail: null,
+      read_at: null,
     }
     await supabase.from('messages').insert(payload)
   }

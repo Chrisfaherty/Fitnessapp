@@ -3,17 +3,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
+import type { Database } from "@/types/database";
 import { CheckCircle2, MessageSquare, ChevronRight, ArrowLeft } from "lucide-react";
 
-interface CheckIn {
-  id: string;
-  week_start: string;
-  status: string;
-  bodyweight_kg: number | null;
-  notes: string | null;
-  trainer_feedback: string | null;
-  created_at: string;
-}
+// Use a subset of the real DB Row type so field names stay in sync
+type CheckIn = Pick<
+  Database["public"]["Tables"]["check_ins"]["Row"],
+  "id" | "week_start_date" | "status" | "body_weight_kg" | "client_notes" | "trainer_notes" | "created_at"
+>;
 
 interface Props {
   initialCheckIns: CheckIn[];
@@ -53,7 +50,7 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
     return d.toISOString().split("T")[0];
   })();
 
-  const alreadySubmitted = checkIns.some((c) => c.week_start === weekStart);
+  const alreadySubmitted = checkIns.some((c) => c.week_start_date === weekStart);
 
   const resetWizard = () => {
     setStep(1);
@@ -70,23 +67,24 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
 
   const submit = async () => {
     setSaving(true);
-    const payload: Record<string, unknown> = {
-      client_id: userId,
-      week_start: weekStart,
-      status: "submitted",
-    };
-    if (bodyweight) payload.bodyweight_kg = Number(bodyweight);
 
-    // Combine mood + user notes into the notes field
+    // Combine mood + user notes into client_notes
     const moodLabel = MOODS.find((m) => m.value === mood);
     const moodLine = moodLabel ? `Mood: ${moodLabel.emoji} ${moodLabel.label} (${mood}/5)` : "";
-    const combinedNotes = [moodLine, notes.trim()].filter(Boolean).join("\n");
-    if (combinedNotes) payload.notes = combinedNotes;
+    const combinedNotes = [moodLine, notes.trim()].filter(Boolean).join("\n") || null;
+
+    const payload: Database["public"]["Tables"]["check_ins"]["Insert"] = {
+      client_id: userId,
+      week_start_date: weekStart,
+      status: "submitted",
+      body_weight_kg: bodyweight ? Number(bodyweight) : null,
+      client_notes: combinedNotes,
+    };
 
     const { data } = await supabase
       .from("check_ins")
       .insert(payload)
-      .select()
+      .select("id, week_start_date, status, body_weight_kg, client_notes, trainer_notes, created_at")
       .single();
 
     if (data) setCheckIns((prev) => [data, ...prev]);
@@ -331,7 +329,7 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
                 className={`card space-y-3 ${ci.status === "reviewed" ? "border-accent/25" : ""}`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-label">Week of {ci.week_start}</span>
+                  <span className="text-label">Week of {ci.week_start_date}</span>
                   <span
                     className={`badge ${
                       ci.status === "reviewed" ? "badge-accent" : "badge-neutral"
@@ -341,26 +339,26 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
                   </span>
                 </div>
 
-                {ci.bodyweight_kg != null && (
+                {ci.body_weight_kg != null && (
                   <p className="text-sm">
                     <span className="text-foreground-secondary">Weight: </span>
-                    <span className="font-mono font-semibold">{ci.bodyweight_kg} kg</span>
+                    <span className="font-mono font-semibold">{ci.body_weight_kg} kg</span>
                   </p>
                 )}
 
-                {ci.notes && (
+                {ci.client_notes && (
                   <p className="text-sm text-foreground-secondary whitespace-pre-line leading-relaxed">
-                    {ci.notes}
+                    {ci.client_notes}
                   </p>
                 )}
 
-                {ci.trainer_feedback && (
+                {ci.trainer_notes && (
                   <div className="border-t border-border pt-3 space-y-1">
                     <p className="text-xs text-accent font-semibold uppercase tracking-wider">
                       Trainer Feedback
                     </p>
                     <p className="text-sm text-foreground leading-relaxed">
-                      {ci.trainer_feedback}
+                      {ci.trainer_notes}
                     </p>
                   </div>
                 )}

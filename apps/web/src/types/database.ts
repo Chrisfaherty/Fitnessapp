@@ -1,4 +1,4 @@
-// Auto-generated Supabase types (simplified hand-authored version)
+// Supabase database types — explicit Insert types to avoid self-referential Omit<> generics
 // In production: run `supabase gen types typescript --local > src/types/database.ts`
 
 export type UserRole = "client" | "trainer" | "admin";
@@ -19,8 +19,21 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["profiles"]["Row"], "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
+        Insert: {
+          id: string;
+          role: UserRole;
+          full_name: string;
+          avatar_url?: string | null;
+          timezone?: string;
+        };
+        Update: {
+          id?: string;
+          role?: UserRole;
+          full_name?: string;
+          avatar_url?: string | null;
+          timezone?: string;
+        };
+        Relationships: [];
       };
       trainer_clients: {
         Row: {
@@ -30,8 +43,17 @@ export interface Database {
           active: boolean;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["trainer_clients"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["trainer_clients"]["Insert"]>;
+        Insert: {
+          trainer_id: string;
+          client_id: string;
+          active?: boolean;
+        };
+        Update: {
+          trainer_id?: string;
+          client_id?: string;
+          active?: boolean;
+        };
+        Relationships: [];
       };
       health_daily: {
         Row: {
@@ -49,8 +71,31 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["health_daily"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["health_daily"]["Insert"]>;
+        Insert: {
+          user_id: string;
+          date: string;
+          steps?: number | null;
+          active_energy_kcal?: number | null;
+          weight_kg?: number | null;
+          nutrition_kcal?: number | null;
+          protein_g?: number | null;
+          carbs_g?: number | null;
+          fat_g?: number | null;
+          sources?: string[];
+        };
+        Update: {
+          user_id?: string;
+          date?: string;
+          steps?: number | null;
+          active_energy_kcal?: number | null;
+          weight_kg?: number | null;
+          nutrition_kcal?: number | null;
+          protein_g?: number | null;
+          carbs_g?: number | null;
+          fat_g?: number | null;
+          sources?: string[];
+        };
+        Relationships: [];
       };
       health_workouts: {
         Row: {
@@ -66,8 +111,29 @@ export interface Database {
           raw_data: Record<string, unknown> | null;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["health_workouts"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["health_workouts"]["Insert"]>;
+        Insert: {
+          user_id: string;
+          external_id: string;
+          workout_type: string;
+          start_at: string;
+          end_at: string;
+          kcal?: number | null;
+          source_app?: string | null;
+          source_bundle?: string | null;
+          raw_data?: Record<string, unknown> | null;
+        };
+        Update: {
+          user_id?: string;
+          external_id?: string;
+          workout_type?: string;
+          start_at?: string;
+          end_at?: string;
+          kcal?: number | null;
+          source_app?: string | null;
+          source_bundle?: string | null;
+          raw_data?: Record<string, unknown> | null;
+        };
+        Relationships: [];
       };
       diary_entries: {
         Row: {
@@ -80,8 +146,21 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["diary_entries"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["diary_entries"]["Insert"]>;
+        Insert: {
+          user_id: string;
+          date: string;
+          notes?: string | null;
+          mood?: number | null;
+          sleep_hours?: number | null;
+        };
+        Update: {
+          user_id?: string;
+          date?: string;
+          notes?: string | null;
+          mood?: number | null;
+          sleep_hours?: number | null;
+        };
+        Relationships: [];
       };
       check_ins: {
         Row: {
@@ -101,8 +180,35 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["check_ins"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["check_ins"]["Insert"]>;
+        Insert: {
+          client_id: string;
+          trainer_id?: string | null;
+          week_start_date: string;
+          status?: CheckInStatus;
+          body_weight_kg?: number | null;
+          energy_level?: number | null;
+          stress_level?: number | null;
+          sleep_quality?: number | null;
+          client_notes?: string | null;
+          trainer_notes?: string | null;
+          trainer_video_url?: string | null;
+          reviewed_at?: string | null;
+        };
+        Update: {
+          client_id?: string;
+          trainer_id?: string | null;
+          week_start_date?: string;
+          status?: CheckInStatus;
+          body_weight_kg?: number | null;
+          energy_level?: number | null;
+          stress_level?: number | null;
+          sleep_quality?: number | null;
+          client_notes?: string | null;
+          trainer_notes?: string | null;
+          trainer_video_url?: string | null;
+          reviewed_at?: string | null;
+        };
+        Relationships: [];
       };
       meal_plans: {
         Row: {
@@ -116,8 +222,23 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["meal_plans"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["meal_plans"]["Insert"]>;
+        Insert: {
+          trainer_id: string;
+          client_id: string;
+          title: string;
+          description?: string | null;
+          week_start?: string | null;
+          active?: boolean;
+        };
+        Update: {
+          trainer_id?: string;
+          client_id?: string;
+          title?: string;
+          description?: string | null;
+          week_start?: string | null;
+          active?: boolean;
+        };
+        Relationships: [];
       };
       meal_plan_days: {
         Row: {
@@ -132,8 +253,29 @@ export interface Database {
           fat_g: number | null;
           sort_order: number;
         };
-        Insert: Omit<Database["public"]["Tables"]["meal_plan_days"]["Row"], "id">;
-        Update: Partial<Database["public"]["Tables"]["meal_plan_days"]["Insert"]>;
+        Insert: {
+          meal_plan_id: string;
+          day_of_week: number;
+          meal_name: string;
+          description?: string | null;
+          calories?: number | null;
+          protein_g?: number | null;
+          carbs_g?: number | null;
+          fat_g?: number | null;
+          sort_order: number;
+        };
+        Update: {
+          meal_plan_id?: string;
+          day_of_week?: number;
+          meal_name?: string;
+          description?: string | null;
+          calories?: number | null;
+          protein_g?: number | null;
+          carbs_g?: number | null;
+          fat_g?: number | null;
+          sort_order?: number;
+        };
+        Relationships: [];
       };
       conversations: {
         Row: {
@@ -142,8 +284,15 @@ export interface Database {
           client_id: string;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["conversations"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["conversations"]["Insert"]>;
+        Insert: {
+          trainer_id: string;
+          client_id: string;
+        };
+        Update: {
+          trainer_id?: string;
+          client_id?: string;
+        };
+        Relationships: [];
       };
       messages: {
         Row: {
@@ -157,8 +306,60 @@ export interface Database {
           read_at: string | null;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["messages"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["messages"]["Insert"]>;
+        Insert: {
+          conversation_id: string;
+          sender_id: string;
+          sender_role: MessageSenderRole;
+          body?: string | null;
+          video_storage_path?: string | null;
+          video_thumbnail?: string | null;
+          read_at?: string | null;
+        };
+        Update: {
+          conversation_id?: string;
+          sender_id?: string;
+          sender_role?: MessageSenderRole;
+          body?: string | null;
+          video_storage_path?: string | null;
+          video_thumbnail?: string | null;
+          read_at?: string | null;
+        };
+        Relationships: [];
+      };
+      weekly_summaries: {
+        Row: {
+          id: string;
+          client_id: string;
+          week_start_date: string;
+          avg_steps: number | null;
+          avg_calories: number | null;
+          avg_protein_g: number | null;
+          avg_weight_kg: number | null;
+          workouts_count: number;
+          check_in_id: string | null;
+          generated_at: string;
+        };
+        Insert: {
+          client_id: string;
+          week_start_date: string;
+          avg_steps?: number | null;
+          avg_calories?: number | null;
+          avg_protein_g?: number | null;
+          avg_weight_kg?: number | null;
+          workouts_count?: number;
+          check_in_id?: string | null;
+        };
+        Update: {
+          client_id?: string;
+          week_start_date?: string;
+          avg_steps?: number | null;
+          avg_calories?: number | null;
+          avg_protein_g?: number | null;
+          avg_weight_kg?: number | null;
+          workouts_count?: number;
+          check_in_id?: string | null;
+        };
+        Relationships: [];
       };
       exercises: {
         Row: {
@@ -176,8 +377,35 @@ export interface Database {
           source: string;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["exercises"]["Row"], "created_at">;
-        Update: Partial<Database["public"]["Tables"]["exercises"]["Insert"]>;
+        Insert: {
+          id: string;
+          name: string;
+          force?: string | null;
+          level: string;
+          mechanic?: string | null;
+          equipment?: string | null;
+          category: string;
+          primary_muscles: string[];
+          secondary_muscles: string[];
+          instructions: string[];
+          image_paths: string[];
+          source: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          force?: string | null;
+          level?: string;
+          mechanic?: string | null;
+          equipment?: string | null;
+          category?: string;
+          primary_muscles?: string[];
+          secondary_muscles?: string[];
+          instructions?: string[];
+          image_paths?: string[];
+          source?: string;
+        };
+        Relationships: [];
       };
       workout_templates: {
         Row: {
@@ -188,8 +416,17 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["workout_templates"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["workout_templates"]["Insert"]>;
+        Insert: {
+          trainer_id: string;
+          title: string;
+          description?: string | null;
+        };
+        Update: {
+          trainer_id?: string;
+          title?: string;
+          description?: string | null;
+        };
+        Relationships: [];
       };
       workout_template_exercises: {
         Row: {
@@ -203,8 +440,27 @@ export interface Database {
           rest_seconds: number;
           notes: string | null;
         };
-        Insert: Omit<Database["public"]["Tables"]["workout_template_exercises"]["Row"], "id">;
-        Update: Partial<Database["public"]["Tables"]["workout_template_exercises"]["Insert"]>;
+        Insert: {
+          template_id: string;
+          exercise_id: string;
+          sort_order: number;
+          target_sets: number;
+          rep_min: number;
+          rep_max: number;
+          rest_seconds: number;
+          notes?: string | null;
+        };
+        Update: {
+          template_id?: string;
+          exercise_id?: string;
+          sort_order?: number;
+          target_sets?: number;
+          rep_min?: number;
+          rep_max?: number;
+          rest_seconds?: number;
+          notes?: string | null;
+        };
+        Relationships: [];
       };
       workout_assignments: {
         Row: {
@@ -217,8 +473,21 @@ export interface Database {
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["workout_assignments"]["Row"], "id" | "created_at" | "updated_at">;
-        Update: Partial<Database["public"]["Tables"]["workout_assignments"]["Insert"]>;
+        Insert: {
+          client_id: string;
+          template_id: string;
+          trainer_id?: string | null;
+          scheduled_date?: string | null;
+          status?: AssignmentStatus;
+        };
+        Update: {
+          client_id?: string;
+          template_id?: string;
+          trainer_id?: string | null;
+          scheduled_date?: string | null;
+          status?: AssignmentStatus;
+        };
+        Relationships: [];
       };
       workout_sessions: {
         Row: {
@@ -232,8 +501,25 @@ export interface Database {
           health_external_id: string | null;
           created_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["workout_sessions"]["Row"], "id" | "created_at">;
-        Update: Partial<Database["public"]["Tables"]["workout_sessions"]["Insert"]>;
+        Insert: {
+          client_id: string;
+          template_id?: string | null;
+          assignment_id?: string | null;
+          performed_at: string;
+          duration_seconds?: number | null;
+          notes?: string | null;
+          health_external_id?: string | null;
+        };
+        Update: {
+          client_id?: string;
+          template_id?: string | null;
+          assignment_id?: string | null;
+          performed_at?: string;
+          duration_seconds?: number | null;
+          notes?: string | null;
+          health_external_id?: string | null;
+        };
+        Relationships: [];
       };
       workout_session_sets: {
         Row: {
@@ -247,25 +533,31 @@ export interface Database {
           rest_seconds: number | null;
           completed_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["workout_session_sets"]["Row"], "id">;
-        Update: Partial<Database["public"]["Tables"]["workout_session_sets"]["Insert"]>;
-      };
-      weekly_summaries: {
-        Row: {
-          id: string;
-          client_id: string;
-          week_start_date: string;
-          avg_steps: number | null;
-          avg_calories: number | null;
-          avg_protein_g: number | null;
-          avg_weight_kg: number | null;
-          workouts_count: number;
-          check_in_id: string | null;
-          generated_at: string;
+        Insert: {
+          session_id: string;
+          exercise_id: string;
+          set_number: number;
+          reps: number;
+          weight_kg?: number | null;
+          rpe?: number | null;
+          rest_seconds?: number | null;
+          completed_at: string;
         };
-        Insert: Omit<Database["public"]["Tables"]["weekly_summaries"]["Row"], "id">;
-        Update: Partial<Database["public"]["Tables"]["weekly_summaries"]["Insert"]>;
+        Update: {
+          session_id?: string;
+          exercise_id?: string;
+          set_number?: number;
+          reps?: number;
+          weight_kg?: number | null;
+          rpe?: number | null;
+          rest_seconds?: number | null;
+          completed_at?: string;
+        };
+        Relationships: [];
       };
+    };
+    Views: {
+      [_ in never]: never;
     };
     Functions: {
       get_last_session_sets: {
@@ -288,6 +580,12 @@ export interface Database {
           total_reps: number;
         }>;
       };
+    };
+    Enums: {
+      [_ in never]: never;
+    };
+    CompositeTypes: {
+      [_ in never]: never;
     };
   };
 }

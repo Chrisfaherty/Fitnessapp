@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, type Transition } from "framer-motion";
 import { SparklineCard } from "@/components/ui/sparkline-card";
 import {
   Users,
@@ -31,7 +31,7 @@ interface Props {
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 12 },
   animate: { opacity: 1, y: 0 },
-  transition: { type: "spring", stiffness: 300, damping: 30, delay },
+  transition: { type: "spring", stiffness: 300, damping: 30, delay } as Transition,
 });
 
 export function TrainerDashboard({ profile, clientLinks, pendingCheckIns }: Props) {
@@ -74,7 +74,7 @@ export function TrainerDashboard({ profile, clientLinks, pendingCheckIns }: Prop
             <motion.div
               className="stat-card h-full group-hover:border-indigo/30 transition-all duration-fast"
               whileHover={{ scale: 1.02, y: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 28 }}
+              transition={{ type: "spring", stiffness: 300, damping: 28 } as Transition}
             >
               <div className="flex items-start justify-between">
                 <div className="stat-card-icon-indigo">
@@ -96,7 +96,7 @@ export function TrainerDashboard({ profile, clientLinks, pendingCheckIns }: Prop
             <motion.div
               className="stat-card h-full group-hover:border-accent/20 transition-all duration-fast"
               whileHover={{ scale: 1.02, y: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 28 }}
+              transition={{ type: "spring", stiffness: 300, damping: 28 } as Transition}
             >
               <div className="flex items-start justify-between">
                 <div className="stat-card-icon">
@@ -132,7 +132,7 @@ export function TrainerDashboard({ profile, clientLinks, pendingCheckIns }: Prop
                 key={ci.id}
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.22 + idx * 0.05, type: "spring", stiffness: 300, damping: 30 }}
+                transition={{ delay: 0.22 + idx * 0.05, type: "spring", stiffness: 300, damping: 30 } as Transition}
               >
                 <Link
                   href={`/trainer/clients/${ci.client_id}?tab=checkins`}
@@ -197,7 +197,7 @@ export function TrainerDashboard({ profile, clientLinks, pendingCheckIns }: Prop
                     type: "spring",
                     stiffness: 280,
                     damping: 28,
-                  }}
+                  } as Transition}
                 >
                   <Link
                     href={`/trainer/clients/${link.client_id}`}
