@@ -1,5 +1,6 @@
 import Foundation
 import Supabase
+import BackgroundTasks
 
 // MARK: - SyncService
 // Orchestrates HealthKit → Supabase sync.
@@ -64,6 +65,32 @@ final class SyncService: ObservableObject {
         } catch {
             self.error = error
         }
+    }
+
+    // MARK: - Background Sync (BGProcessingTask)
+
+    /// Called by the system's BGTaskScheduler when the `com.fitcoach.app.healthsync`
+    /// processing task fires. Runs an incremental sync, marks the task complete,
+    /// then schedules the next firing.
+    func performBackgroundSync(task: BGProcessingTask) async {
+        // Provide an expiration handler so iOS can cancel gracefully
+        task.expirationHandler = {
+            // We rely on structured concurrency cancellation naturally propagating,
+            // but we still mark the task as incomplete so the OS can reschedule.
+            task.setTaskCompleted(success: false)
+        }
+
+        do {
+            let session = try await supabase.auth.session
+            await performIncrementalSync(userId: session.user.id.uuidString)
+            task.setTaskCompleted(success: true)
+        } catch {
+            self.error = error
+            task.setTaskCompleted(success: false)
+        }
+
+        // Schedule the next background sync regardless of success/failure
+        scheduleHealthSync()
     }
 
     // MARK: - Private upsert helpers

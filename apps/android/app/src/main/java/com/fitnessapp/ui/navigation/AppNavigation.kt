@@ -1,4 +1,4 @@
-package com.fitnessapp.ui.navigation
+package com.fitcoach.app.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -11,15 +11,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.*
-import com.fitnessapp.ui.auth.AuthViewModel
-import com.fitnessapp.ui.auth.LoginScreen
-import com.fitnessapp.ui.checkin.CheckInScreen
-import com.fitnessapp.ui.dashboard.DashboardScreen
-import com.fitnessapp.ui.diary.DiaryScreen
-import com.fitnessapp.ui.meals.MealPlanScreen
-import com.fitnessapp.ui.messaging.MessagingScreen
-import com.fitnessapp.ui.workout.WorkoutListScreen
-import com.fitnessapp.ui.workout.WorkoutSessionScreen
+import com.fitcoach.app.ui.auth.AuthViewModel
+import com.fitcoach.app.ui.auth.LoginScreen
+import com.fitcoach.app.ui.checkin.CheckInScreen
+import com.fitcoach.app.ui.dashboard.DashboardScreen
+import com.fitcoach.app.ui.diary.DiaryScreen
+import com.fitcoach.app.ui.meals.MealPlanScreen
+import com.fitcoach.app.ui.messaging.MessagingScreen
+import com.fitcoach.app.ui.workout.WorkoutListScreen
+import com.fitcoach.app.ui.workout.WorkoutSessionScreen
 
 sealed class Screen(val route: String, val label: String, val icon: ImageVector) {
     object Dashboard : Screen("dashboard", "Home",      Icons.Default.Home)

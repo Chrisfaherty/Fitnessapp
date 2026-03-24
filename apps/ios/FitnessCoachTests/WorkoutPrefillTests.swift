@@ -1,5 +1,5 @@
 import XCTest
-@testable import FitnessCoach
+@testable import FitCoach
 
 final class WorkoutPrefillTests: XCTestCase {
 

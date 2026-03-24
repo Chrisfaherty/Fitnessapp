@@ -1,17 +1,16 @@
-# A string used to distinguish different Supabase projects on the same host.
-project_id = "fitnessapp"
+project_id = "fitcoach"
 
 [api]
 enabled = true
 port = 54321
-schemas = ["public", "graphql_public"]
+schemas = ["public", "storage", "graphql_public"]
 extra_search_path = ["public", "extensions"]
 max_rows = 1000
 
 [db]
 port = 54322
 shadow_port = 54320
-major_version = 17
+major_version = 15
 
 [studio]
 enabled = true
@@ -43,6 +42,15 @@ minimum_password_length = 8
 enable_signup = true
 double_confirm_changes = true
 enable_confirmations = false
+
+[functions.weeklySummary]
+verify_jwt = false
+
+[functions.weeklySummary.cron]
+schedule = "0 6 * * 1"  # 06:00 UTC every Monday
+
+[functions.signedMediaUrl]
+verify_jwt = true
 
 [edge_runtime]
 enabled = true

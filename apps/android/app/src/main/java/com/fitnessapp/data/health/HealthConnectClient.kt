@@ -1,4 +1,4 @@
-package com.fitnessapp.data.health
+package com.fitcoach.app.data.health
 
 import android.content.Context
 import androidx.health.connect.client.HealthConnectClient
@@ -7,8 +7,8 @@ import androidx.health.connect.client.records.*
 import androidx.health.connect.client.request.AggregateGroupByDurationRequest
 import androidx.health.connect.client.request.ReadRecordsRequest
 import androidx.health.connect.client.time.TimeRangeFilter
-import com.fitnessapp.data.model.DailyMetrics
-import com.fitnessapp.data.model.WorkoutEvent
+import com.fitcoach.app.data.model.DailyMetrics
+import com.fitcoach.app.data.model.WorkoutEvent
 import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId

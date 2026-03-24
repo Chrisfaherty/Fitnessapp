@@ -24,7 +24,7 @@ struct LoginView: View {
                                 .font(.system(size: 32))
                                 .foregroundColor(.accentFG)
                         }
-                        Text("FitnessCoach")
+                        Text("FitCoach")
                             .font(.largeTitle).bold()
                             .foregroundColor(.appTextFallback)
                         Text("Your all-in-one coaching platform")

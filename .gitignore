@@ -55,3 +55,4 @@ coverage/
 
 # Generated
 packages/design-tokens/dist/
+.vercel

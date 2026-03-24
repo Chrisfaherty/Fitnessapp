@@ -10,7 +10,7 @@ export default async function DashboardRootLayout({
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth/login");
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -18,7 +18,7 @@ export default async function DashboardRootLayout({
     .eq("id", user.id)
     .single();
 
-  if (!profile) redirect("/login");
+  if (!profile) redirect("/auth/login");
 
   return (
     <DashboardLayout profile={profile}>

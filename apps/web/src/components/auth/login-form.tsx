@@ -86,7 +86,7 @@ export function LoginForm() {
       </button>
 
       <p className="text-center text-sm text-foreground-secondary">
-        Demo credentials: trainer1@fitnessapp.dev / Trainer1234!
+        Demo credentials: trainer1@fitcoach.dev / FitCoach123!
       </p>
     </form>
   );

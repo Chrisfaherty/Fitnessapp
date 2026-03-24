@@ -1,17 +1,25 @@
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
+import { Syne, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { Toaster } from "sonner";
 
+const syne = Syne({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: { default: "FitnessCoach", template: "%s | FitnessCoach" },
+  title: { default: "FitCoach", template: "%s | FitCoach" },
   description: "All-in-one fitness coaching platform",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F5F5F7" },
-    { media: "(prefers-color-scheme: dark)",  color: "#080809" },
-  ],
+  themeColor: "#0B0C10",
 };
 
 export default function RootLayout({
@@ -22,7 +30,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${GeistSans.variable} ${GeistMono.variable}`}
+      className={`${syne.variable} ${dmSans.variable}`}
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">

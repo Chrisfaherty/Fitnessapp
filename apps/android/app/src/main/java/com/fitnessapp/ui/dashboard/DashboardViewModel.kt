@@ -1,8 +1,8 @@
-package com.fitnessapp.ui.dashboard
+package com.fitcoach.app.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.fitnessapp.data.health.SyncRepository
+import com.fitcoach.app.data.health.SyncRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.gotrue

@@ -65,7 +65,7 @@ export function SparklineCard({
         {trendPct != null && <Trend pct={trendPct} />}
       </div>
 
-      {/* Value — Geist Mono via text-metric */}
+      {/* Value — Syne via text-metric */}
       <div>
         <div className="flex items-baseline gap-1">
           <span className={`text-metric ${accent ? "text-accent" : "text-foreground"}`}>

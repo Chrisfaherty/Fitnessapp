@@ -28,7 +28,7 @@ final class LoginFlowUITests: XCTestCase {
     }
 
     func test_loginScreen_signInButton_enabledWithCredentials() throws {
-        fillCredentials(email: "client1@fitnessapp.dev", password: "Client1234!")
+        fillCredentials(email: "client1@fitcoach.dev", password: "FitCoach123!")
         let button = app.buttons["Sign In"]
         XCTAssertTrue(button.isEnabled)
     }
@@ -36,7 +36,7 @@ final class LoginFlowUITests: XCTestCase {
     // MARK: – Error Handling
 
     func test_loginScreen_wrongPassword_showsError() throws {
-        fillCredentials(email: "client1@fitnessapp.dev", password: "WrongPass!")
+        fillCredentials(email: "client1@fitcoach.dev", password: "WrongPass!")
         app.buttons["Sign In"].tap()
         let errorLabel = app.staticTexts.matching(
             NSPredicate(format: "label CONTAINS[c] 'Invalid' OR label CONTAINS[c] 'error'")
@@ -47,14 +47,14 @@ final class LoginFlowUITests: XCTestCase {
     // MARK: – Successful Login
 
     func test_loginFlow_successNavigatesToDashboard() throws {
-        fillCredentials(email: "client1@fitnessapp.dev", password: "Client1234!")
+        fillCredentials(email: "client1@fitcoach.dev", password: "FitCoach123!")
         app.buttons["Sign In"].tap()
         let dashboard = app.navigationBars["Dashboard"]
         XCTAssertTrue(dashboard.waitForExistence(timeout: 10))
     }
 
     func test_loginFlow_trainerCanLogin() throws {
-        fillCredentials(email: "trainer1@fitnessapp.dev", password: "Trainer1234!")
+        fillCredentials(email: "trainer1@fitcoach.dev", password: "FitCoach123!")
         app.buttons["Sign In"].tap()
         // Trainer lands on same dashboard shell
         let nav = app.navigationBars.firstMatch

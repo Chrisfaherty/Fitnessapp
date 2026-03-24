@@ -1,4 +1,4 @@
-package com.fitnessapp.ui.workout
+package com.fitcoach.app.ui.workout
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,7 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.fitnessapp.ui.theme.FitnessColors
+import com.fitcoach.app.ui.theme.FitnessColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

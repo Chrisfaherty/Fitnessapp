@@ -1,4 +1,4 @@
-package com.fitnessapp.ui.workout
+package com.fitcoach.app.ui.workout
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.fitnessapp.ui.theme.FitnessColors
+import com.fitcoach.app.ui.theme.FitnessColors
 
 @Composable
 fun RestTimerBar(

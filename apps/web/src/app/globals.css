@@ -3,30 +3,19 @@
 @tailwind utilities;
 
 /* ============================================================
-   CSS Custom Properties — Design Tokens
+   CSS Custom Properties — Design Tokens (FitCoach canonical)
+   Always dark — no light mode.
    ============================================================ */
 :root {
-  /* Light mode */
-  --color-background:       #F5F5F7;
-  --color-surface:          #FFFFFF;
-  --color-surface-elevated: #F0F0F2;
-  --color-text:             #1C1C1E;
-  --color-text-secondary:   #636366;
-  --color-muted:            #8E8E93;
-  --color-border:           rgba(0, 0, 0, 0.10);
-  --color-border-subtle:    rgba(0, 0, 0, 0.06);
-}
-
-.dark {
-  /* Void palette — Gemini spec */
-  --color-background:       #080809;
-  --color-surface:          #111113;
-  --color-surface-elevated: #1C1C1E;
-  --color-text:             #F5F5F7;
-  --color-text-secondary:   #8E8E93;
-  --color-muted:            #48484A;
-  --color-border:           rgba(255, 255, 255, 0.10);
-  --color-border-subtle:    rgba(255, 255, 255, 0.06);
+  --color-background:       #0B0C10;
+  --color-surface:          #12131A;
+  --color-surface-elevated: #1C1D26;
+  --color-text:             #F0F0F0;
+  --color-text-secondary:   rgba(240, 240, 240, 0.55);
+  --color-text-inverse:     #0B0C10;
+  --color-muted:            rgba(240, 240, 240, 0.30);
+  --color-border:           rgba(255, 255, 255, 0.08);
+  --color-border-subtle:    rgba(255, 255, 255, 0.04);
 }
 
 /* ============================================================
@@ -45,7 +34,7 @@ html {
 body {
   background-color: var(--color-background);
   color: var(--color-text);
-  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
 }
 
 /* ============================================================
@@ -85,10 +74,10 @@ svg.lucide {
    ============================================================ */
 @layer components {
   .text-display {
-    @apply text-4xl font-bold tracking-tight leading-tight;
+    @apply text-4xl font-bold tracking-tight leading-tight font-display;
   }
   .text-heading {
-    @apply text-2xl font-semibold tracking-tight;
+    @apply text-2xl font-semibold tracking-tight font-display;
   }
   .text-subheading {
     @apply text-lg font-semibold;
@@ -103,14 +92,14 @@ svg.lucide {
     @apply text-[10px] font-semibold uppercase tracking-widest text-foreground-secondary;
   }
 
-  /* Metric numbers — Geist Mono for precision */
+  /* Metric numbers — tabular for precision */
   .text-metric {
-    @apply text-[2rem] font-bold tracking-tight font-mono;
+    @apply text-[2rem] font-bold tracking-tight font-display;
     font-feature-settings: "tnum" 1;
     font-variant-numeric: tabular-nums;
   }
   .text-metric-sm {
-    @apply text-2xl font-bold tracking-tight font-mono;
+    @apply text-2xl font-bold tracking-tight font-display;
     font-feature-settings: "tnum" 1;
     font-variant-numeric: tabular-nums;
   }

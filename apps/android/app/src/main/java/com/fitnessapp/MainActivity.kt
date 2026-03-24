@@ -1,12 +1,12 @@
-package com.fitnessapp
+package com.fitcoach.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
-import com.fitnessapp.ui.navigation.AppNavigation
-import com.fitnessapp.ui.theme.FitnessAppTheme
+import com.fitcoach.app.ui.navigation.AppNavigation
+import com.fitcoach.app.ui.theme.FitnessAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

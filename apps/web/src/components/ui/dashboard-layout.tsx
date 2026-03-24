@@ -35,11 +35,13 @@ interface NavItem {
 }
 
 const trainerNav: NavItem[] = [
-  { href: "/trainer",           label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/trainer/clients",   label: "Clients",   icon: Users },
-  { href: "/trainer/templates", label: "Templates", icon: LayoutTemplate },
-  { href: "/trainer/exercises", label: "Exercises", icon: BookOpen },
-  { href: "/trainer/messaging", label: "Messages",  icon: MessageSquare },
+  { href: "/trainer",             label: "Dashboard", icon: LayoutDashboard, exact: true },
+  { href: "/trainer/clients",     label: "Clients",   icon: Users },
+  { href: "/trainer/check-ins",   label: "Check-Ins", icon: ClipboardCheck },
+  { href: "/trainer/templates",   label: "Templates", icon: LayoutTemplate },
+  { href: "/trainer/meal-plans",  label: "Meal Plans", icon: Salad },
+  { href: "/trainer/exercises",   label: "Exercises", icon: BookOpen },
+  { href: "/trainer/messaging",   label: "Messages",  icon: MessageSquare },
 ];
 
 const clientNav: NavItem[] = [
@@ -67,7 +69,7 @@ export function DashboardLayout({
   const handleSignOut = async () => {
     const supabase = createClientSupabaseClient();
     await supabase.auth.signOut();
-    router.push("/login");
+    router.push("/auth/login");
     router.refresh();
   };
 
@@ -97,7 +99,7 @@ export function DashboardLayout({
                 <path d="M4 12h3l3-8 4 16 3-8h3" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <span className="font-semibold text-foreground text-sm tracking-tight">FitnessCoach</span>
+            <span className="font-semibold text-foreground text-sm tracking-tight">FitCoach</span>
           </div>
           <button
             className="lg:hidden text-foreground-secondary hover:text-foreground transition-colors p-1"
@@ -184,7 +186,7 @@ export function DashboardLayout({
                 <path d="M4 12h3l3-8 4 16 3-8h3" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <span className="font-semibold text-foreground text-sm">FitnessCoach</span>
+            <span className="font-semibold text-foreground text-sm">FitCoach</span>
           </div>
         </header>
 

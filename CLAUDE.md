@@ -1,10 +1,18 @@
-# FitnessCoach — Agent Instructions
+# FitCoach — Agent Instructions
 
 This file contains everything an AI agent needs to understand and work with this codebase.
 
-## Project Overview
+## Project Identity
 
-Full-stack fitness coaching platform. Monorepo with Supabase backend, Next.js web app, SwiftUI iOS app, and Kotlin Android app.
+| Property | Value |
+|----------|-------|
+| Project name | **FitCoach** |
+| Repo root | `fitnessapp/` |
+| App name in UI | FitCoach |
+| iOS bundle ID | `com.fitcoach.app` |
+| Android package | `com.fitcoach.app` |
+| Demo email domain | `@fitcoach.dev` |
+| Demo password (all users) | `FitCoach123!` |
 
 ## Critical Rules
 
@@ -12,8 +20,24 @@ Full-stack fitness coaching platform. Monorepo with Supabase backend, Next.js we
 - **NEVER commit `.env.local`** — it is in `.gitignore`
 - **NEVER run `git push --force` on main** without explicit user confirmation
 - **ALWAYS run `supabase db reset` after adding migrations** to test them locally
-- **ALWAYS upsert health data** — never insert-only, health sync must be idempotent
-- All Supabase writes from mobile go through the anon key with RLS. Service role is ONLY for edge functions and the import tool.
+- **ALWAYS upsert health data** — never insert-only, health sync must be idempotent (`onConflict: 'user_id,date'`)
+- All Supabase writes from mobile go through the anon key with RLS. Service role is ONLY for edge functions.
+- **No light mode** — the app is always dark. Never add `dark:` class variants or `prefers-color-scheme: light` branches.
+- **`@supabase/supabase-js` stays at `2.43.4`** — v2.98+ has breaking generic type changes.
+
+## Design Tokens (canonical)
+
+| Token | Value |
+|-------|-------|
+| `--color-background` | `#0B0C10` |
+| `--color-surface` | `#12131A` |
+| `--color-surface-elevated` | `#1C1D26` |
+| `--color-border` | `rgba(255,255,255,0.08)` |
+| `--color-text` | `#F0F0F0` |
+| `--color-text-secondary` | `rgba(240,240,240,0.55)` |
+| `accent` | `#A3FF12` |
+
+Fonts: **Syne** (display/headings) + **DM Sans** (body). Both loaded via `next/font/google`.
 
 ## Local Dev Setup (in order)
 
@@ -72,43 +96,51 @@ User → Supabase Auth (JWT) → RLS policies → Postgres tables
 
 ```
 supabase/migrations/
-  001_initial_schema.sql    # profiles, trainer_clients, health_*, diary_entries,
-                            # check_ins, meal_plans, conversations, messages, weekly_summaries
-  002_exercises_and_workouts.sql  # exercises, workout_templates, sessions, sets
-  003_rls_policies.sql      # All RLS policies
-  004_storage.sql           # Storage buckets + policies
+  001_initial_schema.sql
+  002_exercises_and_workouts.sql
+  003_rls_policies.sql
+  004_storage.sql
 
 apps/web/src/
-  app/(auth)/               # Login page
+  app/auth/
+    login/page.tsx          # /auth/login (canonical login route)
+    callback/route.ts       # /auth/callback (OAuth)
   app/(dashboard)/
-    trainer/                # Trainer-only pages
-      clients/              # Client list + detail
-      templates/            # Template list + builder
+    trainer/
+      page.tsx              # Dashboard
+      clients/              # Client list + [clientId] detail
+      check-ins/            # Check-in review with slide-over panel
+      templates/            # Template list + new + [id]/edit
       exercises/            # Exercise library
-      messaging/            # Real-time messaging
-    client/                 # Client-only pages
-      workouts/diary/check-ins/meals/
+      messaging/            # Real-time chat
+      meal-plans/           # Meal plan list + new builder
+      assign/               # Workout assignment wizard
+    client/
+      page.tsx              # Dashboard
+      workouts/             # Assignment list + [assignmentId] detail
+      diary/
+      check-ins/
+      meals/
   lib/supabase/
-    server.ts               # createServerSupabaseClient() for RSC
-    client.ts               # createBrowserSupabaseClient() for client components
-    middleware.ts           # Session refresh middleware
-  types/database.ts         # Auto-generated Supabase types (regenerate with supabase gen types)
+    server.ts               # createServerSupabaseClient()
+    client.ts               # createClientSupabaseClient()
+    middleware.ts           # Auth refresh (redirects to /auth/login)
+  types/database.ts
 
 apps/ios/FitnessCoach/
+  App/FitCoachApp.swift     # App entry + BGTask registration
   Services/HealthKit/
-    HealthDataClient.swift  # Protocol (testable interface)
-    HealthKitClient.swift   # Real implementation
-    MockHealthDataClient.swift  # For unit tests
-  ViewModels/               # @MainActor MVVM classes
-  Views/                    # SwiftUI views organized by feature
+  ViewModels/
+  Views/
 
 apps/android/app/src/main/java/com/fitnessapp/
   data/health/
-    HealthDataClient.kt     # Interface (testable)
-    HealthConnectClient.kt  # Real implementation
-    FakeHealthDataClient.kt # For unit tests
-    SyncRepository.kt       # Orchestrates sync
-  ui/                       # MVVM ViewModels + Compose screens by feature
+    HealthSyncWorker.kt     # WorkManager 6-hour periodic sync
+  ui/
+
+tests/db/rls_tests.sql      # 21 pgTAP RLS assertions
+apps/web/tests/e2e/
+  fitcoach.spec.ts          # 7 Playwright describe blocks
 ```
 
 ## Supabase Tables (all 16)
@@ -118,39 +150,51 @@ apps/android/app/src/main/java/com/fitnessapp/
 `weekly_summaries`, `exercises`, `workout_templates`, `workout_template_exercises`,
 `workout_assignments`, `workout_sessions`, `workout_session_sets`
 
-## Adding a New Feature — Checklist
+## Complete Web Route Map
 
-1. **DB schema:** Add migration in `supabase/migrations/00X_name.sql`
-2. **RLS:** Add policies to `003_rls_policies.sql` or new migration
-3. **Types:** Regenerate with `supabase gen types typescript --local`
-4. **Web:** Add server page → client component pattern
-5. **iOS:** Add Model → ViewModel (@MainActor) → View
-6. **Android:** Add ViewModel (Hilt) → Screen (Composable)
-7. **Tests:** Add pgTAP assertions in `tests/db/`
+| Route | Type | Notes |
+|-------|------|-------|
+| `/` | Server | Redirect to `/auth/login` or role dashboard |
+| `/auth/login` | Server | Login page |
+| `/auth/callback` | Route handler | OAuth exchange |
+| `/trainer` | Server | Dashboard |
+| `/trainer/clients` | Server | Client grid |
+| `/trainer/clients/[clientId]` | Server | Tabbed client detail |
+| `/trainer/check-ins` | Server+Client | Review submitted check-ins, slide-over panel |
+| `/trainer/templates` | Server | Template list |
+| `/trainer/templates/new` | Client | Drag-drop builder |
+| `/trainer/templates/[id]/edit` | Server+Client | Pre-populated builder |
+| `/trainer/exercises` | Client | Exercise library |
+| `/trainer/messaging` | Client | Real-time chat |
+| `/trainer/meal-plans` | Server | Meal plan list |
+| `/trainer/meal-plans/new` | Client | 3-step meal plan builder |
+| `/trainer/assign` | Server+Client | Assignment wizard (`?clientId=` pre-fills) |
+| `/client` | Server | Dashboard with sparklines + heatmap |
+| `/client/workouts` | Server | Assignment list |
+| `/client/workouts/[assignmentId]` | Server+Client | Detail + Start Workout |
+| `/client/diary` | Client | Daily diary |
+| `/client/check-ins` | Client | 3-step check-in wizard |
+| `/client/meals` | Server | Active meal plan |
 
-## Design Tokens
-
-- Accent: `#A3FF12` — `FitnessColors.accent` (iOS), `FitnessColors.Accent` (Android), `text-accent`/`bg-accent` (web)
-- Light bg: `#F7F7FA` | Dark bg: `#0B0C10`
-- Light surface: `#FFFFFF` | Dark surface: `#12131A`
-
-## Demo Credentials (seed.sql)
+## Demo Credentials
 
 | Role | Email | Password |
 |------|-------|----------|
-| Admin | `admin@fitnessapp.dev` | `Admin1234!` |
-| Trainer 1 | `trainer1@fitnessapp.dev` | `Trainer1234!` |
-| Trainer 2 | `trainer2@fitnessapp.dev` | `Trainer1234!` |
-| Client 1 (linked to trainer1) | `client1@fitnessapp.dev` | `Client1234!` |
-| Client 2 (linked to trainer1) | `client2@fitnessapp.dev` | `Client1234!` |
-| Client 3 (linked to trainer2) | `client3@fitnessapp.dev` | `Client1234!` |
-| Client (unlinked — for RLS tests) | `client_unlinked@fitnessapp.dev` | `Client1234!` |
+| Admin | `admin@fitcoach.dev` | `FitCoach123!` |
+| Trainer 1 | `trainer1@fitcoach.dev` | `FitCoach123!` |
+| Trainer 2 | `trainer2@fitcoach.dev` | `FitCoach123!` |
+| Client 1 (linked to trainer1) | `client1@fitcoach.dev` | `FitCoach123!` |
+| Client 2 (linked to trainer1) | `client2@fitcoach.dev` | `FitCoach123!` |
+| Client 3 (linked to trainer2) | `client3@fitcoach.dev` | `FitCoach123!` |
+| Client (unlinked) | `client_unlinked@fitcoach.dev` | `FitCoach123!` |
 
 ## Common Pitfalls
 
-1. **`supabase start` fails:** Ensure Docker is running. Run `docker ps` to verify.
+1. **`supabase start` fails:** Ensure Docker is running.
 2. **Android emulator can't reach Supabase:** Use `10.0.2.2` not `127.0.0.1`
-3. **iOS HealthKit permissions in simulator:** HK doesn't work in simulator — use `MockHealthDataClient` for tests
-4. **`supabase gen types` gives empty file:** Local Supabase must be running (`supabase start`)
-5. **Realtime not working:** Check that `supabase/config.toml` has `[realtime]` enabled
-6. **RLS blocking reads:** Check you're calling with the correct user's session. Service role bypasses RLS.
+3. **iOS HealthKit in simulator:** HK doesn't work in simulator — use `MockHealthDataClient`
+4. **`supabase gen types` gives empty file:** Local Supabase must be running
+5. **Realtime not working:** Check `supabase/config.toml` has `[realtime]` enabled
+6. **RLS blocking reads:** Check you're using the correct user session
+7. **Wrong fonts:** Project uses Syne + DM Sans — never import or reference Geist
+8. **Wrong credentials:** All demo users use `@fitcoach.dev` / `FitCoach123!`

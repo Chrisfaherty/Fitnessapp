@@ -1,4 +1,4 @@
-package com.fitnessapp.ui.auth
+package com.fitcoach.app.ui.auth
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,7 +11,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.fitnessapp.ui.theme.FitnessColors
+import com.fitcoach.app.ui.theme.FitnessColors
 
 @Composable
 fun LoginScreen(
@@ -49,7 +49,7 @@ fun LoginScreen(
         Spacer(Modifier.height(20.dp))
 
         Text(
-            "FitnessCoach",
+            "FitCoach",
             style = MaterialTheme.typography.headlineMedium,
             color = MaterialTheme.colorScheme.onBackground
         )
@@ -120,7 +120,7 @@ fun LoginScreen(
 
         Spacer(Modifier.height(16.dp))
         Text(
-            "Demo: trainer1@fitnessapp.dev / Trainer1234!",
+            "Demo: trainer1@fitcoach.dev / FitCoach123!",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

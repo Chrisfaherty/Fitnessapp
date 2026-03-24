@@ -170,11 +170,11 @@ final class WorkoutFlowUITests: XCTestCase {
         let emailField = app.textFields["Email"]
         guard emailField.waitForExistence(timeout: 10) else { return }
         emailField.tap()
-        emailField.typeText("client1@fitnessapp.dev")
+        emailField.typeText("client1@fitcoach.dev")
 
         let passwordField = app.secureTextFields["Password"]
         passwordField.tap()
-        passwordField.typeText("Client1234!")
+        passwordField.typeText("FitCoach123!")
 
         app.buttons["Sign In"].tap()
         _ = app.tabBars.firstMatch.waitForExistence(timeout: 10)

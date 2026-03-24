@@ -1,6 +1,6 @@
-package com.fitnessapp
+package com.fitcoach.app
 
-import com.fitnessapp.data.model.*
+import com.fitcoach.app.data.model.*
 import org.junit.Assert.*
 import org.junit.Test
 

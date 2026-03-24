@@ -41,14 +41,54 @@ interface TemplateExercise {
   notes: string;
 }
 
-export function TemplateBuilder({ templateId }: { templateId?: string }) {
+interface InitialExercise {
+  exercise_id: string;
+  name: string;
+  category: string;
+  level: string;
+  primary_muscles: string[];
+  equipment: string;
+  target_sets: number;
+  rep_min: number;
+  rep_max: number;
+  rest_seconds: number;
+  notes: string | null;
+  sort_order: number;
+}
+
+interface TemplateBuilderProps {
+  templateId?: string;
+  initialTemplate?: { id: string; title: string; description: string };
+  initialExercises?: InitialExercise[];
+}
+
+export function TemplateBuilder({ templateId, initialTemplate, initialExercises }: TemplateBuilderProps) {
   const router = useRouter();
   const supabase = createClientSupabaseClient();
 
   // ── Template state ──────────────────────────────────────────
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [exercises, setExercises] = useState<TemplateExercise[]>([]);
+  const [title, setTitle] = useState(initialTemplate?.title ?? "");
+  const [description, setDescription] = useState(initialTemplate?.description ?? "");
+  const [exercises, setExercises] = useState<TemplateExercise[]>(() => {
+    if (!initialExercises || initialExercises.length === 0) return [];
+    return [...initialExercises]
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((ie) => ({
+        localId: crypto.randomUUID(),
+        exercise: {
+          id: ie.exercise_id,
+          name: ie.name,
+          category: ie.category,
+          primary_muscles: ie.primary_muscles,
+          equipment: ie.equipment || null,
+        },
+        targetSets: ie.target_sets,
+        repMin: ie.rep_min,
+        repMax: ie.rep_max,
+        restSeconds: ie.rest_seconds,
+        notes: ie.notes ?? "",
+      }));
+  });
   const [isSaving, setIsSaving] = useState(false);
 
   // ── Exercise library state ──────────────────────────────────

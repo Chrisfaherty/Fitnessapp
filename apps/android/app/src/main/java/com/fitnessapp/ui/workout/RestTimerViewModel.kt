@@ -1,4 +1,4 @@
-package com.fitnessapp.ui.workout
+package com.fitcoach.app.ui.workout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

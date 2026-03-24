@@ -17,8 +17,8 @@
 insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
 values (
   '00000000-0000-0000-0000-000000000001',
-  'admin@fitnessapp.dev',
-  crypt('Admin1234!', gen_salt('bf')),
+  'admin@fitcoach.dev',
+  crypt('FitCoach123!', gen_salt('bf')),
   now(),
   '{"full_name":"Admin User","role":"admin"}'::jsonb
 ) on conflict (id) do nothing;
@@ -27,8 +27,8 @@ values (
 insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
 values (
   '00000000-0000-0000-0000-000000000002',
-  'trainer1@fitnessapp.dev',
-  crypt('Trainer1234!', gen_salt('bf')),
+  'trainer1@fitcoach.dev',
+  crypt('FitCoach123!', gen_salt('bf')),
   now(),
   '{"full_name":"Alex Trainer","role":"trainer"}'::jsonb
 ) on conflict (id) do nothing;
@@ -37,8 +37,8 @@ values (
 insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
 values (
   '00000000-0000-0000-0000-000000000003',
-  'trainer2@fitnessapp.dev',
-  crypt('Trainer1234!', gen_salt('bf')),
+  'trainer2@fitcoach.dev',
+  crypt('FitCoach123!', gen_salt('bf')),
   now(),
   '{"full_name":"Sam Trainer","role":"trainer"}'::jsonb
 ) on conflict (id) do nothing;
@@ -47,8 +47,8 @@ values (
 insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
 values (
   '00000000-0000-0000-0000-000000000004',
-  'client1@fitnessapp.dev',
-  crypt('Client1234!', gen_salt('bf')),
+  'client1@fitcoach.dev',
+  crypt('FitCoach123!', gen_salt('bf')),
   now(),
   '{"full_name":"Jordan Client","role":"client"}'::jsonb
 ) on conflict (id) do nothing;
@@ -57,8 +57,8 @@ values (
 insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
 values (
   '00000000-0000-0000-0000-000000000005',
-  'client2@fitnessapp.dev',
-  crypt('Client1234!', gen_salt('bf')),
+  'client2@fitcoach.dev',
+  crypt('FitCoach123!', gen_salt('bf')),
   now(),
   '{"full_name":"Morgan Client","role":"client"}'::jsonb
 ) on conflict (id) do nothing;
@@ -67,8 +67,8 @@ values (
 insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
 values (
   '00000000-0000-0000-0000-000000000006',
-  'client3@fitnessapp.dev',
-  crypt('Client1234!', gen_salt('bf')),
+  'client3@fitcoach.dev',
+  crypt('FitCoach123!', gen_salt('bf')),
   now(),
   '{"full_name":"Casey Client","role":"client"}'::jsonb
 ) on conflict (id) do nothing;
@@ -77,8 +77,8 @@ values (
 insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
 values (
   '00000000-0000-0000-0000-000000000007',
-  'client4@fitnessapp.dev',
-  crypt('Client1234!', gen_salt('bf')),
+  'client_unlinked@fitcoach.dev',
+  crypt('FitCoach123!', gen_salt('bf')),
   now(),
   '{"full_name":"Riley Isolated","role":"client"}'::jsonb
 ) on conflict (id) do nothing;

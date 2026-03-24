@@ -1,4 +1,4 @@
-package com.fitnessapp.ui.auth
+package com.fitcoach.app.ui.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

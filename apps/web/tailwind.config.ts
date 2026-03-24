@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
@@ -17,7 +16,7 @@ const config: Config = {
         "border-subtle": "var(--color-border-subtle)",
         accent: {
           DEFAULT:    "#A3FF12",
-          foreground: "#080809",
+          foreground: "#0B0C10",
           muted:      "#A3FF1215",
           hover:      "#8EE60F",
         },
@@ -31,8 +30,8 @@ const config: Config = {
         danger:  { DEFAULT: "#FF3B30", foreground: "#fff", muted: "#FF3B3015" },
       },
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "system-ui", "-apple-system", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "JetBrains Mono", "monospace"],
+        display: ["var(--font-display)", "sans-serif"],
+        sans:    ["var(--font-sans)", "system-ui", "-apple-system", "sans-serif"],
       },
       transitionDuration: {
         fast: "150ms",

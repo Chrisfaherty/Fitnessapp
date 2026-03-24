@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "FitnessCoach",
+    name: "FitCoach",
     platforms: [.iOS(.v17)],
     dependencies: [
         .package(
@@ -12,19 +12,19 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "FitnessCoach",
+            name: "FitCoach",
             dependencies: [
                 .product(name: "Supabase", package: "supabase-swift"),
             ],
-            path: "FitnessCoach",
+            path: "FitCoach",
             resources: [
                 .process("Resources"),
             ]
         ),
         .testTarget(
-            name: "FitnessCoachTests",
-            dependencies: ["FitnessCoach"],
-            path: "FitnessCoachTests"
+            name: "FitCoachTests",
+            dependencies: ["FitCoach"],
+            path: "FitCoachTests"
         ),
     ]
 )

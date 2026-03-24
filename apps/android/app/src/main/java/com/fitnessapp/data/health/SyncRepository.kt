@@ -1,7 +1,7 @@
-package com.fitnessapp.data.health
+package com.fitcoach.app.data.health
 
-import com.fitnessapp.data.model.DailyMetrics
-import com.fitnessapp.data.model.WorkoutEntry
+import com.fitcoach.app.data.model.DailyMetrics
+import com.fitcoach.app.data.model.WorkoutEntry
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.gotrue
 import io.github.jan.supabase.postgrest.postgrest
@@ -68,6 +68,14 @@ class SyncRepository @Inject constructor(
             ).filterValues { it != null }
         }
         supabase.postgrest["health_workouts"].upsert(rows, upsert = Upsert(onConflict = "user_id,external_id"))
+    }
+
+    /**
+     * Convenience entry-point called by [HealthSyncWorker].
+     * Syncs the default rolling window (7 days) of health data.
+     */
+    suspend fun syncAll() {
+        syncHealthData(days = 7)
     }
 
     /** Returns true if Health Connect is available on this device. */

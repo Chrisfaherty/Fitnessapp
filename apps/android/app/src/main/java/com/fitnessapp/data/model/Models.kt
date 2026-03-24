@@ -1,4 +1,4 @@
-package com.fitnessapp.data.model
+package com.fitcoach.app.data.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -21,7 +21,7 @@ data class Profile(
 @Serializable
 data class DailyMetrics(
     @SerialName("user_id") val userId: String,
-    val date: String,                           // "YYYY-MM-DD"
+    val date: String,                                       // "YYYY-MM-DD"
     val steps: Int? = null,
     @SerialName("active_energy_kcal") val activeEnergyKcal: Double? = null,
     @SerialName("weight_kg") val weightKg: Double? = null,
@@ -34,14 +34,22 @@ data class DailyMetrics(
 
 @Serializable
 data class WorkoutEvent(
+    val id: String,
     @SerialName("user_id") val userId: String,
     @SerialName("external_id") val externalId: String,
     @SerialName("workout_type") val workoutType: String,
-    @SerialName("start_at") val startAt: String,    // ISO-8601
+    @SerialName("start_at") val startAt: String,            // ISO-8601
     @SerialName("end_at") val endAt: String,
     val kcal: Double? = null,
-    @SerialName("source_app") val sourceApp: String? = null,
-    @SerialName("source_bundle") val sourceBundle: String? = null
+    @SerialName("source_app") val sourceApp: String? = null
+)
+
+@Serializable
+data class NutritionTotals(
+    val calories: Double,
+    @SerialName("protein_g") val proteinG: Double,
+    @SerialName("carbs_g") val carbsG: Double,
+    @SerialName("fat_g") val fatG: Double
 )
 
 @Serializable
@@ -118,7 +126,7 @@ data class WorkoutSessionSet(
     @SerialName("rest_seconds") val restSeconds: Int? = null
 )
 
-// In-memory logged set (UI state)
+// In-memory logged set (UI state — not persisted directly)
 data class LoggedSet(
     val setNumber: Int,
     var reps: Int,
@@ -127,19 +135,21 @@ data class LoggedSet(
     var isComplete: Boolean = false
 )
 
-// Prefill data from last session
+// Prefill data sourced from the client's last completed session for an exercise.
+@Serializable
 data class LastSessionInfo(
-    val exerciseId: String,
+    @SerialName("exercise_id") val exerciseId: String,
     val sets: List<LastSetInfo>,
-    val performedAt: String
+    @SerialName("performed_at") val performedAt: String
 ) {
     val lastSet: LastSetInfo? get() = sets.lastOrNull()
 }
 
+@Serializable
 data class LastSetInfo(
-    val setNumber: Int,
+    @SerialName("set_number") val setNumber: Int,
     val reps: Int,
-    val weightKg: Double? = null,
+    @SerialName("weight_kg") val weightKg: Double? = null,
     val rpe: Double? = null
 )
 

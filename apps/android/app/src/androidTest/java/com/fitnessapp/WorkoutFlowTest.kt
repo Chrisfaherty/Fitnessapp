@@ -1,10 +1,10 @@
-package com.fitnessapp
+package com.fitcoach.app
 
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.fitnessapp.data.health.FakeHealthDataClient
-import com.fitnessapp.data.health.HealthDataClient
+import com.fitcoach.app.data.health.FakeHealthDataClient
+import com.fitcoach.app.data.health.HealthDataClient
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
@@ -52,9 +52,9 @@ class WorkoutFlowTest {
     @Test
     fun loginScreen_withCredentials_buttonIsEnabled() {
         composeRule.onNodeWithText("Email")
-            .performTextInput("client1@fitnessapp.dev")
+            .performTextInput("client1@fitcoach.dev")
         composeRule.onNodeWithText("Password")
-            .performTextInput("Client1234!")
+            .performTextInput("FitCoach123!")
         composeRule
             .onNodeWithText("Sign In")
             .assertIsEnabled()
@@ -194,8 +194,8 @@ class WorkoutFlowTest {
 
     private fun loginAsClient() {
         composeRule.waitUntilAtLeastOneExists(hasText("Sign In"), timeoutMillis = 5_000)
-        composeRule.onNodeWithText("Email").performTextInput("client1@fitnessapp.dev")
-        composeRule.onNodeWithText("Password").performTextInput("Client1234!")
+        composeRule.onNodeWithText("Email").performTextInput("client1@fitcoach.dev")
+        composeRule.onNodeWithText("Password").performTextInput("FitCoach123!")
         composeRule.onNodeWithText("Sign In").performClick()
     }
 }

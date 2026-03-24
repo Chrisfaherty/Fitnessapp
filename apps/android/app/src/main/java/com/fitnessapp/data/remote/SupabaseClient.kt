@@ -1,4 +1,4 @@
-package com.fitnessapp.data.remote
+package com.fitcoach.app.data.remote
 
 import dagger.Module
 import dagger.Provides

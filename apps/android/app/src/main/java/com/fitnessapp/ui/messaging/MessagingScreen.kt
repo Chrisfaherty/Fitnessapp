@@ -1,4 +1,4 @@
-package com.fitnessapp.ui.messaging
+package com.fitcoach.app.ui.messaging
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import com.fitnessapp.ui.theme.FitnessColors
+import com.fitcoach.app.ui.theme.FitnessColors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.gotrue

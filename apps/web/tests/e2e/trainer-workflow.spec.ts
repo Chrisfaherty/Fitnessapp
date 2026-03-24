@@ -1,9 +1,9 @@
 import { test, expect, Page } from "@playwright/test";
 
-const TRAINER_EMAIL = "trainer1@fitnessapp.dev";
-const TRAINER_PASSWORD = "Trainer1234!";
-const CLIENT_EMAIL = "client1@fitnessapp.dev";
-const CLIENT_PASSWORD = "Client1234!";
+const TRAINER_EMAIL = "trainer1@fitcoach.dev";
+const TRAINER_PASSWORD = "FitCoach123!";
+const CLIENT_EMAIL = "client1@fitcoach.dev";
+const CLIENT_PASSWORD = "FitCoach123!";
 
 // ============================================================
 // Helpers

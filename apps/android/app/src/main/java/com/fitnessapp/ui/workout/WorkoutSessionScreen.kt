@@ -1,4 +1,4 @@
-package com.fitnessapp.ui.workout
+package com.fitcoach.app.ui.workout
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.fitnessapp.data.model.LoggedSet
-import com.fitnessapp.data.model.WorkoutTemplateExercise
-import com.fitnessapp.ui.theme.FitnessColors
+import com.fitcoach.app.data.model.LoggedSet
+import com.fitcoach.app.data.model.WorkoutTemplateExercise
+import com.fitcoach.app.ui.theme.FitnessColors
 
 @Composable
 fun WorkoutSessionScreen(
@@ -193,7 +193,7 @@ private fun ExerciseHeader(
 }
 
 @Composable
-private fun LastSessionBanner(lastSession: com.fitnessapp.data.model.LastSessionInfo) {
+private fun LastSessionBanner(lastSession: com.fitcoach.app.data.model.LastSessionInfo) {
     Surface(
         color = FitnessColors.Accent.copy(alpha = 0.12f),
         shape = MaterialTheme.shapes.small
@@ -218,7 +218,7 @@ private fun LastSessionBanner(lastSession: com.fitnessapp.data.model.LastSession
 @Composable
 private fun SetLogRow(
     set: LoggedSet,
-    lastSet: com.fitnessapp.data.model.LastSetInfo?,
+    lastSet: com.fitcoach.app.data.model.LastSetInfo?,
     onComplete: (LoggedSet) -> Unit
 ) {
     var repsStr by remember(set.setNumber) { mutableStateOf(set.reps.toString()) }

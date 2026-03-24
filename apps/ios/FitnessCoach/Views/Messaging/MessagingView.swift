@@ -1,6 +1,7 @@
 import SwiftUI
 import Supabase
 import Realtime
+import AVKit
 
 // MARK: – Model
 
@@ -20,7 +21,10 @@ struct ChatMessage: Identifiable, Decodable {
         case sentAt           = "sent_at"
     }
 
-    var isVideo: Bool { videoStoragePath != nil }
+    var isVideo: Bool {
+        guard let path = videoStoragePath else { return false }
+        return !path.isEmpty
+    }
 }
 
 struct Conversation: Decodable {
@@ -34,6 +38,18 @@ struct Conversation: Decodable {
     }
 }
 
+// MARK: – Signed URL response
+
+private struct SignedURLResponse: Decodable {
+    let signedUrl: String
+    let expiresAt: String?
+
+    enum CodingKeys: String, CodingKey {
+        case signedUrl = "signed_url"
+        case expiresAt = "expires_at"
+    }
+}
+
 // MARK: – ViewModel
 
 @MainActor
@@ -43,10 +59,17 @@ final class MessagingViewModel: ObservableObject {
     @Published var error: String?
     @Published var inputText = ""
 
+    // Video playback
+    @Published var videoPlayer: AVPlayer?
+    @Published var isLoadingVideo = false
+    @Published var videoError: String?
+
     private let supabase = SupabaseService.shared.client
     private var conversationId: UUID?
     private var currentUserId: UUID?
     private var realtimeChannel: RealtimeChannelV2?
+
+    // MARK: Conversation loading
 
     func loadConversation() async {
         isLoading = true
@@ -130,13 +153,59 @@ final class MessagingViewModel: ObservableObject {
         Task { await channel.subscribe() }
         realtimeChannel = channel
     }
+
+    // MARK: – Video playback
+
+    /// Fetches a short-lived signed URL from the `signedMediaUrl` edge function,
+    /// then sets `videoPlayer` ready for presentation.
+    func fetchSignedVideoURL(storagePath: String) async throws -> URL {
+        let session = try await supabase.auth.session
+        let accessToken = session.accessToken
+
+        let supabaseURLString = Bundle.main.infoDictionary?["SUPABASE_URL"] as? String ?? ""
+        guard let functionURL = URL(string: "\(supabaseURLString)/functions/v1/signedMediaUrl") else {
+            throw URLError(.badURL)
+        }
+
+        var request = URLRequest(url: functionURL)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+
+        let body = try JSONEncoder().encode(["storage_path": storagePath])
+        request.httpBody = body
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              (200..<300).contains(httpResponse.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+
+        let decoded = try JSONDecoder().decode(SignedURLResponse.self, from: data)
+        guard let url = URL(string: decoded.signedUrl) else {
+            throw URLError(.badURL)
+        }
+        return url
+    }
+
+    func playVideo(storagePath: String) async {
+        isLoadingVideo = true
+        videoError = nil
+        defer { isLoadingVideo = false }
+        do {
+            let url = try await fetchSignedVideoURL(storagePath: storagePath)
+            videoPlayer = AVPlayer(url: url)
+        } catch {
+            videoError = error.localizedDescription
+        }
+    }
 }
 
 // MARK: – View
 
 struct MessagingView: View {
     @StateObject private var vm = MessagingViewModel()
-    @Namespace private var bottomID
 
     var body: some View {
         NavigationStack {
@@ -146,12 +215,9 @@ struct MessagingView: View {
                     ScrollView {
                         LazyVStack(spacing: 8) {
                             ForEach(vm.messages) { msg in
-                                MessageBubble(
-                                    message: msg,
-                                    isOwn: msg.senderId == (vm as AnyObject as? MessagingViewModel)
-                                        .flatMap { _ in vm.messages.first }
-                                        .map { _ in false } ?? false
-                                )
+                                MessageBubble(message: msg) { storagePath in
+                                    Task { await vm.playVideo(storagePath: storagePath) }
+                                }
                             }
                             Color.clear.frame(height: 1).id("bottom")
                         }
@@ -191,6 +257,28 @@ struct MessagingView: View {
                 .background(.background)
             }
             .navigationTitle("Messages")
+            // Video player sheet
+            .fullScreenCover(item: Binding(
+                get: { vm.videoPlayer },
+                set: { if $0 == nil { vm.videoPlayer = nil } }
+            )) { player in
+                VideoPlayerSheet(player: player) {
+                    vm.videoPlayer = nil
+                }
+            }
+            // Video loading overlay
+            .overlay {
+                if vm.isLoadingVideo {
+                    ZStack {
+                        Color.black.opacity(0.45).ignoresSafeArea()
+                        ProgressView("Loading video…")
+                            .progressViewStyle(.circular)
+                            .tint(.white)
+                            .foregroundStyle(.white)
+                    }
+                }
+            }
+            // Network / server errors
             .alert("Error", isPresented: Binding(
                 get: { vm.error != nil },
                 set: { if !$0 { vm.error = nil } }
@@ -199,8 +287,51 @@ struct MessagingView: View {
             } message: {
                 Text(vm.error ?? "")
             }
+            // Video fetch errors
+            .alert("Video Error", isPresented: Binding(
+                get: { vm.videoError != nil },
+                set: { if !$0 { vm.videoError = nil } }
+            )) {
+                Button("OK") { vm.videoError = nil }
+            } message: {
+                Text(vm.videoError ?? "")
+            }
         }
         .task { await vm.loadConversation() }
+    }
+}
+
+// MARK: – AVPlayer Identifiable wrapper
+
+extension AVPlayer: @retroactive Identifiable {
+    public var id: ObjectIdentifier { ObjectIdentifier(self) }
+}
+
+// MARK: – Video player sheet
+
+private struct VideoPlayerSheet: View {
+    let player: AVPlayer
+    let onDismiss: () -> Void
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            Color.black.ignoresSafeArea()
+            VideoPlayer(player: player)
+                .ignoresSafeArea()
+                .onAppear { player.play() }
+
+            Button {
+                player.pause()
+                onDismiss()
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.system(size: 32))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 4)
+            }
+            .padding(.top, 52)
+            .padding(.trailing, 20)
+        }
     }
 }
 
@@ -208,9 +339,8 @@ struct MessagingView: View {
 
 private struct MessageBubble: View {
     let message: ChatMessage
-    let isOwn: Bool
+    let onPlayVideo: (String) -> Void
 
-    // Derive isOwn from senderId stored in AppStorage or UserDefaults
     @AppStorage("currentUserId") private var storedUserId = ""
 
     private var mine: Bool {
@@ -221,12 +351,26 @@ private struct MessageBubble: View {
         HStack {
             if mine { Spacer(minLength: 60) }
 
-            VStack(alignment: mine ? .trailing : .leading, spacing: 2) {
+            VStack(alignment: mine ? .trailing : .leading, spacing: 4) {
                 Group {
-                    if message.isVideo {
-                        Label("Video message", systemImage: "video.fill")
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                    if message.isVideo, let path = message.videoStoragePath {
+                        // Text body (if any) above the video button
+                        if let body = message.body, !body.isEmpty {
+                            Text(body)
+                                .padding(.horizontal, 12)
+                                .padding(.top, 8)
+                                .padding(.bottom, 2)
+                        }
+
+                        // Video play button
+                        Button {
+                            onPlayVideo(path)
+                        } label: {
+                            Label("Play video", systemImage: "play.fill")
+                                .font(.subheadline.weight(.semibold))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                        }
                     } else {
                         Text(message.body ?? "")
                             .padding(.horizontal, 12)

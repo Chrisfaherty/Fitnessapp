@@ -225,7 +225,7 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
                     </div>
                   </div>
 
-                  {/* Large Geist Mono number input */}
+                  {/* Large display number input */}
                   <div className="flex items-baseline justify-center gap-3 mb-10">
                     <input
                       type="number"

@@ -1,7 +1,7 @@
-package com.fitnessapp.data.health
+package com.fitcoach.app.data.health
 
-import com.fitnessapp.data.model.DailyMetrics
-import com.fitnessapp.data.model.WorkoutEvent
+import com.fitcoach.app.data.model.DailyMetrics
+import com.fitcoach.app.data.model.WorkoutEvent
 
 // ============================================================
 // HealthDataClient interface
