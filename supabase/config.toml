@@ -46,9 +46,6 @@ enable_confirmations = false
 [functions.weeklySummary]
 verify_jwt = false
 
-[functions.weeklySummary.cron]
-schedule = "0 6 * * 1"  # 06:00 UTC every Monday
-
 [functions.signedMediaUrl]
 verify_jwt = true
 
