@@ -18,6 +18,7 @@ import {
   LogOut,
   Menu,
   X,
+  Shield,
 } from "lucide-react";
 
 interface Profile {
@@ -52,6 +53,12 @@ const clientNav: NavItem[] = [
   { href: "/client/meals",      label: "Meal Plan", icon: Salad },
 ];
 
+const adminNav: NavItem[] = [
+  { href: "/admin",           label: "Overview",  icon: Shield, exact: true },
+  { href: "/admin/users",     label: "Users",     icon: Users },
+  { href: "/admin/exercises", label: "Exercises", icon: Dumbbell },
+];
+
 export function DashboardLayout({
   profile,
   children,
@@ -63,8 +70,8 @@ export function DashboardLayout({
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navItems = profile.role === "client" ? clientNav : trainerNav;
-  const roleLabel = profile.role === "trainer" ? "TRAINER" : "CLIENT";
+  const navItems = profile.role === "admin" ? adminNav : profile.role === "client" ? clientNav : trainerNav;
+  const roleLabel = profile.role === "admin" ? "ADMIN" : profile.role === "trainer" ? "TRAINER" : "CLIENT";
 
   const handleSignOut = async () => {
     const supabase = createClientSupabaseClient();

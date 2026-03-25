@@ -52,6 +52,12 @@ schedule = "0 6 * * 1"  # 06:00 UTC every Monday
 [functions.signedMediaUrl]
 verify_jwt = true
 
+[functions.adminUsers]
+verify_jwt = true
+
+[functions.sendPushNotification]
+verify_jwt = false
+
 [edge_runtime]
 enabled = true
 policy = "oneshot"
