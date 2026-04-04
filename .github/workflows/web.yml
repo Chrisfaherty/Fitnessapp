@@ -83,9 +83,14 @@ jobs:
           done
           exit 1
 
+      - name: Apply migrations and seed data
+        # supabase start boots empty containers — db reset applies all
+        # migrations + seed.sql so auth.users exists for E2E login
+        run: supabase db reset
+
       - name: Set Supabase env vars for build
         run: |
-          ANON_KEY=$(supabase status --output env | grep ANON_KEY | cut -d= -f2)
+          ANON_KEY=$(supabase status --output env | grep -i "^ANON_KEY" | cut -d= -f2-)
           echo "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}" >> $GITHUB_ENV
 
@@ -93,10 +98,8 @@ jobs:
         run: pnpm --filter web exec playwright install --with-deps chromium
 
       - name: Build web app
+        # NEXT_PUBLIC_* vars from $GITHUB_ENV are automatically available here
         run: pnpm --filter web build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ env.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ env.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Run E2E tests
         # playwright.config.ts webServer starts `next start` automatically in CI
