@@ -16,11 +16,17 @@
 -- signInWithPassword to work. created_at/updated_at are
 -- set explicitly to avoid NOT NULL violations on some versions.
 -- ============================================================
+-- GoTrue scans confirmation_token, recovery_token, email_change,
+-- email_change_token_new, email_change_token_current as non-pointer
+-- strings — NULLs cause "converting NULL to string is unsupported".
+-- Set all token fields to '' (empty string) explicitly.
 insert into auth.users (
   instance_id, id, aud, role,
   email, encrypted_password, email_confirmed_at,
   created_at, updated_at,
-  raw_app_meta_data, raw_user_meta_data
+  raw_app_meta_data, raw_user_meta_data,
+  confirmation_token, recovery_token,
+  email_change, email_change_token_new, email_change_token_current
 ) values
   (
     '00000000-0000-0000-0000-000000000000',
@@ -30,7 +36,8 @@ insert into auth.users (
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
     '{"provider":"email","providers":["email"]}'::jsonb,
-    '{"full_name":"Admin User","role":"admin"}'::jsonb
+    '{"full_name":"Admin User","role":"admin"}'::jsonb,
+    '', '', '', '', ''
   ),
   (
     '00000000-0000-0000-0000-000000000000',
@@ -40,7 +47,8 @@ insert into auth.users (
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
     '{"provider":"email","providers":["email"]}'::jsonb,
-    '{"full_name":"Alex Trainer","role":"trainer"}'::jsonb
+    '{"full_name":"Alex Trainer","role":"trainer"}'::jsonb,
+    '', '', '', '', ''
   ),
   (
     '00000000-0000-0000-0000-000000000000',
@@ -50,7 +58,8 @@ insert into auth.users (
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
     '{"provider":"email","providers":["email"]}'::jsonb,
-    '{"full_name":"Sam Trainer","role":"trainer"}'::jsonb
+    '{"full_name":"Sam Trainer","role":"trainer"}'::jsonb,
+    '', '', '', '', ''
   ),
   (
     '00000000-0000-0000-0000-000000000000',
@@ -60,7 +69,8 @@ insert into auth.users (
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
     '{"provider":"email","providers":["email"]}'::jsonb,
-    '{"full_name":"Jordan Client","role":"client"}'::jsonb
+    '{"full_name":"Jordan Client","role":"client"}'::jsonb,
+    '', '', '', '', ''
   ),
   (
     '00000000-0000-0000-0000-000000000000',
@@ -70,7 +80,8 @@ insert into auth.users (
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
     '{"provider":"email","providers":["email"]}'::jsonb,
-    '{"full_name":"Morgan Client","role":"client"}'::jsonb
+    '{"full_name":"Morgan Client","role":"client"}'::jsonb,
+    '', '', '', '', ''
   ),
   (
     '00000000-0000-0000-0000-000000000000',
@@ -80,7 +91,8 @@ insert into auth.users (
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
     '{"provider":"email","providers":["email"]}'::jsonb,
-    '{"full_name":"Casey Client","role":"client"}'::jsonb
+    '{"full_name":"Casey Client","role":"client"}'::jsonb,
+    '', '', '', '', ''
   ),
   (
     '00000000-0000-0000-0000-000000000000',
@@ -90,10 +102,16 @@ insert into auth.users (
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
     '{"provider":"email","providers":["email"]}'::jsonb,
-    '{"full_name":"Riley Isolated","role":"client"}'::jsonb
+    '{"full_name":"Riley Isolated","role":"client"}'::jsonb,
+    '', '', '', '', ''
   )
 on conflict (id) do update set
-  raw_app_meta_data = excluded.raw_app_meta_data;
+  confirmation_token      = '',
+  recovery_token          = '',
+  email_change            = '',
+  email_change_token_new  = '',
+  email_change_token_current = '',
+  raw_app_meta_data       = excluded.raw_app_meta_data;
 
 -- ============================================================
 -- AUTH IDENTITIES
