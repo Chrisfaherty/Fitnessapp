@@ -6,11 +6,13 @@ on:
     paths:
       - "apps/web/**"
       - "packages/**"
+      - "supabase/**"
       - ".github/workflows/web.yml"
   pull_request:
     paths:
       - "apps/web/**"
       - "packages/**"
+      - "supabase/**"
 
 jobs:
   lint-and-unit:
