@@ -13,7 +13,7 @@ interface SparklineCardProps {
   label: string;
   value: string;
   unit?: string;
-  icon: React.ElementType;
+  icon: React.ReactNode;
   data?: number[];          // up to 7 values, latest last
   trendPct?: number | null; // e.g. 5.2 or -2.1
   accent?: boolean;
@@ -40,7 +40,7 @@ export function SparklineCard({
   label,
   value,
   unit,
-  icon: Icon,
+  icon,
   data,
   trendPct,
   accent = false,
@@ -60,7 +60,7 @@ export function SparklineCard({
       {/* Top row: icon + trend */}
       <div className="flex items-start justify-between">
         <div className={accent ? "stat-card-icon-accent" : "stat-card-icon"}>
-          <Icon className={`w-4 h-4 ${accent ? "text-accent" : "text-foreground-secondary"}`} />
+          {icon}
         </div>
         {trendPct != null && <Trend pct={trendPct} />}
       </div>

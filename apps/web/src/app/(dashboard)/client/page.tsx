@@ -109,7 +109,7 @@ export default async function ClientDashboardPage() {
         <SparklineCard
           label="Avg Steps (7d)"
           value={avgSteps?.toLocaleString() ?? '—'}
-          icon={Footprints}
+          icon={<Footprints className="w-4 h-4 text-foreground-secondary" />}
           data={health.map(r => r.steps ?? 0)}
           trendPct={stepsTrend}
           color="#4F6EF7"
@@ -118,7 +118,7 @@ export default async function ClientDashboardPage() {
           label="Latest Weight"
           value={latestWeight ? `${latestWeight}` : '—'}
           unit={latestWeight ? 'kg' : undefined}
-          icon={Scale}
+          icon={<Scale className="w-4 h-4 text-foreground-secondary" />}
           data={weightData}
           trendPct={weightTrend}
           color="#4F6EF7"
@@ -126,14 +126,14 @@ export default async function ClientDashboardPage() {
         <SparklineCard
           label="Active Workouts"
           value={workoutCount?.toString() ?? '0'}
-          icon={Dumbbell}
+          icon={<Dumbbell className={`w-4 h-4 ${workoutCount ? 'text-accent' : 'text-foreground-secondary'}`} />}
           accent={!!workoutCount}
           color="#A3FF12"
         />
         <SparklineCard
           label="Tracked Days (7d)"
           value={health.length.toString()}
-          icon={Activity}
+          icon={<Activity className="w-4 h-4 text-foreground-secondary" />}
           color="#4F6EF7"
         />
       </div>
