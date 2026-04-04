@@ -29,7 +29,7 @@ async function loginAs(
   email: string,
   password: string
 ): Promise<void> {
-  await page.goto("/login");
+  await page.goto("/auth/login");
   await page.getByLabel(/email/i).fill(email);
   await page.getByLabel(/password/i).fill(password);
   await page.getByRole("button", { name: /sign in/i }).click();
@@ -44,7 +44,7 @@ async function loginAs(
 
 test.describe("Auth", () => {
   test("login redirects to trainer dashboard", async ({ page }) => {
-    await page.goto("/login");
+    await page.goto("/auth/login");
     await page.getByLabel(/email/i).fill(TRAINER_EMAIL);
     await page.getByLabel(/password/i).fill(TRAINER_PASSWORD);
     await page.getByRole("button", { name: /sign in/i }).click();
@@ -52,7 +52,7 @@ test.describe("Auth", () => {
   });
 
   test("invalid credentials shows error", async ({ page }) => {
-    await page.goto("/login");
+    await page.goto("/auth/login");
     await page.getByLabel(/email/i).fill(TRAINER_EMAIL);
     await page.getByLabel(/password/i).fill("wrongpassword123");
     await page.getByRole("button", { name: /sign in/i }).click();

@@ -9,7 +9,7 @@ const CLIENT_PASSWORD = "FitCoach123!";
 // Helpers
 // ============================================================
 async function loginAs(page: Page, email: string, password: string) {
-  await page.goto("/login");
+  await page.goto("/auth/login");
   await page.getByLabel(/email/i).fill(email);
   await page.getByLabel(/password/i).fill(password);
   await page.getByRole("button", { name: /sign in/i }).click();

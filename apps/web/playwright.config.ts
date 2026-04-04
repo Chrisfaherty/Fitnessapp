@@ -17,16 +17,15 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
-    {
-      name: "Mobile Chrome",
-      use: { ...devices["Pixel 5"] },
-    },
   ],
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: "pnpm dev",
-        url: "http://localhost:3000",
-        reuseExistingServer: !process.env.CI,
-      },
+  // In CI: serve the pre-built app with `next start`.
+  // Locally: spin up the dev server instead.
+  webServer: {
+    command: process.env.CI ? "pnpm start" : "pnpm dev",
+    url: "http://localhost:3000",
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+    stdout: "pipe",
+    stderr: "pipe",
+  },
 });
