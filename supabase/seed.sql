@@ -87,6 +87,64 @@ insert into auth.users (
 on conflict (id) do nothing;
 
 -- ============================================================
+-- AUTH IDENTITIES
+-- GoTrue v2 requires an auth.identities row for the 'email'
+-- provider for signInWithPassword to work.
+-- ============================================================
+insert into auth.identities (id, user_id, provider_id, identity_data, provider, created_at, updated_at)
+values
+  (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000001',
+    'admin@fitcoach.dev',
+    '{"sub":"00000000-0000-0000-0000-000000000001","email":"admin@fitcoach.dev"}'::jsonb,
+    'email', now(), now()
+  ),
+  (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000002',
+    'trainer1@fitcoach.dev',
+    '{"sub":"00000000-0000-0000-0000-000000000002","email":"trainer1@fitcoach.dev"}'::jsonb,
+    'email', now(), now()
+  ),
+  (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000003',
+    'trainer2@fitcoach.dev',
+    '{"sub":"00000000-0000-0000-0000-000000000003","email":"trainer2@fitcoach.dev"}'::jsonb,
+    'email', now(), now()
+  ),
+  (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000004',
+    'client1@fitcoach.dev',
+    '{"sub":"00000000-0000-0000-0000-000000000004","email":"client1@fitcoach.dev"}'::jsonb,
+    'email', now(), now()
+  ),
+  (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000005',
+    'client2@fitcoach.dev',
+    '{"sub":"00000000-0000-0000-0000-000000000005","email":"client2@fitcoach.dev"}'::jsonb,
+    'email', now(), now()
+  ),
+  (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000006',
+    'client3@fitcoach.dev',
+    '{"sub":"00000000-0000-0000-0000-000000000006","email":"client3@fitcoach.dev"}'::jsonb,
+    'email', now(), now()
+  ),
+  (
+    gen_random_uuid(),
+    '00000000-0000-0000-0000-000000000007',
+    'client_unlinked@fitcoach.dev',
+    '{"sub":"00000000-0000-0000-0000-000000000007","email":"client_unlinked@fitcoach.dev"}'::jsonb,
+    'email', now(), now()
+  )
+on conflict (provider_id, provider) do nothing;
+
+-- ============================================================
 -- TRAINER-CLIENT LINKS
 -- ============================================================
 insert into public.trainer_clients (trainer_id, client_id, active)
