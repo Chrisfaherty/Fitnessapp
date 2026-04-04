@@ -11,77 +11,80 @@
 -- The UUIDs below are stable for reproducible seeds.
 
 -- ============================================================
--- AUTH USERS (using supabase's internal helper)
+-- AUTH USERS
+-- instance_id, aud, role are required by GoTrue v2 for
+-- signInWithPassword to work. created_at/updated_at are
+-- set explicitly to avoid NOT NULL violations on some versions.
 -- ============================================================
--- Admin
-insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
-values (
-  '00000000-0000-0000-0000-000000000001',
-  'admin@fitcoach.dev',
-  crypt('FitCoach123!', gen_salt('bf')),
-  now(),
-  '{"full_name":"Admin User","role":"admin"}'::jsonb
-) on conflict (id) do nothing;
-
--- Trainer 1
-insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
-values (
-  '00000000-0000-0000-0000-000000000002',
-  'trainer1@fitcoach.dev',
-  crypt('FitCoach123!', gen_salt('bf')),
-  now(),
-  '{"full_name":"Alex Trainer","role":"trainer"}'::jsonb
-) on conflict (id) do nothing;
-
--- Trainer 2
-insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
-values (
-  '00000000-0000-0000-0000-000000000003',
-  'trainer2@fitcoach.dev',
-  crypt('FitCoach123!', gen_salt('bf')),
-  now(),
-  '{"full_name":"Sam Trainer","role":"trainer"}'::jsonb
-) on conflict (id) do nothing;
-
--- Client 1 (linked to trainer1)
-insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
-values (
-  '00000000-0000-0000-0000-000000000004',
-  'client1@fitcoach.dev',
-  crypt('FitCoach123!', gen_salt('bf')),
-  now(),
-  '{"full_name":"Jordan Client","role":"client"}'::jsonb
-) on conflict (id) do nothing;
-
--- Client 2 (linked to trainer1)
-insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
-values (
-  '00000000-0000-0000-0000-000000000005',
-  'client2@fitcoach.dev',
-  crypt('FitCoach123!', gen_salt('bf')),
-  now(),
-  '{"full_name":"Morgan Client","role":"client"}'::jsonb
-) on conflict (id) do nothing;
-
--- Client 3 (linked to trainer2)
-insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
-values (
-  '00000000-0000-0000-0000-000000000006',
-  'client3@fitcoach.dev',
-  crypt('FitCoach123!', gen_salt('bf')),
-  now(),
-  '{"full_name":"Casey Client","role":"client"}'::jsonb
-) on conflict (id) do nothing;
-
--- Client 4 (unlinked — for isolation tests)
-insert into auth.users (id, email, encrypted_password, email_confirmed_at, raw_user_meta_data)
-values (
-  '00000000-0000-0000-0000-000000000007',
-  'client_unlinked@fitcoach.dev',
-  crypt('FitCoach123!', gen_salt('bf')),
-  now(),
-  '{"full_name":"Riley Isolated","role":"client"}'::jsonb
-) on conflict (id) do nothing;
+insert into auth.users (
+  instance_id, id, aud, role,
+  email, encrypted_password, email_confirmed_at,
+  created_at, updated_at, raw_user_meta_data
+) values
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000001',
+    'authenticated', 'authenticated',
+    'admin@fitcoach.dev',
+    crypt('FitCoach123!', gen_salt('bf')),
+    now(), now(), now(),
+    '{"full_name":"Admin User","role":"admin"}'::jsonb
+  ),
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000002',
+    'authenticated', 'authenticated',
+    'trainer1@fitcoach.dev',
+    crypt('FitCoach123!', gen_salt('bf')),
+    now(), now(), now(),
+    '{"full_name":"Alex Trainer","role":"trainer"}'::jsonb
+  ),
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000003',
+    'authenticated', 'authenticated',
+    'trainer2@fitcoach.dev',
+    crypt('FitCoach123!', gen_salt('bf')),
+    now(), now(), now(),
+    '{"full_name":"Sam Trainer","role":"trainer"}'::jsonb
+  ),
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000004',
+    'authenticated', 'authenticated',
+    'client1@fitcoach.dev',
+    crypt('FitCoach123!', gen_salt('bf')),
+    now(), now(), now(),
+    '{"full_name":"Jordan Client","role":"client"}'::jsonb
+  ),
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000005',
+    'authenticated', 'authenticated',
+    'client2@fitcoach.dev',
+    crypt('FitCoach123!', gen_salt('bf')),
+    now(), now(), now(),
+    '{"full_name":"Morgan Client","role":"client"}'::jsonb
+  ),
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000006',
+    'authenticated', 'authenticated',
+    'client3@fitcoach.dev',
+    crypt('FitCoach123!', gen_salt('bf')),
+    now(), now(), now(),
+    '{"full_name":"Casey Client","role":"client"}'::jsonb
+  ),
+  (
+    '00000000-0000-0000-0000-000000000000',
+    '00000000-0000-0000-0000-000000000007',
+    'authenticated', 'authenticated',
+    'client_unlinked@fitcoach.dev',
+    crypt('FitCoach123!', gen_salt('bf')),
+    now(), now(), now(),
+    '{"full_name":"Riley Isolated","role":"client"}'::jsonb
+  )
+on conflict (id) do nothing;
 
 -- ============================================================
 -- TRAINER-CLIENT LINKS

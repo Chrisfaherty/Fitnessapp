@@ -120,12 +120,20 @@ jobs:
         run: |
           echo "Supabase URL: $NEXT_PUBLIC_SUPABASE_URL"
           echo "ANON_KEY length: ${#NEXT_PUBLIC_SUPABASE_ANON_KEY}"
-          RESPONSE=$(curl -sf -X POST \
+          RESPONSE=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST \
             "${NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password" \
             -H "apikey: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}" \
             -H "Content-Type: application/json" \
             -d '{"email":"trainer1@fitcoach.dev","password":"FitCoach123!"}')
-          echo "$RESPONSE" | python3 -c \
+          HTTP_STATUS=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+          BODY=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:")
+          echo "HTTP status: $HTTP_STATUS"
+          echo "Response body: $BODY"
+          if [ "$HTTP_STATUS" != "200" ]; then
+            echo "ERROR: Auth endpoint returned $HTTP_STATUS"
+            exit 1
+          fi
+          echo "$BODY" | python3 -c \
             "import sys,json; d=json.load(sys.stdin); print('Auth OK, user:', d.get('user',{}).get('email','?'))"
 
       - name: Run E2E tests
