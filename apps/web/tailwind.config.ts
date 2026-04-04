@@ -10,6 +10,8 @@ const config: Config = {
         "surface-elevated":"var(--surface-elevated)",
         "surface-overlay": "var(--surface-overlay)",
 
+        "surface-alt":     "var(--surface-elevated)",
+
         border:            "var(--border)",
         "border-strong":   "var(--border-strong)",
         "border-hover":    "var(--border-hover)",

@@ -161,3 +161,67 @@ body {
   outline: 2px solid rgba(163, 255, 18, 0.55);
   outline-offset: 2px;
 }
+
+/* ── Component layer ── */
+@layer components {
+  /* Card — base surface container */
+  .card {
+    @apply bg-surface border border-border rounded-lg p-6;
+    box-shadow: var(--shadow-inset);
+  }
+
+  /* Empty state — centered icon + copy + optional action */
+  .empty-state {
+    @apply bg-surface border border-border rounded-lg flex flex-col items-center justify-center py-16 text-center gap-3 px-6;
+    box-shadow: var(--shadow-inset);
+  }
+
+  /* Stat card icon containers */
+  .stat-card-icon {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center bg-surface-elevated;
+  }
+  .stat-card-icon-accent {
+    @apply w-10 h-10 rounded-xl flex items-center justify-center;
+    background-color: rgba(163, 255, 18, 0.14);
+  }
+
+  /* Badge variants */
+  .badge-accent {
+    @apply inline-flex items-center px-2 py-0.5 bg-accent/15 text-accent border border-accent/25 text-[11px] font-semibold;
+    border-radius: 999px;
+  }
+  .badge-warning {
+    @apply inline-flex items-center px-2 py-0.5 bg-warning-muted text-warning border border-warning/24 text-[11px] font-semibold;
+    border-radius: 999px;
+  }
+  .badge-danger {
+    @apply inline-flex items-center px-2 py-0.5 bg-danger-muted text-danger border border-danger/24 text-[11px] font-semibold;
+    border-radius: 999px;
+  }
+  .badge-success {
+    @apply inline-flex items-center px-2 py-0.5 bg-success-muted text-success border border-success/24 text-[11px] font-semibold;
+    border-radius: 999px;
+  }
+
+  /* Section header row */
+  .section-header {
+    @apply flex items-center justify-between mb-4;
+  }
+  .section-title {
+    font-family: var(--font-display), sans-serif;
+    @apply text-[16px] font-semibold leading-[1.35] tracking-[-0.01em] text-foreground;
+  }
+
+  /* Data table */
+  .data-table { @apply w-full text-sm; }
+  .data-table thead th {
+    @apply px-4 py-3 text-left border-b border-border text-[11px] font-bold uppercase tracking-[0.08em] text-foreground-secondary;
+    background-color: rgba(24, 27, 34, 0.5);
+  }
+  .data-table tbody td {
+    @apply px-4 py-3 border-b border-border text-foreground;
+  }
+  .data-table tbody tr:last-child td { @apply border-0; }
+  .data-table tbody tr { @apply transition-colors duration-[120ms]; }
+  .data-table tbody tr:hover td { background-color: rgba(24, 27, 34, 0.4); }
+}
