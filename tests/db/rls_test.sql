@@ -242,10 +242,12 @@ select ok(
   'TRAINER can read exercises'
 );
 
--- 29. Client cannot insert exercise
+-- 29. Client cannot insert exercise (RLS blocks it — SQLSTATE 42501)
 select throws_ok(
   $$insert into public.exercises (id, name, level, category, primary_muscles, secondary_muscles, instructions, image_paths, source)
     values ('test-insert', 'Test', 'beginner', 'strength', '{}', '{}', '{}', '{}', 'test')$$,
+  '42501',
+  NULL,
   'CLIENT cannot insert exercises'
 );
 
