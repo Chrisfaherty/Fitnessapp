@@ -43,16 +43,16 @@ enable_signup = true
 double_confirm_changes = true
 enable_confirmations = false
 
-[functions.weeklySummary]
+[functions.weeklysummary]
 verify_jwt = false
 
-[functions.signedMediaUrl]
+[functions.signedmediaurl]
 verify_jwt = true
 
-[functions.adminUsers]
+[functions.adminusers]
 verify_jwt = true
 
-[functions.sendPushNotification]
+[functions.sendpushnotification]
 verify_jwt = false
 
 [edge_runtime]

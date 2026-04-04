@@ -12,8 +12,8 @@ export default async function AdminUsersPage() {
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
   if (profile?.role !== 'admin') redirect('/auth/login')
 
-  // Fetch users via adminUsers edge function
-  const { data: fnData, error } = await supabase.functions.invoke('adminUsers')
+  // Fetch users via adminusers edge function
+  const { data: fnData, error } = await supabase.functions.invoke('adminusers')
   const users: any[] = error ? [] : (fnData?.data ?? [])
 
   // Fetch all trainers for linking modal
