@@ -38,7 +38,7 @@ jobs:
         run: |
           supabase db test \
             --db-url "postgresql://postgres:postgres@localhost:54322/postgres" \
-            --file tests/db/crud_test.sql
+            tests/db/crud_test.sql
 
       - name: Run DB RLS tests
         run: |
@@ -46,7 +46,7 @@ jobs:
             -c "CREATE EXTENSION IF NOT EXISTS pgtap;"
           supabase db test \
             --db-url "postgresql://postgres:postgres@localhost:54322/postgres" \
-            --file tests/db/rls_test.sql
+            tests/db/rls_test.sql
 
       - name: Stop Supabase
         if: always()
