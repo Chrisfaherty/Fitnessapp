@@ -11,13 +11,14 @@ select plan(41);  -- 41 RLS assertions total
 -- ============================================================
 -- Test fixtures (IDs match seed.sql)
 -- ============================================================
+-- IDs match seed.sql: admin, trainer1, trainer2, client1-3 (linked), client4 (unlinked)
 \set admin_id    '00000000-0000-0000-0000-000000000001'
 \set trainer1_id '00000000-0000-0000-0000-000000000002'
 \set trainer2_id '00000000-0000-0000-0000-000000000003'
-\set client1_id  '00000000-0000-0000-0000-000000000004'  -- linked to trainer1
-\set client2_id  '00000000-0000-0000-0000-000000000005'  -- linked to trainer1
-\set client3_id  '00000000-0000-0000-0000-000000000006'  -- linked to trainer2
-\set client4_id  '00000000-0000-0000-0000-000000000007'  -- unlinked
+\set client1_id  '00000000-0000-0000-0000-000000000004'
+\set client2_id  '00000000-0000-0000-0000-000000000005'
+\set client3_id  '00000000-0000-0000-0000-000000000006'
+\set client4_id  '00000000-0000-0000-0000-000000000007'
 
 -- Helper schema + set_user function
 create schema if not exists tests;
