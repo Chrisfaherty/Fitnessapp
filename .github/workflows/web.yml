@@ -90,7 +90,22 @@ jobs:
 
       - name: Set Supabase env vars for build
         run: |
-          ANON_KEY=$(supabase status --output env | grep -i "^ANON_KEY" | cut -d= -f2-)
+          # Try --output env first; fall back to human-readable grep
+          STATUS_ENV=$(supabase status --output env 2>/dev/null || true)
+          echo "=== supabase status --output env ==="
+          echo "$STATUS_ENV"
+          echo "====================================="
+          ANON_KEY=$(echo "$STATUS_ENV" | grep -i "^ANON_KEY" | cut -d= -f2-)
+          # Fallback: human-readable format ("anon key: <value>")
+          if [ -z "$ANON_KEY" ]; then
+            ANON_KEY=$(supabase status 2>&1 | grep -i "anon key" | awk '{print $NF}')
+            echo "Fallback ANON_KEY length: ${#ANON_KEY}"
+          fi
+          if [ -z "$ANON_KEY" ]; then
+            echo "ERROR: could not extract ANON_KEY — aborting"
+            exit 1
+          fi
+          echo "ANON_KEY length: ${#ANON_KEY}"
           echo "NEXT_PUBLIC_SUPABASE_URL=http://localhost:54321" >> $GITHUB_ENV
           echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${ANON_KEY}" >> $GITHUB_ENV
 
@@ -100,6 +115,18 @@ jobs:
       - name: Build web app
         # NEXT_PUBLIC_* vars from $GITHUB_ENV are automatically available here
         run: pnpm --filter web build
+
+      - name: Verify Supabase auth endpoint
+        run: |
+          echo "Supabase URL: $NEXT_PUBLIC_SUPABASE_URL"
+          echo "ANON_KEY length: ${#NEXT_PUBLIC_SUPABASE_ANON_KEY}"
+          RESPONSE=$(curl -sf -X POST \
+            "${NEXT_PUBLIC_SUPABASE_URL}/auth/v1/token?grant_type=password" \
+            -H "apikey: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"email":"trainer1@fitcoach.dev","password":"FitCoach123!"}')
+          echo "$RESPONSE" | python3 -c \
+            "import sys,json; d=json.load(sys.stdin); print('Auth OK, user:', d.get('user',{}).get('email','?'))"
 
       - name: Run E2E tests
         # playwright.config.ts webServer starts `next start` automatically in CI
