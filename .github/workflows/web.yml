@@ -83,10 +83,16 @@ jobs:
           done
           exit 1
 
-      - name: Apply migrations and seed data
-        # supabase start boots empty containers — db reset applies all
-        # migrations + seed.sql so auth.users exists for E2E login
-        run: supabase db reset
+      - name: Seed database via psql
+        # supabase start already applies migrations. Run seed.sql directly
+        # via psql so GoTrue is NOT restarted (supabase db reset wipes the
+        # auth schema while GoTrue is still running, causing HTTP 500s on
+        # every subsequent signInWithPassword call).
+        env:
+          PGPASSWORD: postgres
+          PGSSLMODE: disable
+        run: |
+          psql -h localhost -p 54322 -U postgres -d postgres -f supabase/seed.sql
 
       - name: Set Supabase env vars for build
         run: |
