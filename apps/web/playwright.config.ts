@@ -1,8 +1,4 @@
 import { defineConfig, devices } from "@playwright/test";
-import path from "path";
-
-const TRAINER_AUTH = path.join(__dirname, "tests/e2e/.auth/trainer.json");
-const CLIENT_AUTH  = path.join(__dirname, "tests/e2e/.auth/client.json");
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -18,23 +14,16 @@ export default defineConfig({
   },
 
   projects: [
-    // ── Auth setup (runs once, saves cookies) ──────────────────
+    // All spec files run with a fresh (unauthenticated) browser context.
+    // Each test or beforeEach is responsible for calling loginAs() to
+    // authenticate — this avoids the storageState conflict where the
+    // login page redirects already-authenticated users before the form
+    // can be filled.
     {
-      name: "trainer-setup",
-      testMatch: /setup\/trainer\.setup\.ts/,
-    },
-    {
-      name: "client-setup",
-      testMatch: /setup\/client\.setup\.ts/,
-    },
-    // ── Main test suites ───────────────────────────────────────
-    {
-      name: "trainer-tests",
+      name: "chromium",
       testMatch: /fitcoach\.spec\.ts|trainer-workflow\.spec\.ts/,
-      dependencies: ["trainer-setup"],
       use: {
         ...devices["Desktop Chrome"],
-        storageState: TRAINER_AUTH,
       },
     },
   ],
