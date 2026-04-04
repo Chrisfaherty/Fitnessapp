@@ -18,6 +18,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    env:
+      # Local Supabase Postgres — sslmode=disable required (no TLS on local stack)
+      DB_URL: postgresql://postgres:postgres@localhost:54322/postgres?sslmode=disable
+
     steps:
       - uses: actions/checkout@v4
 
@@ -28,25 +32,18 @@ jobs:
 
       - name: Start Supabase local stack
         run: supabase start
-        working-directory: .
 
       - name: Apply migrations
-        # No --db-url: targets the local stack started above, no confirmation prompt
+        # No --db-url: targets the local stack, no confirmation prompt
         run: supabase db reset
 
       - name: Run DB CRUD tests
-        run: |
-          supabase db test \
-            --db-url "postgresql://postgres:postgres@localhost:54322/postgres" \
-            tests/db/crud_test.sql
+        run: supabase db test --db-url "$DB_URL" tests/db/crud_test.sql
 
       - name: Run DB RLS tests
         run: |
-          psql "postgresql://postgres:postgres@localhost:54322/postgres" \
-            -c "CREATE EXTENSION IF NOT EXISTS pgtap;"
-          supabase db test \
-            --db-url "postgresql://postgres:postgres@localhost:54322/postgres" \
-            tests/db/rls_test.sql
+          psql "$DB_URL" -c "CREATE EXTENSION IF NOT EXISTS pgtap;"
+          supabase db test --db-url "$DB_URL" tests/db/rls_test.sql
 
       - name: Stop Supabase
         if: always()
