@@ -45,38 +45,39 @@ test.describe("Exercise library + template builder", () => {
 
   test("trainer can open new template form", async ({ page }) => {
     await page.goto("/trainer/templates/new");
-    await expect(page.getByText(/New Template/i)).toBeVisible();
-    await expect(page.getByPlaceholder(/Full Body Strength/i)).toBeVisible();
+    // Breadcrumb shows "New Template"; left panel shows "Exercise Library"
+    await expect(page.getByText(/New Template/i).first()).toBeVisible({ timeout: 8_000 });
+    // Title input placeholder is "e.g. Day 1 — Heavy Pull"
+    await expect(page.getByPlaceholder(/day 1|heavy pull/i)).toBeVisible({ timeout: 8_000 });
   });
 
   test("trainer can create a template with exercises", async ({ page }) => {
     await page.goto("/trainer/templates/new");
 
-    // Fill title
-    await page.getByPlaceholder(/Full Body Strength/i).fill("E2E Test Template");
+    // Fill title — placeholder is "e.g. Day 1 — Heavy Pull"
+    await page.getByPlaceholder(/day 1|heavy pull/i).fill("E2E Test Template");
 
-    // Open exercise picker
-    await page.getByRole("button", { name: /add exercise/i }).click();
-    await expect(page.getByText(/Exercise Library/i)).toBeVisible();
+    // Exercise Library panel is always visible on the left
+    await expect(page.getByText(/Exercise Library/i)).toBeVisible({ timeout: 8_000 });
 
-    // Search for an exercise
+    // Search for a squat exercise
     await page.getByPlaceholder(/Search exercises/i).fill("squat");
     await page.waitForTimeout(500);  // debounce
 
-    // Pick first result
-    const firstExercise = page.locator("button:has-text('+')").first();
+    // Click the first matching exercise button in the aside list
+    const firstExercise = page.locator("aside button").filter({ hasText: /squat/i }).first();
+    await expect(firstExercise).toBeVisible({ timeout: 8_000 });
     await firstExercise.click();
 
-    // Verify exercise added
-    await expect(page.getByText("1 exercises")).not.toBeVisible();
-    await expect(page.getByText("Exercises (1)")).toBeVisible();
+    // Verify exercise added — counter shows "1 exercise"
+    await expect(page.getByText(/1 exercise/i).first()).toBeVisible({ timeout: 8_000 });
 
     // Save
     await page.getByRole("button", { name: /save template/i }).click();
 
     // Should redirect to templates list
-    await expect(page).toHaveURL(/\/trainer\/templates$/);
-    await expect(page.getByText("E2E Test Template")).toBeVisible();
+    await expect(page).toHaveURL(/\/trainer\/templates$/, { timeout: 12_000 });
+    await expect(page.getByText("E2E Test Template")).toBeVisible({ timeout: 8_000 });
   });
 });
 
@@ -112,6 +113,7 @@ test.describe("Messaging", () => {
 
   test("trainer can navigate to messaging", async ({ page }) => {
     await page.goto("/trainer/messaging");
-    await expect(page.getByText(/Messages/i).first()).toBeVisible();
+    // The messaging page heading is "Messages" inside the sidebar panel
+    await expect(page.getByText(/Messages/i).first()).toBeVisible({ timeout: 8_000 });
   });
 });

@@ -10,7 +10,7 @@ export default async function ExercisesPage() {
   // Fetch initial page of exercises server-side
   const { data: exercises } = await supabase
     .from('exercises')
-    .select('id, name, category, level, primary_muscles, secondary_muscles, equipment, image_paths')
+    .select('id, name, category, level, primary_muscles, secondary_muscles, equipment, image_paths, instructions')
     .order('name', { ascending: true })
     .limit(50)
 

@@ -213,45 +213,30 @@ test.describe("Template builder", () => {
 
   test("can add exercise to template", async ({ page }) => {
     await page.goto("/trainer/templates/new");
-    await expect(page.getByText(/new template/i).first()).toBeVisible({
+    // Exercise Library panel is always visible on the left
+    await expect(page.getByText(/exercise library/i).first()).toBeVisible({
       timeout: 10_000,
     });
-    // Open the exercise picker
-    await page.getByRole("button", { name: /add exercise/i }).click();
-    await expect(page.getByText(/exercise library/i).first()).toBeVisible({
-      timeout: 8_000,
-    });
-    // Pick the first available exercise
-    const addBtn = page.locator("button:has-text('+')").first();
-    await expect(addBtn).toBeVisible({ timeout: 8_000 });
-    await addBtn.click();
-    // The exercise should now appear in the template list
-    await expect(page.getByText(/exercises \(1\)/i)).toBeVisible({
+    // Wait for exercises to load in the aside panel, then click the first one
+    const firstExerciseBtn = page.locator("aside button").first();
+    await expect(firstExerciseBtn).toBeVisible({ timeout: 10_000 });
+    await firstExerciseBtn.click();
+    // Exercise count appears in the builder canvas
+    await expect(page.getByText(/1 exercise/i).first()).toBeVisible({
       timeout: 8_000,
     });
   });
 
   test("can save template", async ({ page }) => {
     await page.goto("/trainer/templates/new");
-    await expect(
-      page.getByPlaceholder(/full body strength/i)
-    ).toBeVisible({ timeout: 10_000 });
-    // Fill the template title
-    await page
-      .getByPlaceholder(/full body strength/i)
-      .fill("E2E Save Template");
-    // Add one exercise
-    await page.getByRole("button", { name: /add exercise/i }).click();
-    const addBtn = page.locator("button:has-text('+')").first();
-    await expect(addBtn).toBeVisible({ timeout: 8_000 });
-    await addBtn.click();
-    // Close picker if it is a modal
-    const closeBtn = page
-      .getByRole("button", { name: /close|done|back/i })
-      .first();
-    if (await closeBtn.isVisible({ timeout: 1_500 }).catch(() => false)) {
-      await closeBtn.click();
-    }
+    // Title input has placeholder "e.g. Day 1 — Heavy Pull"
+    const titleInput = page.getByPlaceholder(/day 1|heavy pull/i);
+    await expect(titleInput).toBeVisible({ timeout: 10_000 });
+    await titleInput.fill("E2E Save Template");
+    // Exercise Library is always on the left — click the first exercise
+    const firstExerciseBtn = page.locator("aside button").first();
+    await expect(firstExerciseBtn).toBeVisible({ timeout: 8_000 });
+    await firstExerciseBtn.click();
     // Save
     await page.getByRole("button", { name: /save template/i }).click();
     // Should redirect to the templates list
@@ -281,36 +266,35 @@ test.describe("Workout assignment", () => {
 
   test("trainer can assign template to client", async ({ page }) => {
     await page.goto("/trainer/assign");
-    // Select client
-    const clientSelect = page
-      .getByLabel(/client/i)
-      .or(page.getByRole("combobox", { name: /client/i }))
-      .first();
-    await expect(clientSelect).toBeVisible({ timeout: 10_000 });
-    await clientSelect.selectOption({ index: 1 });
 
-    // Select template
-    const templateSelect = page
-      .getByLabel(/template/i)
-      .or(page.getByRole("combobox", { name: /template/i }))
-      .first();
-    await expect(templateSelect).toBeVisible({ timeout: 5_000 });
-    await templateSelect.selectOption({ index: 1 });
+    // Step 1: Select a client (wizard uses button grid, not a <select>)
+    const firstClientBtn = page.locator("button").filter({ hasText: /jordan|morgan|client/i }).first();
+    await expect(firstClientBtn).toBeVisible({ timeout: 10_000 });
+    await firstClientBtn.click();
 
-    // Set a scheduled date (tomorrow)
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const dateStr = tomorrow.toISOString().split("T")[0]; // YYYY-MM-DD
-    const dateInput = page.getByLabel(/date/i).first();
-    await expect(dateInput).toBeVisible({ timeout: 5_000 });
-    await dateInput.fill(dateStr);
+    // Advance to step 2
+    await page.getByRole("button", { name: /continue/i }).click();
 
-    // Submit the assignment form
-    await page.getByRole("button", { name: /assign|schedule|submit/i }).click();
+    // Step 2: Select a template (wizard uses button list)
+    const firstTemplateBtn = page.locator("button").filter({ hasText: /full body|strength|e2e/i }).first();
+    await expect(firstTemplateBtn).toBeVisible({ timeout: 8_000 });
+    await firstTemplateBtn.click();
 
-    // Expect a success toast or confirmation message
+    // Advance to step 3
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Step 3: Scheduled date (already defaulted to tomorrow)
+    await expect(page.getByLabel(/scheduled date/i)).toBeVisible({ timeout: 5_000 });
+
+    // Advance to step 4 (confirm)
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Step 4: Confirm — click Assign Workout
+    await page.getByRole("button", { name: /assign workout/i }).click();
+
+    // Expect a success message
     await expect(
-      page.getByText(/assigned|success|saved/i).first()
+      page.getByText(/workout assigned|assigned|success/i).first()
     ).toBeVisible({ timeout: 10_000 });
   });
 
@@ -413,42 +397,27 @@ test.describe("Messaging", () => {
 
   test("trainer can send message", async ({ page }) => {
     await page.goto("/trainer/messaging");
-    // Select an existing conversation (seed has trainer1 <-> client1)
-    const convoItem = page
-      .locator(
-        "[data-testid='conversation-item'], [class*='conversation-item'], [class*='ConversationItem']"
-      )
-      .first()
-      .or(page.getByText(/jordan|client1/i).first());
+    // Select an existing conversation — seed has trainer1 <-> client1 (Jordan Client)
+    // Conversation items are <button> elements showing the client name
+    const convoItem = page.getByText(/jordan client/i).first();
     await expect(convoItem).toBeVisible({ timeout: 10_000 });
     await convoItem.click();
-    // Type a message
-    const messageInput = page
-      .getByPlaceholder(/type a message|message/i)
-      .or(page.getByRole("textbox", { name: /message/i }))
-      .first();
+    // Message input placeholder is "Message..."
+    const messageInput = page.getByPlaceholder(/message/i).first();
     await expect(messageInput).toBeVisible({ timeout: 8_000 });
     const uniqueMsg = `E2E test message ${Date.now()}`;
     await messageInput.fill(uniqueMsg);
-    // Send
-    await page
-      .getByRole("button", { name: /send/i })
-      .or(page.locator("button[type='submit']"))
-      .first()
-      .click();
+    // Send button
+    await page.getByRole("button", { name: /send/i }).first().click();
     // The sent message should appear in the thread
     await expect(page.getByText(uniqueMsg)).toBeVisible({ timeout: 10_000 });
   });
 
   test("message appears in thread", async ({ page }) => {
     await page.goto("/trainer/messaging");
-    // Open the seeded conversation
-    const convoItem = page
-      .locator(
-        "[data-testid='conversation-item'], [class*='conversation-item'], [class*='ConversationItem']"
-      )
-      .first()
-      .or(page.getByText(/jordan|client1/i).first());
+    // Open the seeded conversation — conversation list auto-selects the first one
+    // so the messages should already be loaded
+    const convoItem = page.getByText(/jordan client/i).first();
     await expect(convoItem).toBeVisible({ timeout: 10_000 });
     await convoItem.click();
     // The seed contains at least two messages in this conversation

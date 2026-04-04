@@ -3,6 +3,7 @@
 import { useState, useCallback } from 'react'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import { useDebounce } from '@/lib/utils/use-debounce'
+import { X } from 'lucide-react'
 
 interface Exercise {
   id: string
@@ -13,6 +14,7 @@ interface Exercise {
   secondary_muscles: string[]
   equipment: string | null
   image_paths: string[]
+  instructions?: string[]
 }
 
 interface Props {
@@ -30,6 +32,7 @@ export default function ExerciseLibrary({ initialExercises, allMuscles }: Props)
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [detailExercise, setDetailExercise] = useState<Exercise | null>(null)
   const supabase = createBrowserSupabaseClient()
 
   const debouncedSearch = useDebounce(search, 300)
@@ -38,7 +41,7 @@ export default function ExerciseLibrary({ initialExercises, allMuscles }: Props)
     setLoading(true)
     let query = supabase
       .from('exercises')
-      .select('id, name, category, level, primary_muscles, secondary_muscles, equipment, image_paths')
+      .select('id, name, category, level, primary_muscles, secondary_muscles, equipment, image_paths, instructions')
       .order('name', { ascending: true })
       .limit(100)
 
@@ -115,7 +118,12 @@ export default function ExerciseLibrary({ initialExercises, allMuscles }: Props)
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {exercises.map((ex) => (
-            <div key={ex.id} className="card-compact space-y-2">
+            <div
+              key={ex.id}
+              data-testid="exercise-card"
+              className="card-compact space-y-2 cursor-pointer hover:border-accent/30 transition-colors"
+              onClick={() => setDetailExercise(ex)}
+            >
               {/* Thumbnail */}
               {ex.image_paths?.[0] ? (
                 <img
@@ -160,6 +168,71 @@ export default function ExerciseLibrary({ initialExercises, allMuscles }: Props)
               No exercises found. Try different filters.
             </div>
           )}
+        </div>
+      )}
+
+      {/* Exercise detail modal */}
+      {detailExercise && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={detailExercise.name}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+          onClick={(e) => { if (e.target === e.currentTarget) setDetailExercise(null) }}
+        >
+          <div className="bg-surface border border-border rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto">
+            <div className="flex items-start justify-between p-5 border-b border-border">
+              <div>
+                <h2 className="text-heading font-semibold text-foreground">{detailExercise.name}</h2>
+                <p className="text-caption text-foreground/60 capitalize mt-0.5">
+                  {detailExercise.category} · {detailExercise.level}
+                  {detailExercise.equipment ? ` · ${detailExercise.equipment}` : ''}
+                </p>
+              </div>
+              <button
+                onClick={() => setDetailExercise(null)}
+                className="text-foreground/50 hover:text-foreground transition-colors p-1 -mr-1"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              {detailExercise.primary_muscles.length > 0 && (
+                <div>
+                  <p className="text-label text-foreground/60 mb-1.5">Primary Muscles</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {detailExercise.primary_muscles.map((m) => (
+                      <span key={m} className="badge bg-accent/10 text-accent capitalize">{m}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {detailExercise.secondary_muscles.length > 0 && (
+                <div>
+                  <p className="text-label text-foreground/60 mb-1.5">Secondary Muscles</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {detailExercise.secondary_muscles.map((m) => (
+                      <span key={m} className="badge bg-surface-elevated capitalize">{m}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {detailExercise.instructions && detailExercise.instructions.length > 0 && (
+                <div>
+                  <p className="text-label text-foreground/60 mb-2">Instructions</p>
+                  <ol className="space-y-2">
+                    {detailExercise.instructions.map((step, i) => (
+                      <li key={i} className="flex gap-3 text-sm text-foreground/80">
+                        <span className="text-accent font-semibold flex-shrink-0">{i + 1}.</span>
+                        <span>{step}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
