@@ -6,7 +6,7 @@
 
 begin;
 
-select plan(40);  -- 40 RLS assertions total
+select plan(41);  -- 41 RLS assertions total
 
 -- ============================================================
 -- Test fixtures (IDs match seed.sql)
