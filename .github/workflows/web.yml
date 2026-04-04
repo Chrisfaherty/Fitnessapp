@@ -170,12 +170,16 @@ jobs:
         if: failure()
         run: |
           echo "=== GoTrue container logs ==="
-          docker logs supabase_auth_fitnessapp 2>&1 | tail -50 || \
-            docker ps -a --filter "name=auth" --format "{{.Names}}" | xargs -I{} docker logs {} 2>&1 | tail -50 || \
+          docker logs supabase_auth_fitcoach 2>&1 | tail -80 || \
+            docker ps -a --filter "name=auth" --format "{{.Names}}" | head -5 && \
+            docker ps -a --filter "name=auth" --format "{{.Names}}" | xargs -I{} docker logs {} 2>&1 | tail -80 || \
             echo "Could not find GoTrue container"
-          echo "=== auth.users schema ==="
+          echo "=== auth.users sample row ==="
           PGPASSWORD=postgres PGSSLMODE=disable psql -h localhost -p 54322 -U postgres -d postgres \
-            -c "\d auth.users" 2>&1 | head -40 || echo "Could not query schema"
+            -c "SELECT id, email, aud, role, raw_app_meta_data, is_sso_user, is_anonymous FROM auth.users LIMIT 1;" || true
+          echo "=== auth.identities sample row ==="
+          PGPASSWORD=postgres PGSSLMODE=disable psql -h localhost -p 54322 -U postgres -d postgres \
+            -c "SELECT id, user_id, provider, provider_id FROM auth.identities LIMIT 1;" || true
 
       - name: Run E2E tests
         # playwright.config.ts webServer starts `next start` automatically in CI

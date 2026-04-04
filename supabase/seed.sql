@@ -19,7 +19,8 @@
 insert into auth.users (
   instance_id, id, aud, role,
   email, encrypted_password, email_confirmed_at,
-  created_at, updated_at, raw_user_meta_data
+  created_at, updated_at,
+  raw_app_meta_data, raw_user_meta_data
 ) values
   (
     '00000000-0000-0000-0000-000000000000',
@@ -28,6 +29,7 @@ insert into auth.users (
     'admin@fitcoach.dev',
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
     '{"full_name":"Admin User","role":"admin"}'::jsonb
   ),
   (
@@ -37,6 +39,7 @@ insert into auth.users (
     'trainer1@fitcoach.dev',
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
     '{"full_name":"Alex Trainer","role":"trainer"}'::jsonb
   ),
   (
@@ -46,6 +49,7 @@ insert into auth.users (
     'trainer2@fitcoach.dev',
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
     '{"full_name":"Sam Trainer","role":"trainer"}'::jsonb
   ),
   (
@@ -55,6 +59,7 @@ insert into auth.users (
     'client1@fitcoach.dev',
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
     '{"full_name":"Jordan Client","role":"client"}'::jsonb
   ),
   (
@@ -64,6 +69,7 @@ insert into auth.users (
     'client2@fitcoach.dev',
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
     '{"full_name":"Morgan Client","role":"client"}'::jsonb
   ),
   (
@@ -73,6 +79,7 @@ insert into auth.users (
     'client3@fitcoach.dev',
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
     '{"full_name":"Casey Client","role":"client"}'::jsonb
   ),
   (
@@ -82,9 +89,11 @@ insert into auth.users (
     'client_unlinked@fitcoach.dev',
     crypt('FitCoach123!', gen_salt('bf')),
     now(), now(), now(),
+    '{"provider":"email","providers":["email"]}'::jsonb,
     '{"full_name":"Riley Isolated","role":"client"}'::jsonb
   )
-on conflict (id) do nothing;
+on conflict (id) do update set
+  raw_app_meta_data = excluded.raw_app_meta_data;
 
 -- ============================================================
 -- AUTH IDENTITIES
