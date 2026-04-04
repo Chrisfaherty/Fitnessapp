@@ -38,8 +38,9 @@ export function LoginForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Email field */}
       <div>
-        <label className="text-label text-foreground-secondary block mb-2">Email</label>
+        <label htmlFor="login-email" className="text-label text-foreground-secondary block mb-2">Email</label>
         <input
+          id="login-email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -53,8 +54,9 @@ export function LoginForm() {
 
       {/* Password field */}
       <div>
-        <label className="text-label text-foreground-secondary block mb-2">Password</label>
+        <label htmlFor="login-password" className="text-label text-foreground-secondary block mb-2">Password</label>
         <input
+          id="login-password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
