@@ -19,7 +19,8 @@ select plan(41);  -- 41 RLS assertions total
 \set client3_id  '00000000-0000-0000-0000-000000000006'  -- linked to trainer2
 \set client4_id  '00000000-0000-0000-0000-000000000007'  -- unlinked
 
--- Helper: set current user
+-- Helper schema + set_user function
+create schema if not exists tests;
 create or replace function tests.set_user(uid uuid) returns void as $$
   select set_config('request.jwt.claims', json_build_object('sub', uid)::text, true);
   select set_config('role', 'authenticated', true);
