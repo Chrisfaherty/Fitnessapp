@@ -26,6 +26,9 @@ create or replace function tests.set_user(uid uuid) returns void as $$
   select set_config('request.jwt.claims', json_build_object('sub', uid)::text, true);
   select set_config('role', 'authenticated', true);
 $$ language sql;
+-- Allow the authenticated role to call set_user (it loses access after first call otherwise)
+grant usage  on schema   tests                to authenticated;
+grant execute on function tests.set_user(uuid) to authenticated;
 
 -- ============================================================
 -- 1. PROFILES: client can read own profile
