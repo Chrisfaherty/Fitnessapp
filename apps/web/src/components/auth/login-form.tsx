@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClientSupabaseClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { AlertCircle, Loader2 } from "lucide-react";
 
 export function LoginForm() {
   const router = useRouter();
@@ -36,58 +35,63 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="space-y-1.5">
-        <label htmlFor="email" className="text-label">Email</label>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Email field */}
+      <div>
+        <label className="text-label text-foreground-secondary block mb-2">Email</label>
         <input
-          id="email"
           type="email"
-          className={error ? "input-error" : "input"}
-          placeholder="you@example.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@fitcoach.dev"
+          className="w-full h-11 bg-surface border border-border text-foreground text-[14px] font-sans rounded-md px-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
           required
           autoComplete="email"
+          disabled={loading}
         />
       </div>
 
-      <div className="space-y-1.5">
-        <label htmlFor="password" className="text-label">Password</label>
+      {/* Password field */}
+      <div>
+        <label className="text-label text-foreground-secondary block mb-2">Password</label>
         <input
-          id="password"
           type="password"
-          className={error ? "input-error" : "input"}
-          placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          placeholder="••••••••"
+          className="w-full h-11 bg-surface border border-border text-foreground text-[14px] font-sans rounded-md px-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
           required
           autoComplete="current-password"
+          disabled={loading}
         />
       </div>
 
+      {/* Error message */}
       {error && (
-        <p className="text-sm text-danger flex items-center gap-1.5">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
-          {error}
-        </p>
+        <p className="text-caption text-danger bg-danger-muted border border-danger/24 rounded-md px-3 py-2.5">{error}</p>
       )}
 
+      {/* Submit */}
       <button
         type="submit"
-        className="btn-primary w-full"
         disabled={loading}
+        className="w-full h-10 bg-accent text-accent-foreground text-[14px] font-bold font-sans rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms] mt-2 flex items-center justify-center gap-2"
       >
         {loading ? (
-          <>
-            <Loader2 className="animate-spin w-4 h-4" />
-            Signing in…
-          </>
-        ) : "Sign In"}
+          <><svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="32" strokeDashoffset="12"/></svg> Signing in…</>
+        ) : "Sign in"}
       </button>
 
-      <p className="text-center text-sm text-foreground-secondary">
-        Demo credentials: trainer1@fitcoach.dev / FitCoach123!
-      </p>
+      {/* Demo credentials */}
+      <div className="mt-4 bg-surface border border-border rounded-md p-[14px]">
+        <p className="text-label text-foreground-tertiary mb-2">Demo Accounts</p>
+        <div className="space-y-1.5">
+          <p className="text-caption text-foreground-secondary"><span className="text-foreground-tertiary">Trainer:</span> trainer1@fitcoach.dev</p>
+          <p className="text-caption text-foreground-secondary"><span className="text-foreground-tertiary">Client:</span> client1@fitcoach.dev</p>
+          <p className="text-caption text-foreground-secondary"><span className="text-foreground-tertiary">Admin:</span> admin@fitcoach.dev</p>
+          <p className="text-caption text-foreground-tertiary mt-1">Password: FitCoach123!</p>
+        </div>
+      </div>
     </form>
   );
 }

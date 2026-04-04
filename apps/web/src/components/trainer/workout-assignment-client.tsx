@@ -1,21 +1,16 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence, type Transition } from "framer-motion";
 import { toast } from "sonner";
 import {
-  Search,
   Dumbbell,
-  Calendar,
   ChevronRight,
-  ChevronLeft,
   Check,
   Loader2,
   User,
   LayoutTemplate,
-  ClipboardCheck,
 } from "lucide-react";
 import { createClientSupabaseClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/database";
@@ -37,13 +32,7 @@ interface Props {
 
 type Step = "client" | "template" | "date" | "confirm";
 const STEPS: Step[] = ["client", "template", "date", "confirm"];
-
-const stepMeta: Record<Step, { label: string; icon: React.ElementType }> = {
-  client: { label: "Client", icon: User },
-  template: { label: "Template", icon: LayoutTemplate },
-  date: { label: "Date", icon: Calendar },
-  confirm: { label: "Confirm", icon: ClipboardCheck },
-};
+const TOTAL_STEPS = STEPS.length;
 
 function getTomorrow(): string {
   const d = new Date();
@@ -75,7 +64,6 @@ export function WorkoutAssignmentClient({
   exerciseCounts,
   preselectedClientId,
 }: Props) {
-  const router = useRouter();
   const supabase = createClientSupabaseClient();
 
   const [currentStep, setCurrentStep] = useState<Step>(
@@ -118,11 +106,12 @@ export function WorkoutAssignmentClient({
   }, [templates, templateSearch]);
 
   const stepIndex = STEPS.indexOf(currentStep);
+  const step = stepIndex + 1; // 1-based for display
 
-  function goTo(step: Step) {
-    const newIndex = STEPS.indexOf(step);
+  function goTo(s: Step) {
+    const newIndex = STEPS.indexOf(s);
     setDirection(newIndex > stepIndex ? 1 : -1);
-    setCurrentStep(step);
+    setCurrentStep(s);
   }
 
   function goNext() {
@@ -182,42 +171,48 @@ export function WorkoutAssignmentClient({
     setCurrentStep(preselectedClientId ? "template" : "client");
   }
 
+  const formattedDate = scheduledDate
+    ? new Date(scheduledDate + "T00:00:00").toLocaleDateString(undefined, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "";
+
   // ── Success screen ────────────────────────────────────────────────────────
   if (assignmentDone) {
     return (
-      <div className="max-w-lg mx-auto space-y-8">
+      <div className="max-w-wizard mx-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={spring}
-          className="card flex flex-col items-center text-center gap-6 py-14"
+          className="bg-surface border border-border rounded-lg p-10 flex flex-col items-center text-center gap-6 shadow-elevated"
         >
-          <div className="w-16 h-16 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full bg-accent-muted border border-accent/30 flex items-center justify-center">
             <Check className="w-8 h-8 text-accent" />
           </div>
           <div>
-            <h2 className="text-subheading mb-1">Workout Assigned!</h2>
-            <p className="text-caption">
+            <h2 className="text-h2 font-display text-foreground mb-2">Workout Assigned!</h2>
+            <p className="text-body text-foreground-secondary">
               {templateTitle} is scheduled for{" "}
               <span className="text-foreground font-medium">{clientName}</span>{" "}
               on{" "}
-              <span className="text-foreground font-medium">
-                {scheduledDate}
-              </span>
-              .
+              <span className="text-foreground font-medium">{formattedDate}</span>.
             </p>
           </div>
           <div className="flex gap-3 flex-wrap justify-center">
             <button
               onClick={handleAssignAnother}
-              className="btn-secondary"
+              className="h-10 px-5 bg-surface border border-border text-foreground text-[14px] font-medium rounded-md hover:bg-white/[0.04] hover:border-border-hover transition-colors duration-[120ms] flex items-center gap-2"
             >
               <Dumbbell className="w-4 h-4" />
               Assign Another
             </button>
             <Link
               href={`/trainer/clients/${selectedClientId}`}
-              className="btn-primary"
+              className="h-10 px-5 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] flex items-center gap-2"
             >
               View Client
               <ChevronRight className="w-4 h-4" />
@@ -229,71 +224,19 @@ export function WorkoutAssignmentClient({
   }
 
   return (
-    <div className="max-w-2xl mx-auto space-y-8">
-      {/* ── Page header ─────────────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={spring}
-      >
-        <p className="text-label mb-1.5">Trainer</p>
-        <h1 className="text-display">Assign Workout</h1>
-      </motion.div>
-
-      {/* ── Step indicator ──────────────────────────────────────────────── */}
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ ...spring, delay: 0.04 }}
-        className="flex items-center gap-0"
-      >
-        {STEPS.map((step, idx) => {
-          const meta = stepMeta[step];
-          const Icon = meta.icon;
-          const isActive = step === currentStep;
-          const isCompleted = STEPS.indexOf(step) < stepIndex;
-          return (
-            <div key={step} className="flex items-center">
-              <button
-                onClick={() => {
-                  // Only allow navigating to completed steps
-                  if (isCompleted) goTo(step);
-                }}
-                disabled={!isCompleted && !isActive}
-                className={[
-                  "flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-fast",
-                  isActive
-                    ? "bg-accent/15 text-accent"
-                    : isCompleted
-                    ? "text-foreground-secondary hover:text-foreground cursor-pointer"
-                    : "text-muted cursor-default",
-                ].join(" ")}
-              >
-                <div
-                  className={[
-                    "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
-                    isActive
-                      ? "bg-accent text-accent-foreground"
-                      : isCompleted
-                      ? "bg-white/10 text-foreground-secondary"
-                      : "bg-white/[0.05] text-muted",
-                  ].join(" ")}
-                >
-                  {isCompleted ? (
-                    <Check className="w-3 h-3" />
-                  ) : (
-                    <Icon className="w-3 h-3" />
-                  )}
-                </div>
-                <span className="hidden sm:block">{meta.label}</span>
-              </button>
-              {idx < STEPS.length - 1 && (
-                <div className="w-6 h-px bg-border mx-1" />
-              )}
-            </div>
-          );
-        })}
-      </motion.div>
+    <div className="max-w-wizard mx-auto">
+      {/* ── Progress bar ──────────────────────────────────────────────────── */}
+      <div className="mb-8">
+        <div className="h-1 bg-surface-elevated rounded-pill overflow-hidden">
+          <div
+            className="h-full bg-accent rounded-pill transition-all duration-[400ms] ease-out"
+            style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
+          />
+        </div>
+        <p className="text-caption text-foreground-tertiary mt-2">
+          Step {step} of {TOTAL_STEPS}
+        </p>
+      </div>
 
       {/* ── Step content ────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden">
@@ -307,126 +250,122 @@ export function WorkoutAssignmentClient({
             exit="exit"
             transition={spring}
           >
-            {/* ── Step 1: Select client ──────────────────────────────── */}
+
+            {/* ── Step 1: Select client ──────────────────────────────────── */}
             {currentStep === "client" && (
-              <div className="card space-y-5">
-                <div>
-                  <h2 className="text-subheading mb-1">Select Client</h2>
-                  <p className="text-caption">
-                    Choose which client to assign a workout to.
-                  </p>
+              <div>
+                {/* Step header */}
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h2 className="text-h2 font-display text-foreground mb-1">Select Client</h2>
+                    <p className="text-body text-foreground-secondary">
+                      Choose which client to assign a workout to.
+                    </p>
+                  </div>
                 </div>
 
                 {clientLinks.length === 0 ? (
-                  <div className="empty-state py-10">
-                    <User className="w-8 h-8 text-muted" />
-                    <p className="text-subheading text-sm">No linked clients</p>
-                    <p className="text-caption text-xs max-w-xs">
+                  <div className="bg-surface border border-border rounded-lg p-10 flex flex-col items-center gap-3 text-center">
+                    <User className="w-8 h-8 text-foreground-tertiary" />
+                    <p className="text-body font-medium text-foreground">No linked clients</p>
+                    <p className="text-body-sm text-foreground-secondary max-w-xs">
                       Link clients to your account before assigning workouts.
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {clientLinks.map((link) => {
-                      const name =
-                        link.profiles?.full_name ?? "Unknown Client";
-                      const initial = name[0]?.toUpperCase() ?? "?";
+                      const name = link.profiles?.full_name ?? "Unknown Client";
+                      const initials = name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()
+                        .slice(0, 2);
                       const isSelected = link.client_id === selectedClientId;
                       return (
                         <button
                           key={link.client_id}
                           onClick={() => setSelectedClientId(link.client_id)}
-                          className={[
-                            "w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-fast text-left",
+                          className={`flex items-center gap-3 p-4 rounded-lg border text-left transition-all duration-[160ms] ${
                             isSelected
-                              ? "border-accent/50 bg-accent/[0.07]"
-                              : "border-border bg-surface-elevated hover:border-white/20 hover:bg-surface-elevated",
-                          ].join(" ")}
+                              ? "bg-accent-muted border-accent/40 shadow-[0_0_0_1px_rgba(163,255,18,0.2)]"
+                              : "bg-surface border-border hover:border-border-hover hover:bg-white/[0.02]"
+                          }`}
                         >
-                          <div
-                            className={[
-                              "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0 transition-all",
-                              isSelected
-                                ? "bg-accent/20 border border-accent/40 text-accent"
-                                : "bg-surface border border-border text-foreground-secondary",
-                            ].join(" ")}
-                          >
-                            {initial}
+                          <div className="w-9 h-9 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-[13px] font-bold text-foreground flex-shrink-0">
+                            {initials}
                           </div>
-                          <span
-                            className={[
-                              "font-medium text-sm transition-colors",
-                              isSelected ? "text-accent" : "text-foreground",
-                            ].join(" ")}
-                          >
-                            {name}
-                          </span>
-                          {isSelected && (
-                            <Check className="w-4 h-4 text-accent ml-auto" />
-                          )}
+                          <p className="text-body font-medium text-foreground truncate">{name}</p>
                         </button>
                       );
                     })}
                   </div>
                 )}
 
-                <div className="flex justify-end pt-2">
+                {/* Navigation footer */}
+                <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-border">
                   <button
                     onClick={goNext}
                     disabled={!canAdvanceFromClient()}
-                    className="btn-primary"
+                    className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms]"
                   >
-                    Continue
-                    <ChevronRight className="w-4 h-4" />
+                    Continue →
                   </button>
                 </div>
               </div>
             )}
 
-            {/* ── Step 2: Select template ────────────────────────────── */}
+            {/* ── Step 2: Select template ────────────────────────────────── */}
             {currentStep === "template" && (
-              <div className="card space-y-5">
-                <div>
-                  <h2 className="text-subheading mb-1">Select Template</h2>
-                  <p className="text-caption">
-                    Pick a workout template from your library.
-                  </p>
+              <div>
+                {/* Step header */}
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h2 className="text-h2 font-display text-foreground mb-1">Select Template</h2>
+                    <p className="text-body text-foreground-secondary">
+                      Pick a workout template from your library.
+                    </p>
+                  </div>
+                  {!preselectedClientId && (
+                    <button
+                      onClick={goPrev}
+                      className="h-9 px-3 rounded-sm text-body-sm text-foreground-secondary hover:text-foreground hover:bg-white/[0.04] transition-colors duration-[120ms]"
+                    >
+                      ← Back
+                    </button>
+                  )}
                 </div>
 
                 {/* Search */}
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
-                  <input
-                    type="text"
-                    placeholder="Search templates…"
-                    value={templateSearch}
-                    onChange={(e) => setTemplateSearch(e.target.value)}
-                    className="input pl-9"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="Search templates…"
+                  value={templateSearch}
+                  onChange={(e) => setTemplateSearch(e.target.value)}
+                  className="w-full h-11 bg-surface border border-border text-foreground text-[14px] rounded-md px-[14px] mb-4 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
+                />
 
                 {templates.length === 0 ? (
-                  <div className="empty-state py-10">
-                    <LayoutTemplate className="w-8 h-8 text-muted" />
-                    <p className="text-subheading text-sm">
-                      No templates yet
-                    </p>
-                    <p className="text-caption text-xs max-w-xs">
+                  <div className="bg-surface border border-border rounded-lg p-10 flex flex-col items-center gap-3 text-center">
+                    <LayoutTemplate className="w-8 h-8 text-foreground-tertiary" />
+                    <p className="text-body font-medium text-foreground">No templates yet</p>
+                    <p className="text-body-sm text-foreground-secondary max-w-xs">
                       Create workout templates in your library first.
                     </p>
                     <Link
                       href="/trainer/templates"
-                      className="btn-secondary mt-2"
+                      className="mt-2 h-9 px-4 bg-surface border border-border text-foreground text-[14px] font-medium rounded-md hover:bg-white/[0.04] hover:border-border-hover transition-colors duration-[120ms] flex items-center gap-2"
                     >
                       Go to Templates
                     </Link>
                   </div>
                 ) : filteredTemplates.length === 0 ? (
-                  <p className="text-caption text-center py-6">
+                  <p className="text-body text-foreground-secondary text-center py-8">
                     No templates match your search.
                   </p>
                 ) : (
-                  <div className="grid gap-2 max-h-[420px] overflow-y-auto pr-1">
+                  <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                     {filteredTemplates.map((template) => {
                       const count = exerciseCounts[template.id] ?? 0;
                       const isSelected = template.id === selectedTemplateId;
@@ -434,54 +373,22 @@ export function WorkoutAssignmentClient({
                         <button
                           key={template.id}
                           onClick={() => setSelectedTemplateId(template.id)}
-                          className={[
-                            "w-full flex items-start gap-3 px-4 py-3.5 rounded-xl border transition-all duration-fast text-left",
+                          className={`w-full flex items-center gap-4 p-4 rounded-lg border text-left transition-all duration-[160ms] ${
                             isSelected
-                              ? "border-accent/50 bg-accent/[0.07]"
-                              : "border-border bg-surface-elevated hover:border-white/20",
-                          ].join(" ")}
+                              ? "bg-accent-muted border-accent/40"
+                              : "bg-surface border-border hover:border-border-hover hover:bg-white/[0.02]"
+                          }`}
                         >
-                          <div
-                            className={[
-                              "w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 transition-all",
-                              isSelected
-                                ? "bg-accent/20 border border-accent/40"
-                                : "bg-surface border border-border",
-                            ].join(" ")}
-                          >
-                            <Dumbbell
-                              className={[
-                                "w-4 h-4",
-                                isSelected
-                                  ? "text-accent"
-                                  : "text-foreground-secondary",
-                              ].join(" ")}
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p
-                              className={[
-                                "font-semibold text-sm truncate transition-colors",
-                                isSelected
-                                  ? "text-accent"
-                                  : "text-foreground",
-                              ].join(" ")}
-                            >
-                              {template.title}
-                            </p>
-                            {template.description && (
-                              <p className="text-caption text-xs mt-0.5 line-clamp-1">
-                                {template.description}
-                              </p>
-                            )}
-                            <p className="text-muted text-xs mt-1">
+                          <div className="flex-1">
+                            <p className="text-body font-medium text-foreground">{template.title}</p>
+                            <p className="text-caption text-foreground-tertiary mt-0.5">
                               {count === 0
                                 ? "No exercises added"
                                 : `${count} exercise${count !== 1 ? "s" : ""}`}
                             </p>
                           </div>
                           {isSelected && (
-                            <Check className="w-4 h-4 text-accent flex-shrink-0 mt-1" />
+                            <span className="text-accent">✓</span>
                           )}
                         </button>
                       );
@@ -489,61 +396,60 @@ export function WorkoutAssignmentClient({
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-2">
-                  <button onClick={goPrev} className="btn-ghost">
-                    <ChevronLeft className="w-4 h-4" />
-                    Back
-                  </button>
+                {/* Navigation footer */}
+                <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-border">
                   <button
                     onClick={goNext}
                     disabled={!canAdvanceFromTemplate()}
-                    className="btn-primary"
+                    className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms]"
                   >
-                    Continue
-                    <ChevronRight className="w-4 h-4" />
+                    Continue →
                   </button>
                 </div>
               </div>
             )}
 
-            {/* ── Step 3: Pick date + optional notes ────────────────── */}
+            {/* ── Step 3: Pick date + optional notes ────────────────────── */}
             {currentStep === "date" && (
-              <div className="card space-y-5">
-                <div>
-                  <h2 className="text-subheading mb-1">Schedule</h2>
-                  <p className="text-caption">
-                    Choose when this workout should be completed.
-                  </p>
+              <div>
+                {/* Step header */}
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h2 className="text-h2 font-display text-foreground mb-1">Schedule</h2>
+                    <p className="text-body text-foreground-secondary">
+                      Choose when this workout should be completed.
+                    </p>
+                  </div>
+                  <button
+                    onClick={goPrev}
+                    className="h-9 px-3 rounded-sm text-body-sm text-foreground-secondary hover:text-foreground hover:bg-white/[0.04] transition-colors duration-[120ms]"
+                  >
+                    ← Back
+                  </button>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label
-                      htmlFor="scheduled-date"
-                      className="block text-label mb-2"
-                    >
+                <div className="space-y-5">
+                  <div className="max-w-[320px]">
+                    <label className="text-label text-foreground-secondary block mb-2">
                       Scheduled Date
                     </label>
-                    <div className="relative">
-                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
-                      <input
-                        id="scheduled-date"
-                        type="date"
-                        value={scheduledDate}
-                        onChange={(e) => setScheduledDate(e.target.value)}
-                        min={new Date().toISOString().split("T")[0]}
-                        className="input pl-9 [color-scheme:dark]"
-                      />
-                    </div>
+                    <input
+                      id="scheduled-date"
+                      type="date"
+                      value={scheduledDate}
+                      onChange={(e) => setScheduledDate(e.target.value)}
+                      min={new Date().toISOString().split("T")[0]}
+                      className="w-full h-11 bg-surface border border-border text-foreground text-[14px] rounded-md px-[14px] focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms] [color-scheme:dark]"
+                    />
                   </div>
 
                   <div>
                     <label
                       htmlFor="assignment-notes"
-                      className="block text-label mb-2"
+                      className="text-label text-foreground-secondary block mb-2"
                     >
                       Notes{" "}
-                      <span className="normal-case font-normal text-muted ml-1">
+                      <span className="normal-case font-normal text-foreground-tertiary ml-1">
                         — optional
                       </span>
                     </label>
@@ -553,120 +459,77 @@ export function WorkoutAssignmentClient({
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Any cues, targets or reminders for this session…"
                       rows={3}
-                      className="input resize-none"
+                      className="w-full bg-surface border border-border text-foreground text-[14px] rounded-md px-[14px] py-3 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms] resize-none"
                     />
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-2">
-                  <button onClick={goPrev} className="btn-ghost">
-                    <ChevronLeft className="w-4 h-4" />
-                    Back
-                  </button>
+                {/* Navigation footer */}
+                <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-border">
                   <button
                     onClick={goNext}
                     disabled={!canAdvanceFromDate()}
-                    className="btn-primary"
+                    className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms]"
                   >
-                    Review
-                    <ChevronRight className="w-4 h-4" />
+                    Continue →
                   </button>
                 </div>
               </div>
             )}
 
-            {/* ── Step 4: Confirm ────────────────────────────────────── */}
+            {/* ── Step 4: Confirm ───────────────────────────────────────── */}
             {currentStep === "confirm" && (
-              <div className="card space-y-6">
-                <div>
-                  <h2 className="text-subheading mb-1">Confirm Assignment</h2>
-                  <p className="text-caption">
-                    Review the details before assigning.
-                  </p>
+              <div>
+                {/* Step header */}
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h2 className="text-h2 font-display text-foreground mb-1">Confirm Assignment</h2>
+                    <p className="text-body text-foreground-secondary">
+                      Review the details before assigning.
+                    </p>
+                  </div>
+                  <button
+                    onClick={goPrev}
+                    className="h-9 px-3 rounded-sm text-body-sm text-foreground-secondary hover:text-foreground hover:bg-white/[0.04] transition-colors duration-[120ms]"
+                  >
+                    ← Back
+                  </button>
                 </div>
 
                 {/* Summary card */}
-                <div className="bg-surface-elevated border border-border rounded-xl divide-y divide-border">
-                  {/* Client row */}
-                  <div className="flex items-center gap-3 px-5 py-4">
-                    <div className="w-9 h-9 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-sm font-bold text-accent flex-shrink-0">
-                      {clientName[0]?.toUpperCase() ?? "?"}
+                <div className="bg-surface border border-border rounded-lg p-6 shadow-inset space-y-4">
+                  <h3 className="text-h4 font-display text-foreground mb-4">Assignment Summary</h3>
+                  {[
+                    { label: "Client", value: clientName },
+                    { label: "Template", value: templateTitle },
+                    { label: "Scheduled", value: formattedDate },
+                  ].map((row) => (
+                    <div
+                      key={row.label}
+                      className="flex items-center justify-between py-3 border-b border-border/50 last:border-0"
+                    >
+                      <span className="text-label text-foreground-tertiary">{row.label}</span>
+                      <span className="text-body font-medium text-foreground">{row.value}</span>
                     </div>
-                    <div>
-                      <p className="text-label mb-0.5">Client</p>
-                      <p className="font-semibold text-sm text-foreground">
-                        {clientName}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Template row */}
-                  <div className="flex items-center gap-3 px-5 py-4">
-                    <div className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center flex-shrink-0">
-                      <Dumbbell className="w-4 h-4 text-foreground-secondary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-label mb-0.5">Template</p>
-                      <p className="font-semibold text-sm text-foreground truncate">
-                        {templateTitle}
-                      </p>
-                      {selectedTemplate?.description && (
-                        <p className="text-caption text-xs mt-0.5 line-clamp-1">
-                          {selectedTemplate.description}
-                        </p>
-                      )}
-                    </div>
-                    {exerciseCounts[selectedTemplateId] !== undefined && (
-                      <span className="badge-neutral flex-shrink-0">
-                        {exerciseCounts[selectedTemplateId]}{" "}
-                        {exerciseCounts[selectedTemplateId] === 1
-                          ? "exercise"
-                          : "exercises"}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Date row */}
-                  <div className="flex items-center gap-3 px-5 py-4">
-                    <div className="w-9 h-9 rounded-lg bg-surface border border-border flex items-center justify-center flex-shrink-0">
-                      <Calendar className="w-4 h-4 text-foreground-secondary" />
-                    </div>
-                    <div>
-                      <p className="text-label mb-0.5">Scheduled Date</p>
-                      <p className="font-semibold text-sm text-foreground">
-                        {new Date(scheduledDate + "T00:00:00").toLocaleDateString(
-                          undefined,
-                          {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          }
-                        )}
-                      </p>
-                    </div>
-                  </div>
+                  ))}
 
                   {/* Notes row — only if entered */}
                   {notes.trim() && (
-                    <div className="px-5 py-4">
-                      <p className="text-label mb-1.5">Notes</p>
-                      <p className="text-sm text-foreground-secondary leading-relaxed whitespace-pre-wrap">
+                    <div className="pt-3">
+                      <p className="text-label text-foreground-tertiary mb-1.5">Notes</p>
+                      <p className="text-body-sm text-foreground-secondary leading-relaxed whitespace-pre-wrap">
                         {notes}
                       </p>
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <button onClick={goPrev} className="btn-ghost">
-                    <ChevronLeft className="w-4 h-4" />
-                    Back
-                  </button>
+                {/* Navigation footer */}
+                <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-border">
                   <button
                     onClick={handleAssign}
                     disabled={isSubmitting}
-                    className="btn-primary"
+                    className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:cursor-not-allowed transition-colors duration-[160ms] flex items-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -674,15 +537,13 @@ export function WorkoutAssignmentClient({
                         Assigning…
                       </>
                     ) : (
-                      <>
-                        <Dumbbell className="w-4 h-4" />
-                        Assign Workout
-                      </>
+                      "Assign Workout"
                     )}
                   </button>
                 </div>
               </div>
             )}
+
           </motion.div>
         </AnimatePresence>
       </div>

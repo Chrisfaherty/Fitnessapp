@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/database";
-import { CheckCircle2, MessageSquare, ChevronRight, ArrowLeft } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 
 // Use a subset of the real DB Row type so field names stay in sync
 type CheckIn = Pick<
@@ -24,12 +24,6 @@ const MOODS = [
   { value: 4, emoji: "😊", label: "Good" },
   { value: 5, emoji: "🔥", label: "Crushed it" },
 ] as const;
-
-const slideVariants = {
-  enter: { opacity: 0, x: 32 },
-  center: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -32 },
-};
 
 export default function ClientCheckInClient({ initialCheckIns, userId }: Props) {
   const [checkIns, setCheckIns] = useState<CheckIn[]>(initialCheckIns);
@@ -92,113 +86,77 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
     resetWizard();
   };
 
-  return (
-    <div className="space-y-8">
-      {/* ── Page header ───────────────────────────────────── */}
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-label mb-1.5">Weekly</p>
-          <h1 className="text-display">Check-In</h1>
-          <p className="text-caption mt-1">Week of {weekStart}</p>
-        </div>
+  const total = 3;
+  const progress = ((step - 1) / (total - 1)) * 100;
+  const isLastStep = step === 3;
 
-        {alreadySubmitted ? (
-          <div className="flex items-center gap-2 badge-success px-3 py-2 rounded-xl">
-            <CheckCircle2 className="w-4 h-4" />
-            <span className="text-sm font-medium">Submitted this week</span>
-          </div>
-        ) : !showWizard ? (
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => setShowWizard(true)}
-            className="btn-primary rounded-full px-6"
-          >
-            Submit Check-In
-          </motion.button>
-        ) : null}
-      </div>
+  const prevStep = () => setStep((s) => (s - 1) as 1 | 2 | 3);
+  const nextStep = () => {
+    if (step < 3) setStep((s) => (s + 1) as 1 | 2 | 3);
+    else submit();
+  };
 
-      {/* ── Progressive Disclosure Wizard ─────────────────── */}
-      <AnimatePresence mode="wait">
-        {showWizard && (
-          <motion.div
-            key="wizard"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="card overflow-hidden"
-          >
-            {/* Wizard progress bar */}
-            <div className="h-0.5 bg-border -mx-6 -mt-6 mb-8">
-              <motion.div
-                className="h-full bg-accent rounded-r-full"
-                animate={{ width: `${(step / 3) * 100}%` }}
-                transition={{ type: "spring", stiffness: 200, damping: 30 }}
+  // --- Wizard fullscreen overlay ---
+  if (showWizard) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        {/* Progress indicator */}
+        <div className="px-6 pt-6 pb-0">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="h-1 bg-surface-elevated rounded-full overflow-hidden flex-1">
+              <div
+                className="h-full bg-accent rounded-full transition-all duration-[400ms]"
+                style={{ width: `${progress}%` }}
               />
             </div>
+            <span className="text-caption text-foreground-tertiary whitespace-nowrap">
+              {step} / {total}
+            </span>
+          </div>
+        </div>
 
-            {/* Step counter + back */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-2">
-                {step > 1 && (
-                  <button
-                    onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3)}
-                    className="text-muted hover:text-foreground transition-colors"
-                  >
-                    <ArrowLeft className="w-4 h-4" />
-                  </button>
-                )}
-                <span className="text-label">Step {step} of 3</span>
-              </div>
-              <button
-                onClick={resetWizard}
-                className="text-xs text-muted hover:text-foreground transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-
-            {/* ── Step content (animated) ───────────────── */}
+        {/* Question area */}
+        <div className="flex-1 flex items-center justify-center px-6 py-12">
+          <div className="w-full max-w-[720px]">
             <AnimatePresence mode="wait">
               {/* STEP 1 — Mood rating */}
               {step === 1 && (
                 <motion.div
                   key="step1"
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ type: "spring", stiffness: 280, damping: 30 }}
-                  className="text-center pb-4"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <h2 className="text-2xl font-bold tracking-tight mb-2">
+                  <h2 className="text-h2 font-display text-foreground mb-3">
                     How was your week?
                   </h2>
-                  <p className="text-caption mb-10">Tap to continue</p>
+                  <p className="text-body text-foreground-secondary mb-8">
+                    Select a rating — this goes straight to your trainer.
+                  </p>
 
-                  <div className="flex items-end justify-center gap-3">
+                  <div className="flex gap-2 flex-wrap mt-2">
                     {MOODS.map((m) => (
-                      <motion.button
+                      <button
                         key={m.value}
                         onClick={() => handleMoodSelect(m.value)}
-                        whileHover={{ scale: 1.2, y: -4 }}
-                        whileTap={{ scale: 0.9 }}
-                        transition={{ type: "spring", stiffness: 400, damping: 20 }}
-                        className="flex flex-col items-center gap-2 group"
+                        className={`w-14 h-14 rounded-md text-body font-medium border transition-all duration-[120ms] flex flex-col items-center justify-center gap-0.5 ${
+                          mood === m.value
+                            ? "bg-accent text-accent-foreground border-transparent"
+                            : "bg-surface border-border text-foreground-secondary hover:border-border-strong hover:text-foreground"
+                        }`}
                       >
-                        <span
-                          className={`text-4xl transition-all duration-fast leading-none
-                            ${mood === m.value ? "grayscale-0 scale-125" : "grayscale group-hover:grayscale-0"}`}
-                        >
-                          {m.emoji}
+                        <span className="text-xl leading-none">{m.emoji}</span>
+                        <span className="text-[10px] font-semibold uppercase tracking-wide leading-none">
+                          {m.value}
                         </span>
-                        <span className="text-[10px] text-muted uppercase tracking-wider font-semibold group-hover:text-foreground transition-colors">
-                          {m.label}
-                        </span>
-                      </motion.button>
+                      </button>
                     ))}
                   </div>
+
+                  <p className="text-label text-foreground-tertiary mt-6">
+                    Tap a rating to continue
+                  </p>
                 </motion.div>
               )}
 
@@ -206,133 +164,176 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
               {step === 2 && (
                 <motion.div
                   key="step2"
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ type: "spring", stiffness: 280, damping: 30 }}
-                  className="pb-4"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <div className="flex items-center gap-2 mb-8">
-                    <span className="text-3xl leading-none">
-                      {MOODS.find((m) => m.value === mood)?.emoji}
-                    </span>
-                    <div>
-                      <h2 className="text-2xl font-bold tracking-tight">
-                        What&apos;s your weight?
-                      </h2>
-                      <p className="text-caption">This week&apos;s weigh-in (optional)</p>
-                    </div>
-                  </div>
+                  <h2 className="text-h2 font-display text-foreground mb-3">
+                    What&apos;s your weight this week?
+                  </h2>
+                  <p className="text-body text-foreground-secondary mb-8">
+                    Optional — skip if you didn&apos;t weigh in.
+                  </p>
 
-                  {/* Large display number input */}
-                  <div className="flex items-baseline justify-center gap-3 mb-10">
-                    <input
-                      type="number"
-                      step={0.1}
-                      min={30}
-                      max={300}
-                      value={bodyweight}
-                      onChange={(e) => setBodyweight(e.target.value)}
-                      placeholder="75.0"
-                      autoFocus
-                      className="bg-transparent text-6xl font-mono font-bold text-foreground focus:outline-none w-48 text-right tabular-nums border-b-2 border-border focus:border-accent transition-colors pb-1 placeholder:text-muted/30"
-                      style={{ fontVariantNumeric: "tabular-nums" }}
-                    />
-                    <span className="text-2xl font-mono text-muted font-medium">kg</span>
-                  </div>
+                  <input
+                    type="number"
+                    step={0.1}
+                    min={30}
+                    max={300}
+                    value={bodyweight}
+                    onChange={(e) => setBodyweight(e.target.value)}
+                    placeholder="75.0"
+                    autoFocus
+                    onKeyDown={(e) => e.key === "Enter" && nextStep()}
+                    className="w-full h-[52px] bg-surface border border-border text-foreground text-[16px] font-sans rounded-md px-[14px] placeholder:text-foreground-secondary focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] transition-all duration-[160ms]"
+                  />
 
-                  <div className="flex gap-3 justify-end">
-                    <button
-                      onClick={() => setStep(3)}
-                      className="btn-ghost text-sm"
-                    >
-                      Skip
-                    </button>
-                    <button
-                      onClick={() => setStep(3)}
-                      className="btn-primary flex items-center gap-2"
-                    >
-                      Continue <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
+                  <p className="text-label text-foreground-tertiary mt-4">
+                    Press Enter ↵ to continue
+                  </p>
                 </motion.div>
               )}
 
-              {/* STEP 3 — Notes + Submit */}
+              {/* STEP 3 — Notes + Review */}
               {step === 3 && (
                 <motion.div
                   key="step3"
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{ type: "spring", stiffness: 280, damping: 30 }}
-                  className="pb-4"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
                 >
-                  <div className="flex items-center gap-2 mb-2">
-                    <MessageSquare className="w-5 h-5 text-accent" />
-                    <h2 className="text-2xl font-bold tracking-tight">
-                      Anything else?
-                    </h2>
-                  </div>
-                  <p className="text-caption mb-6">
-                    How was training, diet, sleep, stress? Your trainer will see this.
+                  <h2 className="text-h2 font-display text-foreground mb-3">
+                    Anything else to share?
+                  </h2>
+                  <p className="text-body text-foreground-secondary mb-8">
+                    Training, diet, sleep, stress — your trainer will see this.
                   </p>
 
                   <textarea
-                    rows={5}
+                    autoFocus
+                    rows={4}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    autoFocus
                     placeholder="Training felt strong, diet was on point, sleep was rough this week…"
-                    className="input resize-none mb-6 text-sm leading-relaxed"
+                    className="w-full min-h-[140px] bg-surface border border-border text-foreground text-[16px] font-sans rounded-md px-[14px] py-3 placeholder:text-foreground-secondary focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] resize-y transition-all duration-[160ms]"
                   />
 
-                  {/* Summary chips */}
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {mood > 0 && (
-                      <span className="badge-neutral">
-                        {MOODS.find((m) => m.value === mood)?.emoji}{" "}
-                        {MOODS.find((m) => m.value === mood)?.label}
-                      </span>
-                    )}
-                    {bodyweight && (
-                      <span className="badge-neutral font-mono">
-                        {bodyweight} kg
-                      </span>
-                    )}
+                  {/* Review summary */}
+                  <div className="bg-surface border border-border rounded-lg p-6 shadow-inset space-y-4 mt-6 mb-2">
+                    <h3 className="text-h3 font-display text-foreground mb-2">
+                      Review your check-in
+                    </h3>
+                    <div className="py-3 border-b border-border/50">
+                      <p className="text-label text-foreground-tertiary mb-1">Weekly mood</p>
+                      <p className="text-body text-foreground">
+                        {mood > 0
+                          ? `${MOODS.find((m) => m.value === mood)?.emoji} ${MOODS.find((m) => m.value === mood)?.label} (${mood}/5)`
+                          : "—"}
+                      </p>
+                    </div>
+                    <div className="py-3 border-b border-border/50">
+                      <p className="text-label text-foreground-tertiary mb-1">Body weight</p>
+                      <p className="text-body text-foreground">
+                        {bodyweight ? `${bodyweight} kg` : "Skipped"}
+                      </p>
+                    </div>
+                    <div className="py-3 last:border-0">
+                      <p className="text-label text-foreground-tertiary mb-1">Notes</p>
+                      <p className="text-body text-foreground whitespace-pre-line">
+                        {notes.trim() || "—"}
+                      </p>
+                    </div>
                   </div>
-
-                  <button
-                    onClick={submit}
-                    disabled={saving}
-                    className="btn-primary w-full justify-center"
-                  >
-                    {saving ? "Submitting…" : "Submit Check-In ✓"}
-                  </button>
                 </motion.div>
               )}
             </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
 
-      {/* ── Check-in history ──────────────────────────────── */}
+        {/* Navigation */}
+        <div className="px-6 pb-8 flex items-center justify-between">
+          {step > 1 ? (
+            <button
+              onClick={prevStep}
+              className="h-9 px-3 rounded-sm text-body-sm text-foreground-secondary hover:text-foreground hover:bg-white/[0.04] transition-colors duration-[120ms]"
+            >
+              ← Back
+            </button>
+          ) : (
+            <button
+              onClick={resetWizard}
+              className="h-9 px-3 rounded-sm text-body-sm text-foreground-secondary hover:text-foreground hover:bg-white/[0.04] transition-colors duration-[120ms]"
+            >
+              Cancel
+            </button>
+          )}
+
+          {/* On step 1, navigation is handled by tapping a mood tile; show skip/continue only for step 2+ */}
+          {step >= 2 && (
+            <button
+              onClick={nextStep}
+              disabled={saving}
+              className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-[160ms]"
+            >
+              {isLastStep ? (saving ? "Submitting…" : "Submit Check-in") : "Continue →"}
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // --- Default page view (not in wizard) ---
+  return (
+    <div className="space-y-8">
+      {/* Page header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-label text-foreground-secondary mb-1.5">Weekly</p>
+          <h1 className="text-h2 font-display text-foreground">Check-In</h1>
+          <p className="text-caption text-foreground-tertiary mt-1">Week of {weekStart}</p>
+        </div>
+
+        {alreadySubmitted ? (
+          <div className="flex items-center gap-2 bg-accent/10 border border-accent/25 text-accent px-3 py-2 rounded-md">
+            <CheckCircle2 className="w-4 h-4" />
+            <span className="text-body-sm font-medium">Submitted this week</span>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowWizard(true)}
+            className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms]"
+          >
+            Submit Check-In
+          </button>
+        )}
+      </div>
+
+      {/* Check-in history */}
       {checkIns.length > 0 && (
         <section>
-          <h2 className="section-title mb-4">History</h2>
+          <h2 className="text-label text-foreground-tertiary uppercase tracking-wider mb-4">
+            History
+          </h2>
           <div className="space-y-3">
             {checkIns.map((ci) => (
               <div
                 key={ci.id}
-                className={`card space-y-3 ${ci.status === "reviewed" ? "border-accent/25" : ""}`}
+                className={`bg-surface border rounded-lg p-5 space-y-3 ${
+                  ci.status === "reviewed" ? "border-accent/25" : "border-border"
+                }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-label">Week of {ci.week_start_date}</span>
+                  <span className="text-label text-foreground-secondary">
+                    Week of {ci.week_start_date}
+                  </span>
                   <span
-                    className={`badge ${
-                      ci.status === "reviewed" ? "badge-accent" : "badge-neutral"
+                    className={`text-label font-medium px-2.5 py-1 rounded-sm border ${
+                      ci.status === "reviewed"
+                        ? "bg-accent/10 border-accent/25 text-accent"
+                        : "bg-surface-elevated border-border text-foreground-secondary"
                     }`}
                   >
                     {ci.status === "reviewed" ? "✓ Reviewed" : "Pending review"}
@@ -340,24 +341,26 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
                 </div>
 
                 {ci.body_weight_kg != null && (
-                  <p className="text-sm">
+                  <p className="text-body-sm">
                     <span className="text-foreground-secondary">Weight: </span>
-                    <span className="font-mono font-semibold">{ci.body_weight_kg} kg</span>
+                    <span className="font-mono font-semibold text-foreground">
+                      {ci.body_weight_kg} kg
+                    </span>
                   </p>
                 )}
 
                 {ci.client_notes && (
-                  <p className="text-sm text-foreground-secondary whitespace-pre-line leading-relaxed">
+                  <p className="text-body-sm text-foreground-secondary whitespace-pre-line leading-relaxed">
                     {ci.client_notes}
                   </p>
                 )}
 
                 {ci.trainer_notes && (
                   <div className="border-t border-border pt-3 space-y-1">
-                    <p className="text-xs text-accent font-semibold uppercase tracking-wider">
+                    <p className="text-label text-accent font-semibold uppercase tracking-wider">
                       Trainer Feedback
                     </p>
-                    <p className="text-sm text-foreground leading-relaxed">
+                    <p className="text-body-sm text-foreground leading-relaxed">
                       {ci.trainer_notes}
                     </p>
                   </div>
@@ -368,13 +371,13 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
         </section>
       )}
 
-      {checkIns.length === 0 && !showWizard && (
-        <div className="empty-state">
-          <div className="stat-card-icon mx-auto">
+      {checkIns.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="w-12 h-12 rounded-lg bg-surface-elevated border border-border flex items-center justify-center mb-4">
             <CheckCircle2 className="w-5 h-5 text-foreground-secondary" />
           </div>
-          <p className="text-subheading">No check-ins yet</p>
-          <p className="text-caption max-w-xs text-sm">
+          <p className="text-body text-foreground font-medium mb-1">No check-ins yet</p>
+          <p className="text-body-sm text-foreground-secondary max-w-xs">
             Submit your first weekly check-in to keep your trainer updated.
           </p>
         </div>

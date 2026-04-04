@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClientSupabaseClient } from "@/lib/supabase/client";
 import {
-  BarChart, Bar, LineChart, Line,
+  BarChart, Bar, LineChart, Line, AreaChart, Area,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid
 } from "recharts";
 import { Search, TrendingUp } from "lucide-react";
@@ -29,6 +29,20 @@ const RANGES = [
   { label: "60d", value: 60 },
   { label: "90d", value: 90 },
 ];
+
+const ChartTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-surface-elevated border border-border-strong rounded-md shadow-elevated px-3 py-2.5 min-w-[120px]">
+      <p className="text-caption text-foreground-tertiary mb-1">{label}</p>
+      {payload.map((entry: any, i: number) => (
+        <p key={i} className="text-body text-foreground font-medium">
+          {entry.name}: <span className="font-semibold">{entry.value}</span>
+        </p>
+      ))}
+    </div>
+  );
+};
 
 export function ProgressChart({ clientId }: Props) {
   const supabase = createClientSupabaseClient();
@@ -84,19 +98,11 @@ export function ProgressChart({ clientId }: Props) {
     ? Math.round(data.reduce((sum, r) => sum + (r.total_volume ?? 0), 0) / data.length)
     : 0;
 
-  const tooltipStyle = {
-    backgroundColor: "#1C1D26",
-    border: "1px solid rgba(255,255,255,0.08)",
-    borderRadius: "8px",
-    color: "#F0F0F0",
-    fontSize: "12px",
-  };
-
   return (
     <div className="space-y-6">
       {/* Exercise selector */}
       <div className="relative">
-        <label className="text-label text-foreground-secondary mb-2 block">Select Exercise</label>
+        <label className="text-body-sm text-foreground-secondary mb-2 block">Select Exercise</label>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground-secondary" />
           <input
@@ -109,7 +115,7 @@ export function ProgressChart({ clientId }: Props) {
             }}
             onFocus={() => setShowDropdown(true)}
             placeholder="Search exercises this client has logged…"
-            className="w-full bg-surface border border-border rounded-lg pl-9 pr-4 py-2.5 text-sm text-foreground placeholder:text-foreground-secondary focus:outline-none focus:border-accent/50"
+            className="w-full h-11 bg-surface border border-border text-foreground text-[14px] rounded-md pl-9 pr-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
           />
         </div>
         {showDropdown && filtered.length > 0 && !selectedExercise && (
@@ -146,10 +152,10 @@ export function ProgressChart({ clientId }: Props) {
               <button
                 key={r.value}
                 onClick={() => setDays(r.value)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                className={`h-8 px-3 rounded-sm text-body-sm transition-colors duration-[120ms] ${
                   days === r.value
-                    ? "bg-accent text-accent-foreground"
-                    : "bg-surface border border-border text-foreground-secondary hover:text-foreground"
+                    ? "bg-surface-elevated border border-white/[0.06] text-foreground"
+                    : "text-foreground-secondary hover:text-foreground"
                 }`}
               >
                 {r.label}
@@ -170,38 +176,78 @@ export function ProgressChart({ clientId }: Props) {
               {/* Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Volume Bar Chart */}
-                <div className="bg-surface border border-border rounded-xl p-5">
-                  <p className="text-label text-foreground-secondary mb-4">Weekly Volume (reps × kg)</p>
+                <div className="bg-surface border border-border rounded-lg p-6 shadow-inset">
+                  <p className="text-h4 font-display text-foreground mb-1">Weekly Volume</p>
+                  <p className="text-body-sm text-foreground-secondary mb-4">reps × kg per week</p>
                   <ResponsiveContainer width="100%" height={180}>
                     <BarChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                      <XAxis dataKey="week_label" tick={{ fill: "rgba(240,240,240,0.55)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: "rgba(240,240,240,0.55)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip contentStyle={tooltipStyle} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
-                      <Bar dataKey="total_volume" fill="#A3FF12" radius={[4, 4, 0, 0]} name="Volume" />
+                      <CartesianGrid
+                        strokeDasharray="3 4"
+                        stroke="rgba(255,255,255,0.08)"
+                        vertical={false}
+                      />
+                      <XAxis
+                        dataKey="week_label"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "rgba(245,247,250,0.42)", fontSize: 12, fontFamily: "var(--font-sans)" }}
+                        dy={12}
+                      />
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "rgba(245,247,250,0.42)", fontSize: 12, fontFamily: "var(--font-sans)" }}
+                        width={40}
+                      />
+                      <Tooltip content={<ChartTooltip />} cursor={{ fill: "rgba(255,255,255,0.04)" }} />
+                      <Bar dataKey="total_volume" fill="#A3FF12" radius={[6, 6, 0, 0]} name="Volume" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
 
-                {/* Max Weight Line Chart */}
-                <div className="bg-surface border border-border rounded-xl p-5">
-                  <p className="text-label text-foreground-secondary mb-4">Max Weight (kg)</p>
+                {/* Max Weight Area Chart */}
+                <div className="bg-surface border border-border rounded-lg p-6 shadow-inset">
+                  <p className="text-h4 font-display text-foreground mb-1">Max Weight</p>
+                  <p className="text-body-sm text-foreground-secondary mb-4">kg lifted per week</p>
                   <ResponsiveContainer width="100%" height={180}>
-                    <LineChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                      <XAxis dataKey="week_label" tick={{ fill: "rgba(240,240,240,0.55)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: "rgba(240,240,240,0.55)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip contentStyle={tooltipStyle} />
-                      <Line
+                    <AreaChart data={data} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
+                      <defs>
+                        <linearGradient id="accentGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#A3FF12" stopOpacity={0.20} />
+                          <stop offset="50%" stopColor="#A3FF12" stopOpacity={0.08} />
+                          <stop offset="100%" stopColor="#A3FF12" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid
+                        strokeDasharray="3 4"
+                        stroke="rgba(255,255,255,0.08)"
+                        vertical={false}
+                      />
+                      <XAxis
+                        dataKey="week_label"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "rgba(245,247,250,0.42)", fontSize: 12, fontFamily: "var(--font-sans)" }}
+                        dy={12}
+                      />
+                      <YAxis
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: "rgba(245,247,250,0.42)", fontSize: 12, fontFamily: "var(--font-sans)" }}
+                        width={40}
+                      />
+                      <Tooltip content={<ChartTooltip />} cursor={{ stroke: "rgba(255,255,255,0.08)", strokeWidth: 1 }} />
+                      <Area
                         type="monotone"
                         dataKey="max_weight"
                         stroke="#A3FF12"
-                        strokeWidth={2}
-                        dot={{ fill: "#A3FF12", r: 3, strokeWidth: 0 }}
-                        activeDot={{ r: 5, fill: "#A3FF12" }}
+                        strokeWidth={2.5}
+                        fill="url(#accentGradient)"
+                        dot={false}
+                        activeDot={{ r: 4, fill: "#A3FF12", stroke: "#090A0C", strokeWidth: 2 }}
                         name="Max Weight (kg)"
                       />
-                    </LineChart>
+                    </AreaChart>
                   </ResponsiveContainer>
                 </div>
               </div>
@@ -213,8 +259,8 @@ export function ProgressChart({ clientId }: Props) {
                   { label: "Total Sessions", value: totalSessions.toString() },
                   { label: "Avg Weekly Volume", value: avgVolume.toLocaleString() },
                 ].map(({ label, value }) => (
-                  <div key={label} className="bg-surface border border-border rounded-xl p-4 text-center">
-                    <p className="text-label text-foreground-secondary mb-1">{label}</p>
+                  <div key={label} className="bg-surface border border-border rounded-lg p-4 text-center shadow-inset">
+                    <p className="text-body-sm text-foreground-secondary mb-1">{label}</p>
                     <p className="text-xl font-bold font-display text-foreground">{value}</p>
                   </div>
                 ))}
