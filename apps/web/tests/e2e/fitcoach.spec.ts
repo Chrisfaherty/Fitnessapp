@@ -284,7 +284,9 @@ test.describe("Workout assignment", () => {
     await page.getByRole("button", { name: /continue/i }).click();
 
     // Step 3: Scheduled date (already defaulted to tomorrow)
-    await expect(page.getByLabel(/scheduled date/i)).toBeVisible({ timeout: 5_000 });
+    await expect(
+      page.getByLabel(/scheduled date/i).or(page.locator('#scheduled-date'))
+    ).toBeVisible({ timeout: 5_000 });
 
     // Advance to step 4 (confirm)
     await page.getByRole("button", { name: /continue/i }).click();

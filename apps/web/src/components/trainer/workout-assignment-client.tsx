@@ -430,7 +430,7 @@ export function WorkoutAssignmentClient({
 
                 <div className="space-y-5">
                   <div className="max-w-[320px]">
-                    <label className="text-label text-foreground-secondary block mb-2">
+                    <label htmlFor="scheduled-date" className="text-label text-foreground-secondary block mb-2">
                       Scheduled Date
                     </label>
                     <input
