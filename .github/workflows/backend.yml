@@ -31,7 +31,8 @@ jobs:
         working-directory: .
 
       - name: Apply migrations
-        run: supabase db reset --db-url "postgresql://postgres:postgres@localhost:54322/postgres"
+        # No --db-url: targets the local stack started above, no confirmation prompt
+        run: supabase db reset
 
       - name: Run DB CRUD tests
         run: |
@@ -41,8 +42,8 @@ jobs:
 
       - name: Run DB RLS tests
         run: |
-          # Install pgTAP via SQL if needed
-          psql "postgresql://postgres:postgres@localhost:54322/postgres" -c "CREATE EXTENSION IF NOT EXISTS pgtap;"
+          psql "postgresql://postgres:postgres@localhost:54322/postgres" \
+            -c "CREATE EXTENSION IF NOT EXISTS pgtap;"
           supabase db test \
             --db-url "postgresql://postgres:postgres@localhost:54322/postgres" \
             --file tests/db/rls_test.sql
