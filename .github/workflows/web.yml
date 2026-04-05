@@ -185,7 +185,9 @@ jobs:
 
       - name: Run E2E tests
         # playwright.config.ts webServer starts `next start` automatically in CI
-        run: pnpm --filter web test:e2e
+        # --reporter=github emits GH annotations for each failing test so we can
+        # see exactly which tests fail without needing to download the artifact.
+        run: pnpm --filter web test:e2e --reporter=github,html
 
       - name: Upload Playwright report
         if: always()
