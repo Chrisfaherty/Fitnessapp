@@ -160,7 +160,7 @@ export function DashboardLayout({
       <div className="flex-1" />
 
       {/* User profile footer */}
-      <div className="bg-surface border border-border rounded-lg p-3 mt-4 flex-shrink-0 group cursor-default">
+      <div data-testid="profile-card" className="bg-surface border border-border rounded-lg p-3 mt-4 flex-shrink-0 group cursor-default">
         <div className="flex items-center gap-3">
           {/* Avatar */}
           <div className="relative flex-shrink-0">

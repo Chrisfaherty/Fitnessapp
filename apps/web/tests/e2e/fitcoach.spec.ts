@@ -66,11 +66,16 @@ test.describe("Auth", () => {
     await loginAs(page, TRAINER_EMAIL, TRAINER_PASSWORD);
     // Expect to be on the trainer dashboard first
     await expect(page).toHaveURL(/\/trainer/);
-    // Locate and click the logout control (button or link)
+    // The sign-out button is opacity-0 until the profile card is hovered.
+    // Hover over the profile footer to reveal it, then click.
+    const profileCard = page.locator('[data-testid="profile-card"]').or(
+      page.locator('.group').filter({ has: page.getByTitle(/sign out/i) })
+    ).first();
+    await profileCard.hover();
     await page
       .getByRole("button", { name: /log ?out|sign ?out/i })
       .first()
-      .click();
+      .click({ force: true });
     await expect(page).toHaveURL(/\/(auth\/)?login/, { timeout: 10_000 });
   });
 });
