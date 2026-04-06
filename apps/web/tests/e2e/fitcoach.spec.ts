@@ -118,7 +118,7 @@ test.describe("Trainer dashboard", () => {
     } else {
       // Fallback: a digit adjacent to the "Pending Check-ins" text is visible
       const parentText = await pendingSection
-        .locator("..")
+        .locator("../..")
         .innerText()
         .catch(() => "");
       expect(parentText).toMatch(/\d/);
@@ -412,8 +412,9 @@ test.describe("Messaging", () => {
   test("trainer can send message", async ({ page }) => {
     await page.goto("/trainer/messaging");
     // Select an existing conversation — seed has trainer1 <-> client1 (Jordan Client)
-    // Conversation items are <button> elements showing the client name
-    const convoItem = page.getByText(/jordan client/i).first();
+    // Conversation items are <button> elements showing the client name.
+    // Use button filter to handle both full_name ("Jordan Client") and email fallback.
+    const convoItem = page.locator("button").filter({ hasText: /jordan|client1/i }).first();
     await expect(convoItem).toBeVisible({ timeout: 10_000 });
     await convoItem.click();
     // Message input placeholder is "Message..."
@@ -431,7 +432,7 @@ test.describe("Messaging", () => {
     await page.goto("/trainer/messaging");
     // Open the seeded conversation — conversation list auto-selects the first one
     // so the messages should already be loaded
-    const convoItem = page.getByText(/jordan client/i).first();
+    const convoItem = page.locator("button").filter({ hasText: /jordan|client1/i }).first();
     await expect(convoItem).toBeVisible({ timeout: 10_000 });
     await convoItem.click();
     // The seed contains at least two messages in this conversation

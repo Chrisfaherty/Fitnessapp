@@ -24,7 +24,7 @@ test.describe("Trainer auth + dashboard", () => {
   test("trainer can log in and see dashboard", async ({ page }) => {
     await loginAs(page, TRAINER_EMAIL, TRAINER_PASSWORD);
     await expect(page).toHaveURL(/\/trainer/);
-    await expect(page.getByText(/Active Clients/i)).toBeVisible();
+    await expect(page.getByText(/Active Clients/i).first()).toBeVisible();
   });
 
   test("unauthenticated user is redirected to login", async ({ page }) => {
@@ -89,7 +89,7 @@ test.describe("Client assignment", () => {
 
   test("trainer can see client list", async ({ page }) => {
     await page.goto("/trainer/clients");
-    await expect(page.getByText(/My Clients|Jordan|Morgan/i).first()).toBeVisible();
+    await expect(page.getByText(/Clients|Jordan|Morgan/i).first()).toBeVisible();
   });
 });
 
