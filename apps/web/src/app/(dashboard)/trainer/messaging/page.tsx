@@ -16,7 +16,7 @@ export default async function TrainerMessagingPage() {
         id, full_name, email
       ),
       messages (
-        body, sent_at, sender_id
+        body, created_at, sender_id
       )
     `)
     .eq('trainer_id', user.id)
@@ -25,14 +25,14 @@ export default async function TrainerMessagingPage() {
   const convos = (conversations ?? []).map((c: any) => {
     const msgs: any[] = c.messages ?? []
     const lastMsg = msgs.sort((a: any, b: any) =>
-      new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime()
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     )[0]
     return {
       id: c.id,
       clientId: c.profiles?.id,
       clientName: c.profiles?.full_name ?? c.profiles?.email ?? 'Client',
       lastMessage: lastMsg?.body ?? null,
-      lastMessageAt: lastMsg?.sent_at ?? c.created_at,
+      lastMessageAt: lastMsg?.created_at ?? c.created_at,
     }
   })
 
