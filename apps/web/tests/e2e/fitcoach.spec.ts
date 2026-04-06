@@ -95,20 +95,21 @@ test.describe("Trainer dashboard", () => {
     await expect(
       page.getByText(/active clients/i).first()
     ).toBeVisible({ timeout: 10_000 });
+    // Stat label is "Check-ins Pending" (or "Pending Check-ins") — match both orders
     await expect(
-      page.getByText(/pending check-?ins/i).first()
+      page.getByText(/check-?ins pending|pending check-?ins/i).first()
     ).toBeVisible({ timeout: 10_000 });
   });
 
   test("pending check-ins shows count badge", async ({ page }) => {
     await page.goto("/trainer");
     // The badge can be a <span class="badge-warning"> or any element
-    // bearing a numeric count alongside "Pending Check-ins"
+    // bearing a numeric count alongside the check-ins stat card
     const badgeOrCount = page.locator(
       ".badge-warning, [class*='badge'][class*='warn'], [data-testid='pending-badge']"
     );
-    // If no submitted check-ins exist the badge may be absent or show 0 — both are valid
-    const pendingSection = page.getByText(/pending check-?ins/i).first();
+    // Stat label is "Check-ins Pending" in the component
+    const pendingSection = page.getByText(/check-?ins pending|pending check-?ins/i).first();
     await expect(pendingSection).toBeVisible({ timeout: 10_000 });
     // Either the badge element is present, or a numeric sibling is visible
     const badgeCount = await badgeOrCount.count();
@@ -222,8 +223,10 @@ test.describe("Template builder", () => {
     await expect(page.getByText(/exercise library/i).first()).toBeVisible({
       timeout: 10_000,
     });
-    // Wait for exercises to load in the aside panel, then click the first one
-    const firstExerciseBtn = page.locator("aside button").first();
+    // Exercise buttons in the aside have text (exercise names).
+    // Use filter({ hasText }) to avoid matching icon-only sidebar buttons
+    // (logout button and mobile-close button which have no text content).
+    const firstExerciseBtn = page.locator("aside button").filter({ hasText: /[A-Z]/ }).first();
     await expect(firstExerciseBtn).toBeVisible({ timeout: 10_000 });
     await firstExerciseBtn.click();
     // Exercise count appears in the builder canvas
@@ -238,8 +241,9 @@ test.describe("Template builder", () => {
     const titleInput = page.getByPlaceholder(/day 1|heavy pull/i);
     await expect(titleInput).toBeVisible({ timeout: 10_000 });
     await titleInput.fill("E2E Save Template");
-    // Exercise Library is always on the left — click the first exercise
-    const firstExerciseBtn = page.locator("aside button").first();
+    // Exercise Library is always on the left.
+    // Filter by text content to avoid invisible sidebar icon buttons.
+    const firstExerciseBtn = page.locator("aside button").filter({ hasText: /[A-Z]/ }).first();
     await expect(firstExerciseBtn).toBeVisible({ timeout: 8_000 });
     await firstExerciseBtn.click();
     // Save
@@ -306,6 +310,9 @@ test.describe("Workout assignment", () => {
   });
 
   test("appears on client workout list", async ({ page }) => {
+    // The beforeEach for this describe block logged in as trainer.
+    // Clear cookies so the login page doesn't redirect back to /trainer.
+    await page.context().clearCookies();
     // Log in as the client and verify the seeded assignment is visible
     await loginAs(page, CLIENT_EMAIL, CLIENT_PASSWORD);
     await page.goto("/client/workouts");

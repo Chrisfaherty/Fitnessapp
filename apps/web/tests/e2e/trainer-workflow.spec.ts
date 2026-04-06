@@ -64,7 +64,8 @@ test.describe("Exercise library + template builder", () => {
     await page.getByPlaceholder(/Search exercises/i).fill("squat");
     await page.waitForTimeout(500);  // debounce
 
-    // Click the first matching exercise button in the aside list
+    // Click the first matching exercise button in the aside list.
+    // Filter by hasText to avoid matching icon-only sidebar buttons (logout, close).
     const firstExercise = page.locator("aside button").filter({ hasText: /squat/i }).first();
     await expect(firstExercise).toBeVisible({ timeout: 8_000 });
     await firstExercise.click();
