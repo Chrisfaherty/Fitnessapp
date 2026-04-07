@@ -82,7 +82,17 @@ export default function TrainerMessagingClient({ conversations, trainerId }: Pro
       video_thumbnail: null,
       read_at: null,
     }
-    await supabase.from('messages').insert(payload)
+    // Insert and immediately add to local state (optimistic update) so the
+    // message appears right away without waiting for the Realtime subscription
+    // to relay the INSERT event back to us.
+    const { data: inserted } = await supabase.from('messages').insert(payload).select().single()
+    if (inserted) {
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === inserted.id)) return prev
+        return [...prev, inserted as MessageRow]
+      })
+      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50)
+    }
   }
 
   return (
