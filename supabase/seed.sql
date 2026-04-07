@@ -172,6 +172,22 @@ values
 on conflict (provider_id, provider) do nothing;
 
 -- ============================================================
+-- PROFILES (explicit upsert as safety net if trigger didn't fire)
+-- ============================================================
+insert into public.profiles (id, full_name, role)
+values
+  ('00000000-0000-0000-0000-000000000001', 'Admin User',     'admin'),
+  ('00000000-0000-0000-0000-000000000002', 'Alex Trainer',   'trainer'),
+  ('00000000-0000-0000-0000-000000000003', 'Sam Trainer',    'trainer'),
+  ('00000000-0000-0000-0000-000000000004', 'Jordan Client',  'client'),
+  ('00000000-0000-0000-0000-000000000005', 'Morgan Client',  'client'),
+  ('00000000-0000-0000-0000-000000000006', 'Casey Client',   'client'),
+  ('00000000-0000-0000-0000-000000000007', 'Riley Isolated', 'client')
+on conflict (id) do update set
+  full_name = excluded.full_name,
+  role      = excluded.role;
+
+-- ============================================================
 -- TRAINER-CLIENT LINKS
 -- ============================================================
 insert into public.trainer_clients (trainer_id, client_id, active)
