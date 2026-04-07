@@ -411,11 +411,17 @@ test.describe("Messaging", () => {
 
   test("trainer can send message", async ({ page }) => {
     await page.goto("/trainer/messaging");
-    // Select an existing conversation — seed has trainer1 <-> client1 (Jordan Client)
-    // Conversation items are <button> elements showing the client name.
-    // Use button filter to handle both full_name ("Jordan Client") and email fallback.
-    const convoItem = page.locator("button").filter({ hasText: /jordan|client1/i }).first();
-    await expect(convoItem).toBeVisible({ timeout: 10_000 });
+    // Wait for page to load — "Messages" heading is always shown
+    await expect(page.getByText(/Messages/i).first()).toBeVisible({ timeout: 10_000 });
+    // Conversation items have data-testid="conversation-item" (set in TrainerMessagingClient)
+    const convoItem = page.getByTestId("conversation-item").first();
+    const hasConvo = await convoItem.isVisible({ timeout: 5_000 }).catch(() => false);
+    if (!hasConvo) {
+      // Dump page text so the GitHub annotation shows what's rendered
+      const pageText = await page.evaluate(() => document.body.innerText).catch(() => '(eval failed)');
+      expect(hasConvo, `No conversation-item found. Page text: ${pageText.slice(0, 400)}`).toBeTruthy();
+      return;
+    }
     await convoItem.click();
     // Message input placeholder is "Message..."
     const messageInput = page.getByPlaceholder(/message/i).first();
@@ -430,10 +436,16 @@ test.describe("Messaging", () => {
 
   test("message appears in thread", async ({ page }) => {
     await page.goto("/trainer/messaging");
-    // Open the seeded conversation — conversation list auto-selects the first one
-    // so the messages should already be loaded
-    const convoItem = page.locator("button").filter({ hasText: /jordan|client1/i }).first();
-    await expect(convoItem).toBeVisible({ timeout: 10_000 });
+    // Wait for page to load
+    await expect(page.getByText(/Messages/i).first()).toBeVisible({ timeout: 10_000 });
+    // Open the seeded conversation — use data-testid for reliable selection
+    const convoItem = page.getByTestId("conversation-item").first();
+    const hasConvo = await convoItem.isVisible({ timeout: 5_000 }).catch(() => false);
+    if (!hasConvo) {
+      const pageText = await page.evaluate(() => document.body.innerText).catch(() => '(eval failed)');
+      expect(hasConvo, `No conversation-item found. Page text: ${pageText.slice(0, 400)}`).toBeTruthy();
+      return;
+    }
     await convoItem.click();
     // The seed contains at least two messages in this conversation
     await expect(

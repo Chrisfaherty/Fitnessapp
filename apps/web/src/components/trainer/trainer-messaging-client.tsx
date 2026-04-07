@@ -99,6 +99,7 @@ export default function TrainerMessagingClient({ conversations, trainerId }: Pro
           {conversations.map((convo) => (
             <button
               key={convo.id}
+              data-testid="conversation-item"
               onClick={() => setSelectedConvoId(convo.id)}
               className={`w-full text-left px-4 py-3 border-b border-border/50 hover:bg-surface-alt transition-colors ${
                 selectedConvoId === convo.id ? 'bg-surface-alt border-l-2 border-l-accent' : ''
