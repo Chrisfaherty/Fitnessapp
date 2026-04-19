@@ -18,7 +18,7 @@ export default async function ClientWorkoutsPage() {
   const { data: assignments } = await supabase
     .from('workout_assignments')
     .select(`
-      id, status, assigned_at,
+      id, status, scheduled_date, created_at,
       workout_templates (
         id, title, description,
         workout_template_exercises (
@@ -28,7 +28,7 @@ export default async function ClientWorkoutsPage() {
       )
     `)
     .eq('client_id', user.id)
-    .order('assigned_at', { ascending: false })
+    .order('created_at', { ascending: false })
     .limit(20)
 
   const active = assignments?.filter((a: any) => a.status === 'assigned') ?? []
@@ -69,7 +69,7 @@ export default async function ClientWorkoutsPage() {
                     ))}
                   </div>
                   <div className="text-caption text-foreground/40">
-                    Assigned {new Date(a.assigned_at).toLocaleDateString()}
+                    Assigned {new Date(a.scheduled_date ?? a.created_at).toLocaleDateString()}
                   </div>
                   <p className="text-caption text-foreground/50 italic">
                     Log your session on the iOS/Android app →
