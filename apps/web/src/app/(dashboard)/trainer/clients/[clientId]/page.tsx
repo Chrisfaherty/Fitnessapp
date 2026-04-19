@@ -46,9 +46,9 @@ export default async function ClientDetailPage({ params, searchParams }: Props) 
       .order('date', { ascending: false }),
     supabase
       .from('check_ins')
-      .select('id, week_start, status, bodyweight_kg, notes, trainer_feedback')
+      .select('id, week_start_date, status, body_weight_kg, client_notes, trainer_notes')
       .eq('client_id', params.clientId)
-      .order('week_start', { ascending: false })
+      .order('week_start_date', { ascending: false })
       .limit(10),
     supabase
       .from('workout_sessions')
@@ -92,9 +92,9 @@ export default async function ClientDetailPage({ params, searchParams }: Props) 
       <ClientDetailTabs
         clientId={params.clientId}
         activeTab={activeTab}
-        healthData={(healthData ?? []) as any[]}
-        checkIns={(checkIns ?? []) as any[]}
-        sessions={(sessions ?? []) as any[]}
+        healthData={healthData ?? []}
+        checkIns={checkIns ?? []}
+        sessions={sessions ?? []}
       />
     </div>
   )

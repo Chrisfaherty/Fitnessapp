@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { createBrowserSupabaseClient } from '@/lib/supabase/client'
 import type { Database } from '@/types/database'
 
@@ -41,11 +42,20 @@ export default function ClientDiaryClient({ initialEntries, userId }: Props) {
       notes: form.notes.trim() || null,
     }
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('diary_entries')
       .upsert(payload, { onConflict: 'user_id,date' })
       .select('id, date, mood, sleep_hours, notes, created_at')
       .single()
+
+    setSaving(false)
+
+    if (error) {
+      toast.error('Failed to save entry', {
+        description: error.message,
+      })
+      return
+    }
 
     if (data) {
       setEntries((prev) => {
@@ -55,7 +65,6 @@ export default function ClientDiaryClient({ initialEntries, userId }: Props) {
     }
 
     setShowForm(false)
-    setSaving(false)
     setForm({ mood: '', sleep: '', notes: '' })
   }
 
@@ -74,12 +83,12 @@ export default function ClientDiaryClient({ initialEntries, userId }: Props) {
           <h2 className="text-heading">Today&apos;s Entry — {today}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-label mb-1 block">Mood (1–10)</label>
+              <label className="text-label mb-1 block">Mood (1–5)</label>
               <input
-                type="number" min={1} max={10}
+                type="number" min={1} max={5}
                 value={form.mood}
                 onChange={(e) => setForm((f) => ({ ...f, mood: e.target.value }))}
-                placeholder="8"
+                placeholder="4"
                 className="input w-full"
               />
             </div>
@@ -123,7 +132,7 @@ export default function ClientDiaryClient({ initialEntries, userId }: Props) {
               <div className="flex items-center justify-between">
                 <span className="text-label font-medium">{entry.date}</span>
                 <div className="flex gap-3 text-caption text-foreground/50">
-                  {entry.mood != null && <span>Mood {entry.mood}/10 {moodEmoji(entry.mood)}</span>}
+                  {entry.mood != null && <span>Mood {entry.mood}/5 {moodEmoji(entry.mood)}</span>}
                   {entry.sleep_hours != null && <span>Sleep {entry.sleep_hours}h</span>}
                 </div>
               </div>
@@ -139,7 +148,7 @@ export default function ClientDiaryClient({ initialEntries, userId }: Props) {
 }
 
 function moodEmoji(value: number): string {
-  if (value >= 8) return '😄'
-  if (value >= 5) return '😐'
+  if (value >= 4) return '😄'
+  if (value >= 3) return '😐'
   return '😟'
 }

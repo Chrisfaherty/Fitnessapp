@@ -89,19 +89,19 @@ export function ClientDetailTabs({ clientId, activeTab, healthData, checkIns, se
               {checkIns.map((ci: any) => (
                 <div key={ci.id} className="bg-surface border border-border rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-label font-medium">Week of {ci.week_start}</span>
+                    <span className="text-label font-medium">Week of {ci.week_start_date}</span>
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${
                       ci.status === 'reviewed'
                         ? 'text-accent border-accent/30 bg-accent/10'
                         : 'text-foreground-secondary border-border'
                     }`}>{ci.status}</span>
                   </div>
-                  {ci.bodyweight_kg && <p className="text-body">Weight: {ci.bodyweight_kg} kg</p>}
-                  {ci.notes && <p className="text-body text-foreground-secondary mt-1">{ci.notes}</p>}
-                  {ci.trainer_feedback && (
+                  {ci.body_weight_kg && <p className="text-body">Weight: {ci.body_weight_kg} kg</p>}
+                  {ci.client_notes && <p className="text-body text-foreground-secondary mt-1">{ci.client_notes}</p>}
+                  {ci.trainer_notes && (
                     <div className="mt-3 pt-3 border-t border-border">
                       <p className="text-label text-accent mb-1">Your Feedback</p>
-                      <p className="text-body">{ci.trainer_feedback}</p>
+                      <p className="text-body">{ci.trainer_notes}</p>
                     </div>
                   )}
                 </div>

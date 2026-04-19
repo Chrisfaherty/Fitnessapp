@@ -75,14 +75,14 @@ export default async function ClientDashboardPage() {
   const heatmapStart = format(subDays(new Date(), 14 * 7), 'yyyy-MM-dd')
   const { data: sessionsRaw } = await supabase
     .from('workout_sessions')
-    .select('started_at')
+    .select('performed_at')
     .eq('client_id', user.id)
-    .gte('started_at', heatmapStart)
+    .gte('performed_at', heatmapStart)
 
   // Aggregate sessions by date
   const sessionCountByDate: Record<string, number> = {}
   for (const s of (sessionsRaw ?? [])) {
-    const d = (s as any).started_at?.split('T')[0]
+    const d = (s as any).performed_at?.split('T')[0]
     if (d) sessionCountByDate[d] = (sessionCountByDate[d] ?? 0) + 1
   }
   const heatmapData = Object.entries(sessionCountByDate).map(([date, count]) => ({

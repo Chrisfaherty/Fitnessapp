@@ -1,27 +1,52 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
+const DAY_LABELS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+interface MealPlanDay {
+  id: string
+  day_of_week: number
+  meal_name: string
+  description: string | null
+  calories: number | null
+  protein_g: number | null
+  carbs_g: number | null
+  fat_g: number | null
+  sort_order: number
+}
+
+interface MealPlan {
+  id: string
+  title: string
+  description: string | null
+  week_start: string | null
+  active: boolean
+  meal_plan_days: MealPlanDay[]
+}
+
 export default async function ClientMealsPage() {
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
 
   const { data: plans } = await supabase
     .from('meal_plans')
     .select(`
-      id, title, notes, start_date, end_date,
+      id, title, description, week_start, active,
       meal_plan_days (
-        id, day_label, meals, total_calories, protein_g, carbs_g, fat_g
+        id, day_of_week, meal_name, description, calories, protein_g, carbs_g, fat_g, sort_order
       )
     `)
     .eq('client_id', user.id)
     .order('created_at', { ascending: false })
 
+  const typedPlans = (plans ?? []) as unknown as MealPlan[]
+
   return (
     <div className="space-y-6">
       <h1 className="text-display">Meal Plans</h1>
 
-      {!plans || plans.length === 0 ? (
+      {typedPlans.length === 0 ? (
         <div className="card text-center py-16 text-foreground/50">
           <p className="text-2xl mb-3">🥗</p>
           <p className="text-heading mb-1">No meal plans yet</p>
@@ -29,7 +54,7 @@ export default async function ClientMealsPage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {plans.map((plan: any) => (
+          {typedPlans.map((plan) => (
             <MealPlanCard key={plan.id} plan={plan} />
           ))}
         </div>
@@ -38,44 +63,67 @@ export default async function ClientMealsPage() {
   )
 }
 
-function MealPlanCard({ plan }: { plan: any }) {
-  const days: any[] = plan.meal_plan_days ?? []
-  const dateRange = [plan.start_date, plan.end_date].filter(Boolean).join(' → ')
+function MealPlanCard({ plan }: { plan: MealPlan }) {
+  const days = plan.meal_plan_days ?? []
+
+  // Group meals by day of week
+  const byDay = new Map<number, MealPlanDay[]>()
+  for (const d of days) {
+    const bucket = byDay.get(d.day_of_week) ?? []
+    bucket.push(d)
+    byDay.set(d.day_of_week, bucket)
+  }
+  // Sort each bucket by sort_order, then meal_name
+  for (const bucket of byDay.values()) {
+    bucket.sort((a, b) => a.sort_order - b.sort_order || a.meal_name.localeCompare(b.meal_name))
+  }
+  const orderedDays = Array.from(byDay.entries()).sort(([a], [b]) => a - b)
 
   return (
     <div className="card space-y-4">
       <div>
         <h2 className="text-heading font-semibold">{plan.title}</h2>
-        {dateRange && <p className="text-caption text-foreground/50">{dateRange}</p>}
-        {plan.notes && <p className="text-body text-foreground/70 mt-1">{plan.notes}</p>}
+        {plan.week_start && (
+          <p className="text-caption text-foreground/50">Week of {plan.week_start}</p>
+        )}
+        {plan.description && (
+          <p className="text-body text-foreground/70 mt-1">{plan.description}</p>
+        )}
       </div>
 
-      {days.length > 0 && (
+      {orderedDays.length > 0 && (
         <div className="divide-y divide-border">
-          {days
-            .sort((a: any, b: any) => a.day_label.localeCompare(b.day_label))
-            .map((day: any) => (
-              <div key={day.id} className="py-3 space-y-2">
-                <p className="text-label font-medium text-accent">{day.day_label}</p>
-                {day.meals && <p className="text-body whitespace-pre-line">{day.meals}</p>}
-                {(day.total_calories || day.protein_g || day.carbs_g || day.fat_g) && (
-                  <div className="flex gap-3 flex-wrap">
-                    {day.total_calories && (
-                      <span className="badge bg-surface-alt">{day.total_calories} kcal</span>
+          {orderedDays.map(([dow, meals]) => (
+            <div key={dow} className="py-3 space-y-3">
+              <p className="text-label font-medium text-accent">{DAY_LABELS[dow] ?? `Day ${dow}`}</p>
+              <div className="space-y-2">
+                {meals.map((m) => (
+                  <div key={m.id} className="space-y-1">
+                    <p className="text-body font-medium text-foreground">{m.meal_name}</p>
+                    {m.description && (
+                      <p className="text-body text-foreground/70 whitespace-pre-line">{m.description}</p>
                     )}
-                    {day.protein_g && (
-                      <span className="badge bg-accent/10 text-accent">P {day.protein_g}g</span>
-                    )}
-                    {day.carbs_g && (
-                      <span className="badge bg-surface-alt">C {day.carbs_g}g</span>
-                    )}
-                    {day.fat_g && (
-                      <span className="badge bg-surface-alt">F {day.fat_g}g</span>
+                    {(m.calories || m.protein_g || m.carbs_g || m.fat_g) && (
+                      <div className="flex gap-2 flex-wrap">
+                        {m.calories != null && (
+                          <span className="badge bg-surface-alt">{m.calories} kcal</span>
+                        )}
+                        {m.protein_g != null && (
+                          <span className="badge bg-accent/10 text-accent">P {m.protein_g}g</span>
+                        )}
+                        {m.carbs_g != null && (
+                          <span className="badge bg-surface-alt">C {m.carbs_g}g</span>
+                        )}
+                        {m.fat_g != null && (
+                          <span className="badge bg-surface-alt">F {m.fat_g}g</span>
+                        )}
+                      </div>
                     )}
                   </div>
-                )}
+                ))}
               </div>
-            ))}
+            </div>
+          ))}
         </div>
       )}
     </div>
