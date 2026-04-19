@@ -5,7 +5,16 @@ import ClientCheckInClient from "@/components/client/client-check-in-client";
 export default async function ClientCheckInsPage() {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth/login");
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+  if (!profile || (profile.role !== "client" && profile.role !== "admin")) {
+    redirect("/trainer");
+  }
 
   const { data: checkIns } = await supabase
     .from("check_ins")

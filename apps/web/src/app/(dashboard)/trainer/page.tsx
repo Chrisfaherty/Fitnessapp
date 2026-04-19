@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Trainer Dashboard" };
 export default async function TrainerPage() {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth/login");
 
   const { data: profile } = await supabase
     .from("profiles")

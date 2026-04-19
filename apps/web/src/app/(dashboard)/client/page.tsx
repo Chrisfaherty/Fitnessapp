@@ -9,7 +9,16 @@ import { format, subDays } from 'date-fns'
 export default async function ClientDashboardPage() {
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+  if (!profile || (profile.role !== 'client' && profile.role !== 'admin')) {
+    redirect('/trainer')
+  }
 
   // Last 7 days health summary
   const sevenDaysAgo = new Date()

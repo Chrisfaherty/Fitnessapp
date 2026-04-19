@@ -6,7 +6,7 @@ import { Users, ChevronRight } from 'lucide-react'
 export default async function TrainerClientsPage() {
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
 
   // Get linked clients for this trainer
   const { data: links } = await supabase

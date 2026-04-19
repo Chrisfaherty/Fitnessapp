@@ -21,7 +21,7 @@ export default async function AssignWorkoutPage({ searchParams }: Props) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth/login");
 
   // Verify trainer role
   const { data: profile } = await supabase

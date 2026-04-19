@@ -16,7 +16,7 @@ export default async function WorkoutDetailPage({ params }: PageProps) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth/login");
 
   // Fetch the assignment — security: must belong to this client
   const { data: assignment } = await supabase

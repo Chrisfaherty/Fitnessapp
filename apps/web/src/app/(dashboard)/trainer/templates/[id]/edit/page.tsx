@@ -16,7 +16,7 @@ export default async function EditTemplatePage({ params }: PageProps) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth/login");
 
   // Security: only the owning trainer may edit this template
   const { data: template } = await supabase

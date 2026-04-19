@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Workout Templates" };
 export default async function TemplatesPage() {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
+  if (!user) redirect("/auth/login");
 
   const { data: templates } = await supabase
     .from("workout_templates")

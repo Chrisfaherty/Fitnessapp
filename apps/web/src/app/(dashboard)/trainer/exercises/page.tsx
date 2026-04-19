@@ -5,7 +5,7 @@ import ExerciseLibrary from '@/components/trainer/exercise-library'
 export default async function ExercisesPage() {
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
 
   // Fetch initial page of exercises server-side
   const { data: exercises } = await supabase

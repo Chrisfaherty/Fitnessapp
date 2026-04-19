@@ -10,7 +10,10 @@ export default async function AdminExercisesPage() {
   if (!user) redirect('/auth/login')
 
   const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  if (profile?.role !== 'admin') redirect('/auth/login')
+  if (!profile) redirect('/auth/login')
+  if (profile.role !== 'admin') {
+    redirect(profile.role === 'trainer' ? '/trainer' : '/client')
+  }
 
   const { data: exercises } = await supabase
     .from('exercises')

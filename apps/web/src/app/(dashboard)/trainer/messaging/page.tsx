@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic'
 export default async function TrainerMessagingPage() {
   const supabase = await createServerSupabaseClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!user) redirect('/auth/login')
 
   // Step 1: fetch conversations for this trainer (no ambiguous FK join on profiles)
   const { data: conversations, error: convErr } = await supabase

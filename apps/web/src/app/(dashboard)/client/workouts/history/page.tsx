@@ -10,6 +10,15 @@ export default async function WorkoutHistoryPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login')
 
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+  if (!profile || (profile.role !== 'client' && profile.role !== 'admin')) {
+    redirect('/trainer')
+  }
+
   const { data: sessions } = await supabase
     .from('workout_sessions')
     .select(`

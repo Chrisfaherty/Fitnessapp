@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { createBrowserSupabaseClient } from "@/lib/supabase/client";
 import type { Database } from "@/types/database";
 import { CheckCircle2 } from "lucide-react";
@@ -75,14 +76,23 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
       client_notes: combinedNotes,
     };
 
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("check_ins")
       .insert(payload)
       .select("id, week_start_date, status, body_weight_kg, client_notes, trainer_notes, created_at")
       .single();
 
-    if (data) setCheckIns((prev) => [data, ...prev]);
     setSaving(false);
+
+    if (error) {
+      toast.error("Failed to submit check-in", {
+        description: error.message,
+      });
+      // Keep wizard open so user can retry
+      return;
+    }
+
+    if (data) setCheckIns((prev) => [data, ...prev]);
     resetWizard();
   };
 
