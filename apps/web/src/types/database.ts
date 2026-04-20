@@ -470,6 +470,7 @@ export interface Database {
           trainer_id: string | null;
           scheduled_date: string | null;
           status: AssignmentStatus;
+          notes: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -479,6 +480,7 @@ export interface Database {
           trainer_id?: string | null;
           scheduled_date?: string | null;
           status?: AssignmentStatus;
+          notes?: string | null;
         };
         Update: {
           client_id?: string;
@@ -486,6 +488,7 @@ export interface Database {
           trainer_id?: string | null;
           scheduled_date?: string | null;
           status?: AssignmentStatus;
+          notes?: string | null;
         };
         Relationships: [];
       };

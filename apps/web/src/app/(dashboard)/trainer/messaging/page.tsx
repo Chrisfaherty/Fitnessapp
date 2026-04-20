@@ -36,20 +36,27 @@ export default async function TrainerMessagingPage() {
     (profiles ?? []).map((p) => [p.id, p])
   )
 
-  // Step 3: fetch latest message per conversation
-  const { data: messages } = convoIds.length
-    ? await supabase
-        .from('messages')
-        .select('conversation_id, body, created_at')
-        .in('conversation_id', convoIds)
-        .order('created_at', { ascending: false })
-    : { data: [] }
-
-  // Group messages by conversation, take the latest
+  // Step 3: fetch the single latest message per conversation in parallel.
+  // Previously we pulled every message in every conversation (hundreds of
+  // KB for heavy users) and picked the first in JS — now we do one
+  // limit(1) query per conversation, fired together.
   const lastMsgMap: Record<string, { body: string | null; created_at: string }> = {}
-  for (const msg of messages ?? []) {
-    if (!lastMsgMap[msg.conversation_id]) {
-      lastMsgMap[msg.conversation_id] = { body: msg.body, created_at: msg.created_at }
+  if (convoIds.length) {
+    const latestResults = await Promise.all(
+      convoIds.map((cid) =>
+        supabase
+          .from('messages')
+          .select('conversation_id, body, created_at')
+          .eq('conversation_id', cid)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+      )
+    )
+    for (const { data: msg } of latestResults) {
+      if (msg) {
+        lastMsgMap[msg.conversation_id] = { body: msg.body, created_at: msg.created_at }
+      }
     }
   }
 

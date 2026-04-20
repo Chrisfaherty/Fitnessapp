@@ -146,6 +146,7 @@ export function WorkoutAssignmentClient({
       trainer_id: trainerId,
       scheduled_date: scheduledDate,
       status: "assigned",
+      notes: notes.trim() || null,
     });
 
     setIsSubmitting(false);

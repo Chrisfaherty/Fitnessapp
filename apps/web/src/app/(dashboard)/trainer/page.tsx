@@ -36,14 +36,18 @@ export default async function TrainerPage() {
 
   const clientIds = clientLinks.map((l) => l.client_id);
 
-  // Pending check-ins
-  const { data: rawPendingCheckIns } = await supabase
-    .from("check_ins")
-    .select("id, client_id, week_start_date, status, profiles!check_ins_client_id_fkey(full_name)")
-    .in("client_id", clientIds.length > 0 ? clientIds : ["none"])
-    .eq("status", "submitted")
-    .order("created_at", { ascending: false })
-    .limit(5);
+  // Pending check-ins. Skip the query entirely when the trainer has no
+  // linked clients — passing a sentinel like ["none"] throws
+  // "invalid input syntax for type uuid" and crashes the dashboard.
+  const { data: rawPendingCheckIns } = clientIds.length > 0
+    ? await supabase
+        .from("check_ins")
+        .select("id, client_id, week_start_date, status, profiles!check_ins_client_id_fkey(full_name)")
+        .in("client_id", clientIds)
+        .eq("status", "submitted")
+        .order("created_at", { ascending: false })
+        .limit(5)
+    : { data: [] };
 
   const pendingCheckIns = (rawPendingCheckIns ?? []) as unknown as Array<{
     id: string;

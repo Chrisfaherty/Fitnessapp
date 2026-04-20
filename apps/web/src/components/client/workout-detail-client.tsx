@@ -287,6 +287,17 @@ export function WorkoutDetailClient({
     setSessionActive(false);
 
     try {
+      // 1) Capture duration on the session row so the Workout History
+      //    page can distinguish finished from abandoned sessions.
+      if (sessionId) {
+        const { error: sessionError } = await supabase
+          .from("workout_sessions")
+          .update({ duration_seconds: elapsedSeconds })
+          .eq("id", sessionId);
+        if (sessionError) throw sessionError;
+      }
+
+      // 2) Mark the assignment complete.
       const { error: assignError } = await supabase
         .from("workout_assignments")
         .update({ status: "completed" })

@@ -28,7 +28,15 @@ export default function ClientDiaryClient({ initialEntries, userId }: Props) {
   const [form, setForm] = useState({ mood: '', sleep: '', notes: '' })
   const supabase = createBrowserSupabaseClient()
 
-  const today = new Date().toISOString().split('T')[0]
+  // Use local-time components, not UTC ISO, so a user in UTC-X logging
+  // at 6pm doesn't silently save under tomorrow's date.
+  const today = (() => {
+    const d = new Date()
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const dd = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${dd}`
+  })()
 
   const saveEntry = async (e: React.FormEvent) => {
     e.preventDefault()

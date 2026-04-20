@@ -36,13 +36,19 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
   const [saving, setSaving] = useState(false);
   const supabase = createBrowserSupabaseClient();
 
-  // Week start = Monday of current week
+  // Week start = Monday of current week (in the user's local timezone).
+  // Build the YYYY-MM-DD string from local getFullYear/getMonth/getDate
+  // to avoid a UTC-offset drift around midnight that would cause the
+  // wrong Monday to be stored (also DST-safe).
   const weekStart = (() => {
     const d = new Date();
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    d.setDate(diff);
-    return d.toISOString().split("T")[0];
+    const day = d.getDay(); // 0=Sun … 6=Sat
+    const diff = day === 0 ? -6 : 1 - day; // offset to this week's Monday
+    d.setDate(d.getDate() + diff);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${dd}`;
   })();
 
   const alreadySubmitted = checkIns.some((c) => c.week_start_date === weekStart);
