@@ -202,7 +202,7 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
                     placeholder="75.0"
                     autoFocus
                     onKeyDown={(e) => e.key === "Enter" && nextStep()}
-                    className="w-full h-[52px] bg-surface border border-border text-foreground text-[16px] font-sans rounded-md px-[14px] placeholder:text-foreground-secondary focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] transition-all duration-[160ms]"
+                    className="w-full h-[52px] bg-surface border border-border text-foreground text-body-lg rounded-md px-[14px] placeholder:text-foreground-secondary focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] transition-all duration-[160ms]"
                   />
 
                   <p className="text-label text-foreground-tertiary mt-4">
@@ -233,7 +233,7 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                     placeholder="Training felt strong, diet was on point, sleep was rough this week…"
-                    className="w-full min-h-[140px] bg-surface border border-border text-foreground text-[16px] font-sans rounded-md px-[14px] py-3 placeholder:text-foreground-secondary focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] resize-y transition-all duration-[160ms]"
+                    className="w-full min-h-[140px] bg-surface border border-border text-foreground text-body-lg rounded-md px-[14px] py-3 placeholder:text-foreground-secondary focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] resize-y transition-all duration-[160ms]"
                   />
 
                   {/* Review summary */}
@@ -291,7 +291,7 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
             <button
               onClick={nextStep}
               disabled={saving}
-              className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-[160ms]"
+              className="h-10 px-6 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-[160ms]"
             >
               {isLastStep ? (saving ? "Submitting…" : "Submit Check-in") : "Continue →"}
             </button>
@@ -320,7 +320,7 @@ export default function ClientCheckInClient({ initialCheckIns, userId }: Props) 
         ) : (
           <button
             onClick={() => setShowWizard(true)}
-            className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms]"
+            className="h-10 px-6 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms]"
           >
             Submit Check-In
           </button>

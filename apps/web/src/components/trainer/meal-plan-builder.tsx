@@ -57,7 +57,7 @@ const MEAL_PRESETS = ["Breakfast", "Lunch", "Dinner", "Snack", "Pre-Workout", "P
 // ── Shared input style ───────────────────────────────────────────────────────
 
 const inputCls =
-  "w-full h-11 bg-surface border border-border text-foreground text-[14px] rounded-md px-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]";
+  "w-full h-11 bg-surface border border-border text-foreground text-body rounded-md px-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]";
 
 // ── Step indicator ───────────────────────────────────────────────────────────
 
@@ -121,7 +121,7 @@ function AddMealForm({ onAdd, onCancel }: AddMealFormProps) {
   };
 
   const smallInput =
-    "w-full h-9 bg-surface border border-border text-foreground text-[13px] rounded-md px-3 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] transition-all duration-[160ms]";
+    "w-full h-9 bg-surface border border-border text-foreground text-body-sm rounded-md px-3 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] transition-all duration-[160ms]";
 
   return (
     <motion.div
@@ -164,7 +164,7 @@ function AddMealForm({ onAdd, onCancel }: AddMealFormProps) {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
-          className="w-full bg-surface border border-border text-foreground text-[13px] rounded-md px-3 py-2 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] transition-all duration-[160ms] resize-none"
+          className="w-full bg-surface border border-border text-foreground text-body-sm rounded-md px-3 py-2 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] transition-all duration-[160ms] resize-none"
         />
       </div>
 
@@ -194,7 +194,7 @@ function AddMealForm({ onAdd, onCancel }: AddMealFormProps) {
       <div className="flex gap-2 pt-1">
         <button
           onClick={handleAdd}
-          className="flex-1 h-8 bg-accent text-accent-foreground text-[12px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms]"
+          className="flex-1 h-8 bg-accent text-accent-foreground text-caption font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms]"
         >
           Add Meal
         </button>
@@ -221,7 +221,7 @@ function MealCard({ entry, onRemove }: { entry: MealEntry; onRemove: () => void 
       className="group flex items-start gap-3 p-3 border-b border-border/50 last:border-0 hover:bg-white/[0.02] transition-colors"
     >
       {/* Drag handle */}
-      <span className="text-foreground-tertiary opacity-0 group-hover:opacity-100 cursor-grab mt-1 select-none text-[14px] leading-none">
+      <span className="text-foreground-tertiary opacity-0 group-hover:opacity-100 cursor-grab mt-1 select-none text-body leading-none">
         ⠿
       </span>
       <div className="flex-1 min-w-0">
@@ -477,7 +477,7 @@ export function MealPlanBuilder({ clients }: MealPlanBuilderProps) {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={3}
-                    className="w-full bg-surface border border-border text-foreground text-[14px] rounded-md px-[14px] py-3 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms] resize-none"
+                    className="w-full bg-surface border border-border text-foreground text-body rounded-md px-[14px] py-3 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms] resize-none"
                   />
                 </div>
 
@@ -540,7 +540,7 @@ export function MealPlanBuilder({ clients }: MealPlanBuilderProps) {
                 <button
                   onClick={goToStep2}
                   disabled={clients.length === 0}
-                  className="h-9 px-5 bg-accent text-accent-foreground text-[13px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="h-9 px-5 bg-accent text-accent-foreground text-body-sm font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Continue
                   <ChevronRight className="w-4 h-4" />
@@ -630,14 +630,14 @@ export function MealPlanBuilder({ clients }: MealPlanBuilderProps) {
             <div className="flex items-center justify-between pt-2">
               <button
                 onClick={() => setStep(1)}
-                className="h-9 px-4 bg-surface-elevated border border-border text-foreground-secondary text-[13px] rounded-md hover:text-foreground hover:border-border-hover transition-all duration-[160ms] flex items-center gap-2"
+                className="h-9 px-4 bg-surface-elevated border border-border text-foreground-secondary text-body-sm rounded-md hover:text-foreground hover:border-border-hover transition-all duration-[160ms] flex items-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Back
               </button>
               <button
                 onClick={() => setStep(3)}
-                className="h-9 px-5 bg-accent text-accent-foreground text-[13px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] flex items-center gap-2"
+                className="h-9 px-5 bg-accent text-accent-foreground text-body-sm font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] flex items-center gap-2"
               >
                 Review
                 <ChevronRight className="w-4 h-4" />
@@ -744,7 +744,7 @@ export function MealPlanBuilder({ clients }: MealPlanBuilderProps) {
             <div className="flex items-center justify-between pt-2">
               <button
                 onClick={() => setStep(2)}
-                className="h-9 px-4 bg-surface-elevated border border-border text-foreground-secondary text-[13px] rounded-md hover:text-foreground hover:border-border-hover transition-all duration-[160ms] flex items-center gap-2"
+                className="h-9 px-4 bg-surface-elevated border border-border text-foreground-secondary text-body-sm rounded-md hover:text-foreground hover:border-border-hover transition-all duration-[160ms] flex items-center gap-2"
               >
                 <ChevronLeft className="w-4 h-4" />
                 Back
@@ -752,7 +752,7 @@ export function MealPlanBuilder({ clients }: MealPlanBuilderProps) {
               <button
                 onClick={handleSave}
                 disabled={isSaving}
-                className="h-9 px-5 bg-accent text-accent-foreground text-[13px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="h-9 px-5 bg-accent text-accent-foreground text-body-sm font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isSaving ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -793,7 +793,7 @@ export function MealPlanBuilder({ clients }: MealPlanBuilderProps) {
             </div>
             <button
               onClick={() => setStep(3)}
-              className="h-9 px-5 bg-accent text-accent-foreground text-[13px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms]"
+              className="h-9 px-5 bg-accent text-accent-foreground text-body-sm font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms]"
             >
               Review Plan
             </button>

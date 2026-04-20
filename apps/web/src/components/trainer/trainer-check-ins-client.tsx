@@ -90,7 +90,7 @@ function CheckInRow({ checkIn, isSelected, onClick }: RowProps) {
       }`}
     >
       {/* Avatar */}
-      <div className="w-9 h-9 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-[13px] font-bold text-foreground flex-shrink-0 overflow-hidden">
+      <div className="w-9 h-9 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-body-sm font-bold text-foreground flex-shrink-0 overflow-hidden">
         {client.avatar_url ? (
           <img
             src={client.avatar_url}
@@ -175,7 +175,7 @@ function SlideOver({ checkIn, onClose, onMarkReviewed, isSubmitting }: SlideOver
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-border flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center text-[13px] font-bold text-foreground flex-shrink-0 overflow-hidden">
+            <div className="w-9 h-9 rounded-full bg-surface border border-border flex items-center justify-center text-body-sm font-bold text-foreground flex-shrink-0 overflow-hidden">
               {checkIn.client.avatar_url ? (
                 <img
                   src={checkIn.client.avatar_url}
@@ -317,7 +317,7 @@ function SlideOver({ checkIn, onClose, onMarkReviewed, isSubmitting }: SlideOver
           {isReviewed ? (
             <button
               onClick={onClose}
-              className="flex-1 h-10 bg-surface-elevated border border-border text-foreground text-[14px] font-medium rounded-md hover:border-white/20 transition-colors duration-[160ms]"
+              className="flex-1 h-10 bg-surface-elevated border border-border text-foreground text-body font-medium rounded-md hover:border-white/20 transition-colors duration-[160ms]"
             >
               Close
             </button>
@@ -325,14 +325,14 @@ function SlideOver({ checkIn, onClose, onMarkReviewed, isSubmitting }: SlideOver
             <>
               <button
                 onClick={onClose}
-                className="flex-1 h-10 bg-surface-elevated border border-border text-foreground text-[14px] font-medium rounded-md hover:border-white/20 transition-colors duration-[160ms]"
+                className="flex-1 h-10 bg-surface-elevated border border-border text-foreground text-body font-medium rounded-md hover:border-white/20 transition-colors duration-[160ms]"
               >
                 Message
               </button>
               <button
                 onClick={() => onMarkReviewed(checkIn.id, trainerNotes, trainerVideoUrl)}
                 disabled={isSubmitting}
-                className="flex-1 h-10 bg-accent text-[#0B0C10] text-[14px] font-bold rounded-md hover:bg-accent/90 transition-colors duration-[160ms] disabled:opacity-60 disabled:cursor-not-allowed"
+                className="flex-1 h-10 bg-accent text-[#0B0C10] text-body font-bold rounded-md hover:bg-accent/90 transition-colors duration-[160ms] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <span className="flex items-center justify-center gap-2">

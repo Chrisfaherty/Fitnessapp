@@ -18,19 +18,19 @@ type MotionButtonProps = HTMLMotionProps<"button">;
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "h-10 px-4 bg-accent text-accent-foreground text-[14px] font-bold font-sans rounded-md " +
+    "h-10 px-4 bg-accent text-accent-foreground text-body font-bold rounded-md " +
     "hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/40 disabled:cursor-not-allowed " +
     "transition-colors duration-[160ms] ease-in-out",
   secondary:
-    "h-10 px-4 bg-surface-elevated border border-border text-foreground text-[14px] font-medium font-sans rounded-md " +
+    "h-10 px-4 bg-surface-elevated border border-border text-foreground text-body font-medium rounded-md " +
     "hover:border-border-hover hover:bg-white/[0.03] " +
     "transition-colors duration-[160ms] ease-in-out",
   ghost:
-    "h-9 px-3 bg-transparent text-foreground-secondary text-[14px] font-medium font-sans rounded-sm " +
+    "h-9 px-3 bg-transparent text-foreground-secondary text-body font-medium rounded-sm " +
     "hover:bg-white/[0.04] hover:text-foreground " +
     "transition-colors duration-[120ms] ease-in-out",
   danger:
-    "h-10 px-4 bg-danger-muted border border-danger/24 text-danger text-[14px] font-medium font-sans rounded-md " +
+    "h-10 px-4 bg-danger-muted border border-danger/24 text-danger text-body font-medium rounded-md " +
     "hover:bg-danger/20 " +
     "transition-colors duration-[160ms] ease-in-out",
   icon:

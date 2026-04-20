@@ -36,7 +36,7 @@ export function Badge({
   return (
     <span
       className={[
-        "h-6 px-[10px] rounded-pill text-[12px] font-semibold inline-flex items-center gap-1.5",
+        "h-6 px-[10px] rounded-pill text-caption font-semibold inline-flex items-center gap-1.5",
         variantClasses[variant],
         className,
       ]

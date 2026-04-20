@@ -115,7 +115,7 @@ export function ProgressChart({ clientId }: Props) {
             }}
             onFocus={() => setShowDropdown(true)}
             placeholder="Search exercises this client has logged…"
-            className="w-full h-11 bg-surface border border-border text-foreground text-[14px] rounded-md pl-9 pr-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
+            className="w-full h-11 bg-surface border border-border text-foreground text-body rounded-md pl-9 pr-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
           />
         </div>
         {showDropdown && filtered.length > 0 && !selectedExercise && (

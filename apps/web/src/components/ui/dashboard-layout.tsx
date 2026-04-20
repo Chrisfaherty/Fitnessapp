@@ -164,7 +164,7 @@ export function DashboardLayout({
         <div className="flex items-center gap-3">
           {/* Avatar */}
           <div className="relative flex-shrink-0">
-            <div className="w-9 h-9 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-[13px] font-bold text-foreground">
+            <div className="w-9 h-9 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-body-sm font-bold text-foreground">
               {initial}
             </div>
             <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-success rounded-full border-2 border-background" />

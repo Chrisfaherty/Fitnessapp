@@ -58,7 +58,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 const inputBase =
-  "h-11 w-full bg-surface border text-foreground text-[14px] font-sans rounded-md px-[14px] " +
+  "h-11 w-full bg-surface border text-foreground text-body rounded-md px-[14px] " +
   "placeholder:text-foreground-disabled " +
   "outline-none " +
   "transition-all duration-[160ms] ease-[ease]";
@@ -93,7 +93,7 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 }
 
 const textareaBase =
-  "w-full min-h-[120px] bg-surface border text-foreground text-[14px] font-sans rounded-md px-[14px] py-3 resize-y " +
+  "w-full min-h-[120px] bg-surface border text-foreground text-body rounded-md px-[14px] py-3 resize-y " +
   "placeholder:text-foreground-disabled " +
   "outline-none " +
   "transition-all duration-[160ms] ease-[ease]";

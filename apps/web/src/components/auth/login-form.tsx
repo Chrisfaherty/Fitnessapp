@@ -45,7 +45,7 @@ export function LoginForm() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="you@fitcoach.dev"
-          className="w-full h-11 bg-surface border border-border text-foreground text-[14px] font-sans rounded-md px-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
+          className="w-full h-11 bg-surface border border-border text-foreground text-body rounded-md px-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
           required
           autoComplete="email"
           disabled={loading}
@@ -61,7 +61,7 @@ export function LoginForm() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="••••••••"
-          className="w-full h-11 bg-surface border border-border text-foreground text-[14px] font-sans rounded-md px-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
+          className="w-full h-11 bg-surface border border-border text-foreground text-body rounded-md px-[14px] placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
           required
           autoComplete="current-password"
           disabled={loading}
@@ -77,7 +77,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full h-10 bg-accent text-accent-foreground text-[14px] font-bold font-sans rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms] mt-2 flex items-center justify-center gap-2"
+        className="w-full h-10 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms] mt-2 flex items-center justify-center gap-2"
       >
         {loading ? (
           <><svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="32" strokeDashoffset="12"/></svg> Signing in…</>

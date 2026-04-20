@@ -169,7 +169,7 @@ export function TrainerDashboard({ profile, clientLinks, pendingCheckIns }: Prop
                 className="flex items-center gap-4 px-6 py-4 border-b border-border/50 last:border-0 hover:bg-white/[0.02] transition-colors"
               >
                 {/* Avatar */}
-                <div className="w-8 h-8 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-[12px] font-bold text-foreground flex-shrink-0">
+                <div className="w-8 h-8 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-caption font-bold text-foreground flex-shrink-0">
                   {initials(ci.profiles?.full_name)}
                 </div>
                 {/* Info */}

@@ -397,7 +397,7 @@ export function WorkoutDetailClient({
             <button
               onClick={handleCompleteSet}
               disabled={isSaving}
-              className="w-full h-10 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] disabled:opacity-60 disabled:cursor-not-allowed"
+              className="w-full h-10 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isSaving ? "Saving…" : "Complete Set"}
             </button>
@@ -524,7 +524,7 @@ export function WorkoutDetailClient({
               )}
               <button
                 onClick={handleStartWorkout}
-                className="w-full h-11 bg-accent text-accent-foreground text-[14px] font-bold font-sans rounded-md hover:bg-accent-strong transition-colors duration-[160ms] mt-6"
+                className="w-full h-11 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] mt-6"
               >
                 Start Workout
               </button>

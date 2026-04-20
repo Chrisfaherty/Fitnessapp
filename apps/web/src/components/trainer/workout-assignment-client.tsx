@@ -206,14 +206,14 @@ export function WorkoutAssignmentClient({
           <div className="flex gap-3 flex-wrap justify-center">
             <button
               onClick={handleAssignAnother}
-              className="h-10 px-5 bg-surface border border-border text-foreground text-[14px] font-medium rounded-md hover:bg-white/[0.04] hover:border-border-hover transition-colors duration-[120ms] flex items-center gap-2"
+              className="h-10 px-5 bg-surface border border-border text-foreground text-body font-medium rounded-md hover:bg-white/[0.04] hover:border-border-hover transition-colors duration-[120ms] flex items-center gap-2"
             >
               <Dumbbell className="w-4 h-4" />
               Assign Another
             </button>
             <Link
               href={`/trainer/clients/${selectedClientId}`}
-              className="h-10 px-5 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] flex items-center gap-2"
+              className="h-10 px-5 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong transition-colors duration-[160ms] flex items-center gap-2"
             >
               View Client
               <ChevronRight className="w-4 h-4" />
@@ -294,7 +294,7 @@ export function WorkoutAssignmentClient({
                               : "bg-surface border-border hover:border-border-hover hover:bg-white/[0.02]"
                           }`}
                         >
-                          <div className="w-9 h-9 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-[13px] font-bold text-foreground flex-shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-surface-elevated border border-border flex items-center justify-center text-body-sm font-bold text-foreground flex-shrink-0">
                             {initials}
                           </div>
                           <p className="text-body font-medium text-foreground truncate">{name}</p>
@@ -309,7 +309,7 @@ export function WorkoutAssignmentClient({
                   <button
                     onClick={goNext}
                     disabled={!canAdvanceFromClient()}
-                    className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms]"
+                    className="h-10 px-6 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms]"
                   >
                     Continue →
                   </button>
@@ -344,7 +344,7 @@ export function WorkoutAssignmentClient({
                   placeholder="Search templates…"
                   value={templateSearch}
                   onChange={(e) => setTemplateSearch(e.target.value)}
-                  className="w-full h-11 bg-surface border border-border text-foreground text-[14px] rounded-md px-[14px] mb-4 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
+                  className="w-full h-11 bg-surface border border-border text-foreground text-body rounded-md px-[14px] mb-4 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms]"
                 />
 
                 {templates.length === 0 ? (
@@ -356,7 +356,7 @@ export function WorkoutAssignmentClient({
                     </p>
                     <Link
                       href="/trainer/templates"
-                      className="mt-2 h-9 px-4 bg-surface border border-border text-foreground text-[14px] font-medium rounded-md hover:bg-white/[0.04] hover:border-border-hover transition-colors duration-[120ms] flex items-center gap-2"
+                      className="mt-2 h-9 px-4 bg-surface border border-border text-foreground text-body font-medium rounded-md hover:bg-white/[0.04] hover:border-border-hover transition-colors duration-[120ms] flex items-center gap-2"
                     >
                       Go to Templates
                     </Link>
@@ -402,7 +402,7 @@ export function WorkoutAssignmentClient({
                   <button
                     onClick={goNext}
                     disabled={!canAdvanceFromTemplate()}
-                    className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms]"
+                    className="h-10 px-6 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms]"
                   >
                     Continue →
                   </button>
@@ -440,7 +440,7 @@ export function WorkoutAssignmentClient({
                       value={scheduledDate}
                       onChange={(e) => setScheduledDate(e.target.value)}
                       min={new Date().toISOString().split("T")[0]}
-                      className="w-full h-11 bg-surface border border-border text-foreground text-[14px] rounded-md px-[14px] focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms] [color-scheme:dark]"
+                      className="w-full h-11 bg-surface border border-border text-foreground text-body rounded-md px-[14px] focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms] [color-scheme:dark]"
                     />
                   </div>
 
@@ -460,7 +460,7 @@ export function WorkoutAssignmentClient({
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Any cues, targets or reminders for this session…"
                       rows={3}
-                      className="w-full bg-surface border border-border text-foreground text-[14px] rounded-md px-[14px] py-3 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms] resize-none"
+                      className="w-full bg-surface border border-border text-foreground text-body rounded-md px-[14px] py-3 placeholder:text-foreground-disabled focus:outline-none focus:border-accent/55 focus:shadow-[0_0_0_3px_rgba(163,255,18,0.12)] hover:border-border-hover transition-all duration-[160ms] resize-none"
                     />
                   </div>
                 </div>
@@ -470,7 +470,7 @@ export function WorkoutAssignmentClient({
                   <button
                     onClick={goNext}
                     disabled={!canAdvanceFromDate()}
-                    className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms]"
+                    className="h-10 px-6 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:text-accent-foreground/46 disabled:cursor-not-allowed transition-colors duration-[160ms]"
                   >
                     Continue →
                   </button>
@@ -530,7 +530,7 @@ export function WorkoutAssignmentClient({
                   <button
                     onClick={handleAssign}
                     disabled={isSubmitting}
-                    className="h-10 px-6 bg-accent text-accent-foreground text-[14px] font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:cursor-not-allowed transition-colors duration-[160ms] flex items-center gap-2"
+                    className="h-10 px-6 bg-accent text-accent-foreground text-body font-bold rounded-md hover:bg-accent-strong disabled:bg-accent-muted disabled:cursor-not-allowed transition-colors duration-[160ms] flex items-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
